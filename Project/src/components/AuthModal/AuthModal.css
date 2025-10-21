@@ -1,0 +1,249 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.auth-modal {
+  background-color: #2a2a2a;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 24px;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background-color: #444;
+  color: #ffffff;
+}
+
+.auth-modal__header {
+  padding: 32px 32px 24px;
+  text-align: center;
+  border-bottom: 1px solid #444;
+}
+
+.auth-modal__logo {
+  margin-bottom: 20px;
+}
+
+.logo-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4285f4, #34a853, #fbbc05, #ea4335);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.logo-text {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: lowercase;
+  letter-spacing: 0.5px;
+}
+
+.auth-modal__title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.auth-modal__subtitle {
+  font-size: 16px;
+  color: #cccccc;
+  margin: 12px 0 0 0;
+  text-align: center;
+}
+
+.auth-modal__actions {
+  padding: 24px 32px 32px;
+  text-align: center;
+}
+
+.auth-modal__submit--success {
+  background-color: #4285f4;
+  color: #ffffff;
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+  border: none;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.auth-modal__submit--success:hover {
+  background-color: #3367d6;
+}
+
+.auth-modal__form {
+  padding: 24px 32px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #1a1a1a;
+  border: 2px solid #444;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 16px;
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+  border-color: #4285f4;
+}
+
+.form-input--error {
+  border-color: #e74c3c;
+}
+
+.form-input::placeholder {
+  color: #666;
+}
+
+.error-message {
+  display: block;
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.error-message--general {
+  background-color: rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.auth-modal__submit {
+  width: 100%;
+  background-color: #4285f4;
+  color: #ffffff;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+  margin-top: 8px;
+}
+
+.auth-modal__submit:hover:not(:disabled) {
+  background-color: #3367d6;
+}
+
+.auth-modal__submit:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+.auth-modal__footer {
+  padding: 16px 32px 32px;
+  text-align: center;
+  border-top: 1px solid #444;
+}
+
+.auth-modal__toggle {
+  background: none;
+  border: none;
+  color: #4285f4;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.auth-modal__toggle:hover {
+  color: #3367d6;
+}
+
+@media (max-width: 480px) {
+  .auth-modal {
+    margin: 20px;
+    max-width: none;
+  }
+  
+  .auth-modal__header,
+  .auth-modal__form,
+  .auth-modal__footer {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .auth-modal__title {
+    font-size: 20px;
+  }
+  
+  .auth-modal__subtitle {
+    font-size: 14px;
+  }
+  
+  .auth-modal__actions {
+    padding: 20px;
+  }
+  
+  .auth-modal__submit--success {
+    padding: 12px 24px;
+    font-size: 14px;
+  }
+  
+  .logo-circle {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .logo-text {
+    font-size: 14px;
+  }
+}
