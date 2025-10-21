@@ -1,0 +1,421 @@
+.dashboard {
+  padding: 40px 0;
+}
+
+.dashboard-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
+.loading-spinner {
+  font-size: 18px;
+  color: #888;
+}
+
+.featured-movie {
+  margin-bottom: 60px;
+}
+
+.featured-movie__content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.featured-movie__poster {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.featured-movie__poster img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.featured-movie__info {
+  padding: 20px 0;
+}
+
+.featured-movie__title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.featured-movie__description {
+  font-size: 16px;
+  color: #ccc;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.featured-movie__details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.detail-label {
+  font-size: 14px;
+  color: #888;
+  min-width: 80px;
+}
+
+.detail-value {
+  font-size: 14px;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.detail-value:has-text("★") {
+  color: #ffd700;
+}
+
+.featured-movie__actions-container {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+}
+
+/* На десктопе скрываем мобильную версию */
+.mobile-second-row {
+  display: none;
+}
+
+/* На десктопе скрываем дублирующиеся элементы */
+.featured-movie__actions-container .btn--secondary,
+.featured-movie__actions-container .action-btn {
+  display: flex;
+}
+
+.btn {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  outline: none;
+  min-height: 50px;
+}
+
+.btn--primary {
+  background-color: #4285f4;
+  color: #ffffff;
+}
+
+.btn--primary:hover {
+  background-color: #3367d6;
+  transform: translateY(-2px);
+}
+
+.btn--secondary {
+  background-color: transparent;
+  color: #ffffff;
+  border: 2px solid #4285f4;
+}
+
+.btn--secondary:hover {
+  background-color: #4285f4;
+  transform: translateY(-2px);
+}
+
+.section-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.top-movies {
+  margin-bottom: 40px;
+}
+
+.top-movies__grid {
+  display: grid;
+  grid-template-columns: repeat(5, 224px);
+  grid-template-rows: repeat(2, auto);
+  gap: 24px;
+  justify-content: center;
+}
+
+.top-movie-item {
+  position: relative;
+}
+
+.top-movie-item__rank {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  background-color: #4285f4;
+  color: #ffffff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(66, 133, 244, 0.3);
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 20px 0;
+  }
+  
+  .featured-movie__content {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .featured-movie__title {
+    font-size: 24px;
+  }
+  
+  .featured-movie__description {
+    font-size: 14px;
+  }
+  
+  .featured-movie__actions-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .featured-movie__actions-container .btn--primary {
+    width: 100%;
+  }
+  
+  /* На мобилке скрываем десктопные элементы (колонку) */
+  .featured-movie__actions-container .btn--secondary,
+  .featured-movie__actions-container .action-btn {
+    display: none;
+  }
+  
+  /* На мобилке показываем мобильную версию (ряд) */
+  .mobile-second-row {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+    width: 100%;
+  }
+  
+  .mobile-second-row .btn--secondary {
+    display: flex;
+    flex: 1;
+    min-height: 50px;
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+  
+  .mobile-second-row .action-btn {
+    display: flex;
+    flex: 1;
+    min-height: 50px;
+  }
+  
+  .btn--primary {
+    width: 100%;
+    max-width: 100%;
+    padding: 16px 24px;
+    font-size: 16px;
+    min-height: 60px;
+    text-align: center;
+    justify-content: center;
+  }
+  
+.second-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  align-items: stretch;
+}
+  
+  .btn--secondary {
+    flex: 1;
+    padding: 12px 20px;
+    font-size: 14px;
+    min-height: 50px;
+  }
+  
+  .action-btn {
+    flex: 1;
+    min-height: 50px;
+  }
+  
+  .section-title {
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+  
+  .top-movies__grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    padding: 0 0 8px 0;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    justify-content: flex-start;
+  }
+  
+  .top-movies__grid::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .movie-card {
+    flex: 0 0 280px;
+    width: 280px;
+    scroll-snap-align: start;
+    margin: 0;
+  }
+  
+  .movie-card:first-child {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 375px) {
+  .featured-movie__title {
+    font-size: 20px;
+  }
+  
+  .top-movies__grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 12px;
+    padding: 0 0 8px 0;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    justify-content: flex-start;
+  }
+  
+  .top-movies__grid::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .movie-card {
+    flex: 0 0 260px;
+    width: 260px;
+    scroll-snap-align: start;
+    margin: 0;
+  }
+  
+  .movie-card:first-child {
+    margin-left: 0;
+  }
+  
+  .featured-movie__actions-container {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .featured-movie__actions-container .btn--primary {
+    width: 100%;
+  }
+  
+  /* На мобилке скрываем десктопные элементы (колонку) */
+  .featured-movie__actions-container .btn--secondary,
+  .featured-movie__actions-container .action-btn {
+    display: none;
+  }
+  
+  /* На мобилке показываем мобильную версию (ряд) */
+  .mobile-second-row {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+  }
+  
+  .mobile-second-row .btn--secondary,
+  .mobile-second-row .action-btn {
+    display: flex;
+    min-height: 45px;
+  }
+  
+  .second-row {
+    gap: 6px;
+  }
+  
+  .second-row .btn--secondary {
+    min-height: 45px;
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+  
+  .second-row .action-btn {
+    min-height: 45px;
+  }
+  
+  .btn {
+    padding: 14px 20px;
+    font-size: 14px;
+    min-width: 100px;
+    max-width: 120px;
+  }
+  
+  .btn--primary {
+    width: 100%;
+    max-width: 100%;
+    padding: 16px 24px;
+    font-size: 16px;
+    min-height: 60px;
+    text-align: center;
+    justify-content: center;
+  }
+  
+  .action-btn {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.action-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  background-color: #333;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.action-btn:hover {
+  background-color: #555;
+}
+
+.action-btn--favorite.active {
+  background-color: #e74c3c;
+}
+
+.action-btn--favorite.active svg {
+  fill: #ffffff;
+}
