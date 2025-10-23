@@ -1,7 +1,7 @@
 {
   "name": "vk-marusya-movies",
   "version": "1.0.0",
-  "description": "VK Marusya Movies Platform",
+  "description": "VK Marusya Movies Platform - веб-приложение для просмотра и управления фильмами",
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^2.9.1",

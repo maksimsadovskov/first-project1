@@ -22,23 +22,26 @@
 ## Технологии
 
 - React 18
+- TypeScript
+- Redux Toolkit
 - React Router DOM
 - CSS3 (Flexbox, Grid)
 - Local Storage для хранения данных пользователя
 
-## Установка и запуск
+## Быстрый запуск
 
-1. Установите зависимости:
+**Требования:** Node.js 14+
+
 ```bash
 npm install
-```
-
-2. Запустите приложение в режиме разработки:
-```bash
 npm start
 ```
 
-3. Откройте [http://localhost:3000](http://localhost:3000) в браузере
+Откройте [http://localhost:3000](http://localhost:3000) в браузере
+
+## Расположение проекта
+
+Проект находится в папке: `Project/`
 
 ## Структура проекта
 
@@ -51,18 +54,16 @@ src/
 │   ├── MovieCard/      # Карточка фильма
 │   ├── SearchModal/    # Модальное окно поиска
 │   └── TrailerModal/   # Модальное окно трейлера
-├── contexts/           # React контексты
-│   ├── AuthContext.js  # Контекст авторизации
-│   └── MoviesContext.js # Контекст фильмов
+├── contexts/           # React контексты (не используется - заменен на Redux)
 ├── pages/              # Страницы приложения
 │   ├── AccountPage/    # Страница аккаунта
 │   ├── Dashboard/      # Главная страница
 │   ├── GenrePage/      # Страница жанра
 │   ├── Genres/         # Страница жанров
 │   └── MoviePage/      # Страница фильма
-├── App.js              # Главный компонент
+├── App.tsx             # Главный компонент
 ├── App.css             # Стили приложения
-├── index.js            # Точка входа
+├── index.tsx           # Точка входа
 └── index.css           # Глобальные стили
 ```
 
