@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { Movie, Genre, MoviesState, MoviesResponse } from '../../types';
 import apiService from '../../services/api';
-import { mockMovies, mockGenres, getRandomMovie as getRandomMovieMock, getTopMovies as getTopMoviesMock, getMoviesByGenre as getMoviesByGenreMock } from '../../data/mockData';
+// Removed mockData usage; all data now comes from API
 
 const initialState: MoviesState = {
   movies: [],
@@ -30,8 +30,7 @@ export const fetchRandomMovie = createAsyncThunk(
   'movies/fetchRandomMovie',
   async (_, { rejectWithValue }) => {
     try {
-      // Используем моковые данные для демонстрации
-      const movie = getRandomMovieMock();
+      const movie = await apiService.getRandomMovie();
       return movie;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки случайного фильма');
@@ -43,8 +42,7 @@ export const fetchTopMovies = createAsyncThunk(
   'movies/fetchTopMovies',
   async (_, { rejectWithValue }) => {
     try {
-      // Используем моковые данные для демонстрации
-      const movies = getTopMoviesMock();
+      const movies = await apiService.getTopMovies();
       return movies;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки топ фильмов');
@@ -56,19 +54,8 @@ export const fetchMoviesByGenre = createAsyncThunk(
   'movies/fetchMoviesByGenre',
   async ({ genreId, page = 1, limit = 10 }: { genreId: number; page?: number; limit?: number }, { rejectWithValue }) => {
     try {
-      // Используем моковые данные для демонстрации
-      const movies = getMoviesByGenreMock(genreId);
-      const startIndex = (page - 1) * limit;
-      const endIndex = startIndex + limit;
-      const paginatedMovies = movies.slice(startIndex, endIndex);
-      
-      return {
-        movies: paginatedMovies,
-        total: movies.length,
-        page,
-        limit,
-        genreId
-      };
+      const response = await apiService.getMoviesByGenre(genreId, page, limit);
+      return { ...response, genreId };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки фильмов по жанру');
     }
@@ -79,8 +66,8 @@ export const fetchGenres = createAsyncThunk(
   'movies/fetchGenres',
   async (_, { rejectWithValue }) => {
     try {
-      // Используем моковые данные для демонстрации
-      return mockGenres;
+      const genres = await apiService.getGenres();
+      return genres as unknown as Genre[];
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки жанров');
     }

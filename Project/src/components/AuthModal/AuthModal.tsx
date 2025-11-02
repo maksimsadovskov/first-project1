@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loginUser, registerUser, clearRegistrationSuccess } from '../../store/slices/authSlice';
 import { closeAuthModal } from '../../store/slices/modalSlice';
 import { LoginCredentials, RegisterCredentials } from '../../types';
+import logoMarusya from '../../assets/logos/mask-group.svg';
 import './AuthModal.css';
 
 interface AuthModalProps {
@@ -13,6 +14,7 @@ interface AuthModalProps {
 interface FormData {
   email: string;
   password: string;
+  confirmPassword: string;
   name: string;
   surname: string;
 }
@@ -20,6 +22,7 @@ interface FormData {
 interface FormErrors {
   email?: string;
   password?: string;
+  confirmPassword?: string;
   name?: string;
   surname?: string;
   general?: string;
@@ -33,10 +36,20 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState<FormData>({
     email: '',
     password: '',
+    confirmPassword: '',
     name: '',
     surname: ''
   });
   const [errors, setErrors] = useState<FormErrors>({});
+
+  // Всегда открываем модалку в режиме "Вход" только если это не окно успешной регистрации
+  useEffect(() => {
+    if (isOpen && !isRegistrationSuccess) {
+      setIsLogin(true);
+      setErrors({});
+      setFormData({ email: '', password: '', confirmPassword: '', name: '', surname: '' });
+    }
+  }, [isOpen, isRegistrationSuccess]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
@@ -77,6 +90,17 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       if (!formData.surname.trim()) {
         newErrors.surname = 'Фамилия обязательна';
       }
+      
+      // Валидация подтверждения пароля
+      if (!formData.confirmPassword.trim()) {
+        newErrors.confirmPassword = 'Подтвердите пароль';
+      } else if (formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = 'Пароли не совпадают';
+        // Если пароли не совпадают и пароль валиден, также показываем ошибку на поле пароля
+        if (formData.password.trim() && formData.password.length >= 6 && !newErrors.password) {
+          newErrors.password = 'Пароли не совпадают';
+        }
+      }
     }
     
     setErrors(newErrors);
@@ -88,7 +112,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     
     console.log('Отправка формы:', { isLogin, formData });
     
-    if (!validateForm()) {
+    const isValid = validateForm();
+    if (!isValid) {
       console.log('Валидация не прошла:', errors);
       return;
     }
@@ -111,27 +136,41 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           surname: formData.surname
         };
         await dispatch(registerUser(credentials)).unwrap();
-        console.log('Регистрация успешна');
+        console.log('Регистрация успешна, isRegistrationSuccess должен быть true');
+        // Не закрываем модальное окно, чтобы показать экран успешной регистрации
+        setFormData({ email: '', password: '', confirmPassword: '', name: '', surname: '' });
+        // Не сбрасываем isLogin, чтобы при переходе к входу форма была правильной
+        return;
       }
       onClose();
-      setFormData({ email: '', password: '', name: '', surname: '' });
+      setFormData({ email: '', password: '', confirmPassword: '', name: '', surname: '' });
     } catch (error) {
       console.error('Ошибка при отправке формы:', error);
       // Error is handled by Redux
     }
   };
 
-  const toggleMode = (): void => {
-    setIsLogin(!isLogin);
+  const handleRegistrationClick = (): void => {
+    setIsLogin(false);
     setErrors({});
-    setFormData({ email: '', password: '', name: '', surname: '' });
+    setFormData({ email: '', password: '', confirmPassword: '', name: '', surname: '' });
+    dispatch(clearRegistrationSuccess());
+  };
+
+  const handleBackToLogin = (): void => {
+    setIsLogin(true);
+    setErrors({});
+    setFormData({ email: '', password: '', confirmPassword: '', name: '', surname: '' });
+    dispatch(clearRegistrationSuccess());
   };
 
   const handleGoToLogin = (): void => {
+    console.log('Переход к форме входа');
     dispatch(clearRegistrationSuccess());
     setIsLogin(true);
     setErrors({});
-    setFormData({ email: '', password: '', name: '', surname: '' });
+    setFormData({ email: '', password: '', confirmPassword: '', name: '', surname: '' });
+    // Модальное окно остается открытым, показываем форму входа
   };
 
   if (!isOpen) return null;
@@ -141,21 +180,20 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     return (
       <div className="modal-overlay" onClick={onClose}>
         <div className="auth-modal auth-modal--success" onClick={(e) => e.stopPropagation()}>
-          <button className="modal-close" onClick={onClose}>
-            ×
+          <button className="auth-modal__close-btn" onClick={onClose} aria-label="Закрыть">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10.5859 12L2.79297 4.20706L4.20718 2.79285L12.0001 10.5857L19.793 2.79285L21.2072 4.20706L13.4143 12L21.2072 19.7928L19.793 21.2071L12.0001 13.4142L4.20718 21.2071L2.79297 19.7928L10.5859 12Z" fill="#000000"/>
+            </svg>
           </button>
-          
-          <div className="auth-modal__header">
-            <div className="auth-modal__logo">
-              <div className="logo-circle">
-                <span className="logo-text">маруся</span>
-              </div>
+          <div className="auth-modal__success-content">
+            <div className="auth-modal__logo auth-modal__logo--success">
+              <img src={logoMarusya} alt="Маруся" className="auth-modal__logo-img" />
+              <span className="auth-modal__logo-text">Маруся</span>
             </div>
-            <h2 className="auth-modal__title">Регистрация завершена</h2>
-            <p className="auth-modal__subtitle">Используйте вашу электронную почту для входа</p>
-          </div>
-          
-          <div className="auth-modal__actions">
+            <h2 className="auth-modal__title auth-modal__title--success">Регистрация завершена</h2>
+            <p className="auth-modal__subtitle auth-modal__subtitle--success">
+              Используйте вашу электронную почту<br />для входа
+            </p>
             <button 
               className="auth-modal__submit auth-modal__submit--success"
               onClick={handleGoToLogin}
@@ -170,20 +208,21 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="auth-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>
-          ×
+      <div className={`auth-modal ${!isLogin ? 'auth-modal--registration' : ''}`} onClick={(e) => e.stopPropagation()}>
+        <button className="auth-modal__close-btn" onClick={onClose} aria-label="Закрыть">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10.5859 12L2.79297 4.20706L4.20718 2.79285L12.0001 10.5857L19.793 2.79285L21.2072 4.20706L13.4143 12L21.2072 19.7928L19.793 21.2071L12.0001 13.4142L4.20718 21.2071L2.79297 19.7928L10.5859 12Z" fill="#000000"/>
+          </svg>
         </button>
         
         <div className="auth-modal__header">
           <div className="auth-modal__logo">
-            <div className="logo-circle">
-              <span className="logo-text">маруся</span>
-            </div>
+            <img src={logoMarusya} alt="Маруся" className="auth-modal__logo-img" />
+            <span className="auth-modal__logo-text">Маруся</span>
           </div>
-          <h2 className="auth-modal__title">
-            {isLogin ? 'Вход' : 'Регистрация'}
-          </h2>
+          {!isLogin && (
+            <h2 className="auth-modal__title auth-modal__title--registration">Регистрация</h2>
+          )}
         </div>
         
         <form className="auth-modal__form" onSubmit={handleSubmit}>
@@ -199,84 +238,174 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             </div>
           )}
           
-          {!isLogin && (
+          {isLogin ? (
             <>
-              <div className="form-group">
-                <label htmlFor="name" className="form-label">Имя</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className={`form-input ${errors.name ? 'form-input--error' : ''}`}
-                  placeholder="Введите имя"
-                />
-                {errors.name && <span className="error-message">{errors.name}</span>}
+              <div className="form-group form-group--with-icon">
+                <div className="form-input-wrapper">
+                  <input
+                    type="email"
+                    id="email-login"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className={`form-input form-input--icon ${errors.email ? 'form-input--error' : ''}`}
+                    placeholder=" "
+                  />
+                  <div className="form-input-label-wrapper">
+                    <svg className="form-input-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="currentColor"/>
+                    </svg>
+                    <span className="form-input-label">электронная почта</span>
+                  </div>
+                </div>
+                {errors.email && <span className="error-message">{errors.email}</span>}
               </div>
               
-              <div className="form-group">
-                <label htmlFor="surname" className="form-label">Фамилия</label>
-                <input
-                  type="text"
-                  id="surname"
-                  name="surname"
-                  value={formData.surname}
-                  onChange={handleInputChange}
-                  className={`form-input ${errors.surname ? 'form-input--error' : ''}`}
-                  placeholder="Введите фамилию"
-                />
-                {errors.surname && <span className="error-message">{errors.surname}</span>}
+              <div className="form-group form-group--with-icon">
+                <div className="form-input-wrapper">
+                  <input
+                    type="password"
+                    id="password-login"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className={`form-input form-input--icon ${errors.password ? 'form-input--error' : ''}`}
+                    placeholder=" "
+                  />
+                  <div className="form-input-label-wrapper">
+                    <svg className="form-input-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M17 8h-1V6c0-2.76-2.24-5-5-5S6 3.24 6 6v2H5c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10z" fill="currentColor"/>
+                    </svg>
+                    <span className="form-input-label">пароль</span>
+                  </div>
+                </div>
+                {errors.password && <span className="error-message">{errors.password}</span>}
               </div>
+              
+              <button 
+                type="submit" 
+                className="auth-modal__submit"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Загрузка...' : 'Войти'}
+              </button>
+              
+              <p className="auth-modal__registration-text" onClick={handleRegistrationClick} style={{ cursor: 'pointer' }}>Регистрация</p>
+            </>
+          ) : (
+            <>
+              <div className="form-group form-group--with-icon">
+                <div className="form-input-wrapper">
+                  <input
+                    type="email"
+                    id="email-register"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className={`form-input form-input--icon ${errors.email ? 'form-input--error' : ''}`}
+                    placeholder=" "
+                  />
+                  <div className="form-input-label-wrapper">
+                    <svg className="form-input-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="currentColor"/>
+                    </svg>
+                    <span className="form-input-label">электронная почта</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="form-group form-group--with-icon">
+                <div className="form-input-wrapper">
+                  <input
+                    type="text"
+                    id="name-register"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    className={`form-input form-input--icon ${errors.name ? 'form-input--error' : ''}`}
+                    placeholder=" "
+                  />
+                  <div className="form-input-label-wrapper">
+                    <svg className="form-input-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
+                    </svg>
+                    <span className="form-input-label">имя</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="form-group form-group--with-icon">
+                <div className="form-input-wrapper">
+                  <input
+                    type="text"
+                    id="surname-register"
+                    name="surname"
+                    value={formData.surname}
+                    onChange={handleInputChange}
+                    className={`form-input form-input--icon ${errors.surname ? 'form-input--error' : ''}`}
+                    placeholder=" "
+                  />
+                  <div className="form-input-label-wrapper">
+                    <svg className="form-input-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
+                    </svg>
+                    <span className="form-input-label">фамилия</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="form-group form-group--with-icon">
+                <div className="form-input-wrapper">
+                  <input
+                    type="password"
+                    id="password-register"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className={`form-input form-input--icon ${errors.password ? 'form-input--error' : ''}`}
+                    placeholder=" "
+                  />
+                  <div className="form-input-label-wrapper">
+                    <svg className="form-input-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M17 8h-1V6c0-2.76-2.24-5-5-5S6 3.24 6 6v2H5c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10z" fill="currentColor"/>
+                    </svg>
+                    <span className="form-input-label">пароль</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="form-group form-group--with-icon">
+                <div className="form-input-wrapper">
+                  <input
+                    type="password"
+                    id="confirm-password-register"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    className={`form-input form-input--icon ${errors.confirmPassword ? 'form-input--error' : ''}`}
+                    placeholder=" "
+                  />
+                  <div className="form-input-label-wrapper">
+                    <svg className="form-input-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M17 8h-1V6c0-2.76-2.24-5-5-5S6 3.24 6 6v2H5c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10z" fill="currentColor"/>
+                    </svg>
+                    <span className="form-input-label">подтвердите пароль</span>
+                  </div>
+                </div>
+              </div>
+              
+              <button 
+                type="submit" 
+                className="auth-modal__submit auth-modal__submit--register"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Загрузка...' : 'Создать аккаунт'}
+              </button>
+              
+              <p className="auth-modal__back-to-login" onClick={handleBackToLogin} style={{ cursor: 'pointer' }}>У меня есть пароль</p>
             </>
           )}
-          
-          <div className="form-group">
-            <label htmlFor="email" className="form-label">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className={`form-input ${errors.email ? 'form-input--error' : ''}`}
-              placeholder="Введите email"
-            />
-            {errors.email && <span className="error-message">{errors.email}</span>}
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="password" className="form-label">Пароль</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              className={`form-input ${errors.password ? 'form-input--error' : ''}`}
-              placeholder="Введите пароль"
-            />
-            {errors.password && <span className="error-message">{errors.password}</span>}
-          </div>
-          
-          <button 
-            type="submit" 
-            className="auth-modal__submit"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Загрузка...' : (isLogin ? 'Войти' : 'Зарегистрироваться')}
-          </button>
         </form>
-        
-        <div className="auth-modal__footer">
-          <button 
-            type="button" 
-            className="auth-modal__toggle"
-            onClick={toggleMode}
-          >
-            {isLogin ? 'Нет аккаунта? Зарегистрироваться' : 'У меня есть пароль'}
-          </button>
-        </div>
       </div>
     </div>
   );

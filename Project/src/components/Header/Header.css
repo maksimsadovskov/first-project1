@@ -3,7 +3,7 @@
   top: 0;
   left: 0;
   right: 0;
-  background-color: #1a1a1a;
+  background-color: rgb(25, 35, 54);
   border-bottom: 1px solid #333;
   z-index: 1000;
   height: 80px;
@@ -88,16 +88,22 @@
 }
 
 .login-btn {
-  background-color: #333;
+  background-color: rgb(25, 35, 54); /* цвет как у страницы */
   color: #ffffff;
   padding: 8px 16px;
   border-radius: 4px;
   font-size: 14px;
   transition: background-color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
+.login-btn .login-text { display: inline; }
+.login-btn .login-icon { display: none; }
+
 
 .login-btn:hover {
-  background-color: #555;
+  background-color: rgba(255, 255, 255, 0.1); /* лёгкий hover-эффект */
 }
 
 .user-menu {
@@ -191,7 +197,7 @@
     order: 2;
     position: relative;
     z-index: 1001;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgb(25, 35, 54); /* цвет как у страницы */
     border-radius: 8px;
     margin-left: 16px;
     width: 40px;
@@ -230,7 +236,7 @@
     height: 40px;
     padding: 8px;
     border-radius: 50%;
-    background-color: #2a2a2a;
+    background-color: rgb(25, 35, 54); /* цвет как у страницы */
     border: none;
     display: flex;
     align-items: center;
@@ -242,10 +248,34 @@
     height: 40px;
     padding: 8px;
     border-radius: 50%;
-    background-color: #2a2a2a;
+    background-color: rgb(25, 35, 54); /* цвет как у страницы */
     border: none;
     display: flex;
     align-items: center;
     justify-content: center;
   }
+  /* На мобиле показываем иконку входа и скрываем текст */
+  .login-btn .login-text { display: none; }
+  .login-btn .login-icon { display: inline; }
+}
+
+@media (max-width: 768px) {
+  /* Унифицированные боковые отступы 20px у хедера */
+  .header .container { padding: 0 20px; }
+}
+
+/* Final mobile override: force 20px side padding in header container */
+@media (max-width: 768px) {
+  body .header > .container { padding-left: 20px; padding-right: 20px; margin: 0 auto; }
+}
+@media (max-width: 375px) {
+  body .header > .container { padding-left: 20px; padding-right: 20px; margin: 0 auto; }
+}
+
+/* Remove debug highlight */
+@media (max-width: 768px) {
+  body .header > .container { background: transparent; padding-left: 20px; padding-right: 20px; }
+}
+@media (max-width: 375px) {
+  body .header > .container { background: transparent; padding-left: 20px; padding-right: 20px; }
 }

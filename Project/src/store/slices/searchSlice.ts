@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { Movie, SearchState } from '../../types';
 import apiService from '../../services/api';
-import { searchMovies as searchMoviesMock } from '../../data/mockData';
+// Removed mockData usage; using API search
 
 const initialState: SearchState = {
   query: '',
@@ -17,8 +17,7 @@ export const searchMovies = createAsyncThunk(
       if (!query.trim()) {
         return [];
       }
-      // Используем моковые данные для демонстрации
-      const results = searchMoviesMock(query);
+      const results = await apiService.searchMovies(query);
       return results;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка поиска');

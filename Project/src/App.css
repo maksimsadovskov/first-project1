@@ -1,8 +1,23 @@
+/* Base layout */
 .App {
   min-height: 100vh;
-  background-color: #1a1a1a;
+  background-color: rgb(25, 35, 54);
+  display: flex;            /* for desktop sticky footer */
+  flex-direction: column;
 }
 
 .main-content {
   padding-top: 80px; /* Account for fixed header */
+  flex: 1;           /* stretch on desktop */
+}
+
+@media (max-width: 768px) {
+  .App {
+    min-height: auto;   /* height equals content on mobile */
+    display: block;     /* no flex stretching */
+  }
+  .main-content {
+    padding-top: 0;
+    flex: initial;   /* don't stretch on mobile */
+  }
 }
