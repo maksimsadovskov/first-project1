@@ -2,7 +2,10 @@
   display: block;
   text-decoration: none;
   color: inherit;
-  border-radius: 12px;
+  width: 290px;
+  height: 304px;
+  border-radius: 24px;
+  border: 1px solid #3a3a3a;
   overflow: hidden;
   transition: transform 0.2s ease;
   background-color: #2a2a2a;
@@ -15,7 +18,7 @@
 .genre-card__image {
   position: relative;
   width: 100%;
-  aspect-ratio: 16/9;
+  height: 220px;
   overflow: hidden;
 }
 
@@ -30,13 +33,13 @@
   transform: scale(1.05);
 }
 
-.genre-card__overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-  padding: 20px 16px 16px;
+.genre-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 84px; /* 304 - 220 */
+  background: rgba(0, 0, 0, 0.6);
+  padding: 0 12px;
 }
 
 .genre-card__title {
@@ -45,6 +48,7 @@
   font-weight: 600;
   margin: 0;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  text-align: center;
 }
 
 @media (max-width: 768px) {
@@ -52,7 +56,5 @@
     font-size: 16px;
   }
   
-  .genre-card__overlay {
-    padding: 16px 12px 12px;
-  }
+  .genre-card__footer { height: 84px; padding: 0 10px; }
 }

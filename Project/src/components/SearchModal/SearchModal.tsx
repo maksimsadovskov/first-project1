@@ -23,10 +23,9 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     if (isOpen) {
-      // Focus on input when modal opens
       const input = document.querySelector('.search-modal__input') as HTMLInputElement;
       if (input) {
-        setTimeout(() => input.focus(), 100);
+        input.focus();
       }
     } else {
       // Clear search when modal closes

@@ -129,3 +129,31 @@
     font-size: 12px;
   }
 }
+
+/* Mobile 375px: карточка 335x(220+84), радиус 24, бордер 1, отступ снизу 24 */
+@media (max-width: 375px) {
+  .movie-card {
+    width: 335px;
+    border-radius: 24px;
+    border: 1px solid #3a3a3a;
+    margin-bottom: 24px;
+  }
+
+  .movie-card__poster {
+    aspect-ratio: auto;
+    height: 220px;
+  }
+
+  .movie-card__info {
+    height: 84px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .movie-card__title {
+    text-align: center;
+    margin-bottom: 6px;
+  }
+}

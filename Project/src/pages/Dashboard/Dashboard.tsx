@@ -69,7 +69,7 @@ const Dashboard: React.FC = () => {
                 </p>
                 <div className="featured-movie__details">
                   <div className="detail-item">
-                    <span className="detail-value">★{featuredMovie.rating}</span>
+                    <span className="detail-value detail-value--rating">★{featuredMovie.rating}</span>
                   </div>
                   <div className="detail-item">
                     <span className="detail-value">{featuredMovie.year}</span>

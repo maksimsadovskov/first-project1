@@ -27,13 +27,10 @@ const Genres: React.FC = () => {
       <div className="container">
         <div className="genres-header">
           <h1 className="genres-title">Жанры фильмов</h1>
-          <p className="genres-description">
-            Выберите жанр, который вас интересует, и откройте для себя лучшие фильмы в этой категории.
-          </p>
         </div>
         
         <div className="genres-grid">
-          {genres.map(genre => (
+          {genres.slice(0, 8).map(genre => (
             <GenreCard key={genre.id} genre={genre} />
           ))}
         </div>

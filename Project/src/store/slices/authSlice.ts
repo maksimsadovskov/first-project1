@@ -15,29 +15,9 @@ export const loginUser = createAsyncThunk(
   'auth/login',
   async (credentials: LoginCredentials, { rejectWithValue }) => {
     try {
-      // Моковый вход для демонстрации
-      const savedUser = localStorage.getItem('user');
-      if (savedUser) {
-        const user = JSON.parse(savedUser);
-        // Проверяем email
-        if (user.email === credentials.email) {
-          // Имитируем задержку API
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          return user;
-        }
-      }
-      
-      // Если пользователь не найден, создаем нового
-      const mockUser: User = {
-        id: Date.now(),
-        email: credentials.email,
-        name: 'Пользователь',
-        surname: 'Тестовый'
-      };
-      
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      return mockUser;
+      const user = await apiService.login(credentials);
+      localStorage.setItem('user', JSON.stringify(user));
+      return user;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка входа');
     }
@@ -48,19 +28,10 @@ export const registerUser = createAsyncThunk(
   'auth/register',
   async (credentials: RegisterCredentials, { rejectWithValue }) => {
     try {
-      // Моковая регистрация для демонстрации
-      const mockUser: User = {
-        id: Date.now(),
-        email: credentials.email,
-        name: credentials.name,
-        surname: credentials.surname
-      };
-      
-      // Имитируем задержку API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      return mockUser;
+      const user = await apiService.register(credentials);
+      // Не авторизуем автоматически, только флаг успеха
+      localStorage.setItem('user', JSON.stringify(user));
+      return user;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка регистрации');
     }

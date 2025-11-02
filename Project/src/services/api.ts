@@ -13,8 +13,9 @@ class ApiService {
   private api: AxiosInstance;
 
   constructor() {
+    const baseURL = 'http://localhost:3001';
     this.api = axios.create({
-      baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001/api',
+      baseURL,
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
@@ -119,8 +120,8 @@ class ApiService {
   }
 
   // Genres methods
-  async getGenres(): Promise<string[]> {
-    const response: AxiosResponse<ApiResponse<string[]>> = await this.api.get(
+  async getGenres(): Promise<Genre[]> {
+    const response: AxiosResponse<ApiResponse<Genre[]>> = await this.api.get(
       '/genres'
     );
     return response.data.data;

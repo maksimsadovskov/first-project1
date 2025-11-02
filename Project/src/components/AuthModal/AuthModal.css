@@ -13,142 +13,222 @@
 }
 
 .auth-modal {
-  background-color: #2a2a2a;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 400px;
-  max-height: 90vh;
-  overflow-y: auto;
+  background-color: #ffffff;
+  border-radius: 24px;
+  width: 420px;
+  height: 450px;
   position: relative;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
 }
 
-.modal-close {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: none;
-  border: none;
-  color: #888;
-  font-size: 24px;
-  cursor: pointer;
-  width: 32px;
-  height: 32px;
+.auth-modal--registration {
+  height: 710px;
+}
+
+.auth-modal--success {
+  height: 382px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  transition: all 0.2s ease;
 }
 
-.modal-close:hover {
-  background-color: #444;
-  color: #ffffff;
+.auth-modal__close-btn {
+  position: absolute;
+  top: 0;
+  right: -70px;
+  width: 48px;
+  height: 48px;
+  background-color: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2001;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  opacity: 1;
+  visibility: visible;
+  transition: none;
+  will-change: opacity;
+}
+
+/* Скрываем все другие кнопки закрытия в AuthModal */
+.auth-modal .modal-close {
+  display: none;
+}
+
+
+.auth-modal__close-btn:hover {
+  background-color: #f5f5f5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.auth-modal__close-btn svg {
+  width: 24px;
+  height: 24px;
+  color: #000000;
+}
+
+.auth-modal__close-btn svg path {
+  fill: #000000;
+  stroke: #000000;
+  stroke-width: 0.5;
 }
 
 .auth-modal__header {
   padding: 32px 32px 24px;
   text-align: center;
-  border-bottom: 1px solid #444;
+  border-bottom: none;
 }
 
 .auth-modal__logo {
-  margin-bottom: 20px;
-}
-
-.logo-circle {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #4285f4, #34a853, #fbbc05, #ea4335);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  gap: 3px;
+  margin-bottom: 0;
 }
 
-.logo-text {
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 600;
-  text-transform: lowercase;
-  letter-spacing: 0.5px;
+.auth-modal__logo-img {
+  width: auto;
+  height: auto;
+  display: block;
+}
+
+.auth-modal__logo-text {
+  font-family: 'Play', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  color: #000000;
+  margin-left: 3px;
 }
 
 .auth-modal__title {
-  font-size: 24px;
-  font-weight: 600;
-  color: #ffffff;
+  display: none; /* Скрываем заголовок "Вход" */
+}
+
+.auth-modal__title--registration {
+  display: block;
+  font-family: 'Play', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 24px;
+  color: #000000;
   margin: 0;
+  text-align: center;
+  padding-top: 16px;
 }
 
 .auth-modal__subtitle {
   font-size: 16px;
-  color: #cccccc;
+  color: #666666;
   margin: 12px 0 0 0;
   text-align: center;
 }
 
-.auth-modal__actions {
-  padding: 24px 32px 32px;
-  text-align: center;
-}
-
-.auth-modal__submit--success {
-  background-color: #4285f4;
-  color: #ffffff;
-  padding: 14px 32px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  transition: background-color 0.2s ease;
-  border: none;
-  cursor: pointer;
-  min-width: 120px;
-}
-
-.auth-modal__submit--success:hover {
-  background-color: #3367d6;
-}
-
 .auth-modal__form {
   padding: 24px 32px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 0;
 }
 
-.form-label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #ffffff;
+.form-group--with-icon {
+  position: relative;
+}
+
+.form-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-input-label-wrapper {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.form-input-label {
+  font-family: 'Play', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  color: #00000066;
+  white-space: nowrap;
+}
+
+.form-input-icon {
+  width: 24px;
+  height: 24px;
+  color: #00000066;
+  flex-shrink: 0;
 }
 
 .form-input {
   width: 100%;
-  padding: 12px 16px;
-  background-color: #1a1a1a;
-  border: 2px solid #444;
+  padding: 16px;
+  padding-left: 140px; /* левый паддинг больше для иконки+текста */
+  background-color: #ffffff;
+  border: 1px solid #00000066;
   border-radius: 8px;
-  color: #ffffff;
-  font-size: 16px;
-  transition: border-color 0.2s ease;
+  color: #00000066;
+  font-family: 'Play', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  transition: all 0.2s ease;
 }
 
 .form-input:focus {
-  border-color: #4285f4;
+  outline: none;
+  border-color: #000000;
+  color: #000000;
+  padding-left: 16px; /* Убираем левый паддинг при фокусе */
 }
 
-.form-input--error {
+.form-input--error:focus {
   border-color: #e74c3c;
 }
 
+.form-input:focus ~ .form-input-label-wrapper,
+.form-input:not(:placeholder-shown) ~ .form-input-label-wrapper {
+  opacity: 0; /* Скрываем лейбл при фокусе или когда есть текст */
+  pointer-events: none;
+}
+
+.form-input--error {
+  border-color: #ff7575;
+}
+
+.form-input--error ~ .form-input-label-wrapper .form-input-icon {
+  color: #ff7575;
+}
+
+.form-input--error:focus {
+  border-color: #ff7575;
+}
+
 .form-input::placeholder {
-  color: #666;
+  color: transparent; /* Скрываем плейсхолдер */
 }
 
 .error-message {
@@ -156,6 +236,7 @@
   color: #e74c3c;
   font-size: 12px;
   margin-top: 4px;
+  font-family: 'Play', sans-serif;
 }
 
 .error-message--general {
@@ -176,7 +257,40 @@
   font-size: 16px;
   font-weight: 600;
   transition: background-color 0.2s ease;
-  margin-top: 8px;
+  margin-top: auto;
+  border: none;
+  cursor: pointer;
+  font-family: 'Play', sans-serif;
+}
+
+.auth-modal__registration-text {
+  font-family: 'Play', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0%;
+  color: #000000;
+  margin: 24px 0 0 0;
+  text-align: center;
+}
+
+.auth-modal__back-to-login {
+  font-family: 'Play', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0%;
+  color: #000000;
+  margin: 24px 0 0 0;
+  text-align: center;
+}
+
+.auth-modal__submit--register {
+  font-family: 'Play', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0%;
 }
 
 .auth-modal__submit:hover:not(:disabled) {
@@ -188,10 +302,68 @@
   cursor: not-allowed;
 }
 
+.auth-modal__actions {
+  padding: 24px 32px 32px;
+  text-align: center;
+}
+
+.auth-modal__success-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 64px 40px 64px;
+}
+
+.auth-modal__logo--success {
+  margin-bottom: 40px;
+}
+
+.auth-modal__title--success {
+  display: block;
+  font-family: 'Play', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 24px;
+  color: #000000;
+  margin: 0 0 24px 0;
+  text-align: center;
+}
+
+.auth-modal__subtitle--success {
+  font-family: 'Play', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0%;
+  color: #000000;
+  margin: 0 0 24px 0;
+  text-align: center;
+}
+
+.auth-modal__submit--success {
+  background-color: #4285f4;
+  color: #ffffff;
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+  border: none;
+  cursor: pointer;
+  min-width: 120px;
+  font-family: 'Play', sans-serif;
+  margin: 0;
+}
+
+.auth-modal__submit--success:hover {
+  background-color: #3367d6;
+}
+
 .auth-modal__footer {
   padding: 16px 32px 32px;
   text-align: center;
-  border-top: 1px solid #444;
+  border-top: 1px solid #e0e0e0;
 }
 
 .auth-modal__toggle {
@@ -202,23 +374,75 @@
   cursor: pointer;
   text-decoration: underline;
   transition: color 0.2s ease;
+  font-family: 'Play', sans-serif;
 }
 
 .auth-modal__toggle:hover {
   color: #3367d6;
 }
 
+/* Медиа-запрос для мобильных экранов (включая 375px) */
 @media (max-width: 480px) {
+  /* Размер модального окна входа/регистрации */
   .auth-modal {
-    margin: 20px;
-    max-width: none;
+    width: 335px;
+    height: 410px;
+    overflow: visible;
+    position: relative;
   }
   
-  .auth-modal__header,
-  .auth-modal__form,
-  .auth-modal__footer {
-    padding-left: 20px;
-    padding-right: 20px;
+  /* Размер окна регистрации */
+  .auth-modal--registration {
+    width: 335px;
+    height: 710px;
+    overflow: visible;
+    position: relative;
+  }
+  
+  /* Размер окна успешной регистрации */
+  .auth-modal--success {
+    width: 335px;
+    height: 382px;
+    overflow: visible;
+    position: relative;
+  }
+  
+  /* Кнопка закрытия внутри окна в правом верхнем углу для всех типов модальных окон */
+  .auth-modal__close-btn,
+  .auth-modal .auth-modal__close-btn,
+  .auth-modal--registration .auth-modal__close-btn,
+  .auth-modal--success .auth-modal__close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 48px;
+    height: 48px;
+    border: none;
+    background-color: transparent;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2001;
+    box-shadow: none;
+  }
+  
+  /* Боковые отступы 20px для header */
+  .auth-modal__header {
+    padding: 32px 20px 24px;
+  }
+  
+  /* Боковые отступы 20px для формы (поля ввода и кнопка войти) */
+  .auth-modal__form {
+    padding: 24px 20px;
+    gap: 20px;
+    overflow: visible;
+  }
+  
+  /* Боковые отступы 20px для окна успешной регистрации */
+  .auth-modal__success-content {
+    padding: 64px 20px 64px;
   }
   
   .auth-modal__title {
@@ -238,12 +462,16 @@
     font-size: 14px;
   }
   
-  .logo-circle {
-    width: 70px;
-    height: 70px;
+  /* Убедимся, что поля ввода занимают всю ширину с учетом бокового отступа */
+  .form-group {
+    width: 100%;
   }
   
-  .logo-text {
-    font-size: 14px;
+  .form-input {
+    width: 100%;
+  }
+  
+  .auth-modal__submit {
+    width: 100%;
   }
 }
