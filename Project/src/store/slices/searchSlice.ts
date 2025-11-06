@@ -12,13 +12,37 @@ const initialState: SearchState = {
 // Async thunk
 export const searchMovies = createAsyncThunk(
   'search/searchMovies',
-  async (query: string, { rejectWithValue }) => {
+  async (query: string, { rejectWithValue, getState }) => {
     try {
       if (!query.trim()) {
         return [];
       }
-      const results = await apiService.searchMovies(query);
-      return results;
+      
+      const lowerQuery = query.toLowerCase();
+      const state: any = getState();
+      const allMovies = [
+        ...(state.movies?.movies || []),
+        ...(state.movies?.topMovies || []),
+        ...(state.movies?.featuredMovie ? [state.movies.featuredMovie] : [])
+      ];
+      
+      // Клиентский поиск по загруженным фильмам (поддержка русских названий)
+      const clientResults = allMovies.filter((movie: any) => 
+        movie.title?.toLowerCase().includes(lowerQuery)
+      );
+      
+      // Если нашли на клиенте или запрос на русском — возвращаем клиентские результаты
+      if (clientResults.length > 0 || /[а-яА-ЯЁё]/.test(query)) {
+        return clientResults;
+      }
+      
+      // Иначе пробуем API (для английских названий)
+      try {
+        const apiResults = await apiService.searchMovies(query);
+        return apiResults;
+      } catch {
+        return clientResults;
+      }
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка поиска');
     }

@@ -30,7 +30,7 @@ const AppContent: React.FC = () => {
     dispatch(fetchGenres());
     dispatch(fetchTopMovies());
     dispatch(fetchRandomMovie());
-    dispatch(fetchMovies({ page: 1, limit: 100 })); // Загружаем больше фильмов для страницы MoviePage
+    dispatch(fetchMovies({ page: 1, limit: 250 })); // Загружаем фильмы для поиска и страниц
   }, [dispatch]);
 
   if (isLoading) {

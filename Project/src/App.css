@@ -21,3 +21,16 @@
     flex: initial;   /* don't stretch on mobile */
   }
 }
+
+/* МЕДИА-ЗАПРОС ДЛЯ 375PX */
+@media (max-width: 375px) {
+  .App {
+    overflow-x: hidden; /* Убираем горизонтальный скролл */
+  }
+  
+  .main-content {
+    padding-top: 0;
+    flex: initial;
+    overflow-x: hidden; /* Убираем горизонтальный скролл */
+  }
+}

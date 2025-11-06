@@ -42,6 +42,7 @@ export interface Movie {
   poster: string;
   trailer: string;
   description?: string;
+  runtime?: number; // длительность в минутах
 }
 
 export interface Genre {
@@ -89,6 +90,7 @@ export interface ModalState {
   isSearchModalOpen: boolean;
   isTrailerModalOpen: boolean;
   trailerUrl: string;
+  trailerTitle: string;
 }
 
 // Root state

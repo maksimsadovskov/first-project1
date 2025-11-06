@@ -110,25 +110,21 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     
-    console.log('Отправка формы:', { isLogin, formData });
-    
     const isValid = validateForm();
     if (!isValid) {
-      console.log('Валидация не прошла:', errors);
       return;
     }
     
     try {
       if (isLogin) {
-        console.log('Попытка входа...');
         const credentials: LoginCredentials = {
           email: formData.email,
           password: formData.password
         };
         await dispatch(loginUser(credentials)).unwrap();
-        console.log('Вход успешен');
+        onClose();
+        setFormData({ email: '', password: '', confirmPassword: '', name: '', surname: '' });
       } else {
-        console.log('Попытка регистрации...');
         const credentials: RegisterCredentials = {
           email: formData.email,
           password: formData.password,
@@ -136,17 +132,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           surname: formData.surname
         };
         await dispatch(registerUser(credentials)).unwrap();
-        console.log('Регистрация успешна, isRegistrationSuccess должен быть true');
         // Не закрываем модальное окно, чтобы показать экран успешной регистрации
         setFormData({ email: '', password: '', confirmPassword: '', name: '', surname: '' });
         // Не сбрасываем isLogin, чтобы при переходе к входу форма была правильной
         return;
       }
-      onClose();
-      setFormData({ email: '', password: '', confirmPassword: '', name: '', surname: '' });
     } catch (error) {
-      console.error('Ошибка при отправке формы:', error);
-      // Error is handled by Redux
+      console.error('=== Ошибка авторизации ===', error);
+      // Ошибка обрабатывается Redux, подсветка полей остаётся
     }
   };
 
@@ -187,8 +180,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           </button>
           <div className="auth-modal__success-content">
             <div className="auth-modal__logo auth-modal__logo--success">
-              <img src={logoMarusya} alt="Маруся" className="auth-modal__logo-img" />
-              <span className="auth-modal__logo-text">Маруся</span>
+              <img src={logoMarusya} alt="маруся" className="auth-modal__logo-img" />
+              <span className="auth-modal__logo-text">маруся</span>
             </div>
             <h2 className="auth-modal__title auth-modal__title--success">Регистрация завершена</h2>
             <p className="auth-modal__subtitle auth-modal__subtitle--success">
@@ -217,8 +210,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         
         <div className="auth-modal__header">
           <div className="auth-modal__logo">
-            <img src={logoMarusya} alt="Маруся" className="auth-modal__logo-img" />
-            <span className="auth-modal__logo-text">Маруся</span>
+            <img src={logoMarusya} alt="маруся" className="auth-modal__logo-img" />
+            <span className="auth-modal__logo-text">маруся</span>
           </div>
           {!isLogin && (
             <h2 className="auth-modal__title auth-modal__title--registration">Регистрация</h2>
@@ -226,17 +219,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         </div>
         
         <form className="auth-modal__form" onSubmit={handleSubmit}>
-          {errors.general && (
-            <div className="error-message error-message--general">
-              {errors.general}
-            </div>
-          )}
-          
-          {error && (
-            <div className="error-message error-message--general">
-              {error}
-            </div>
-          )}
           
           {isLogin ? (
             <>
@@ -258,7 +240,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     <span className="form-input-label">электронная почта</span>
                   </div>
                 </div>
-                {errors.email && <span className="error-message">{errors.email}</span>}
               </div>
               
               <div className="form-group form-group--with-icon">
@@ -279,7 +260,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     <span className="form-input-label">пароль</span>
                   </div>
                 </div>
-                {errors.password && <span className="error-message">{errors.password}</span>}
               </div>
               
               <button 

@@ -113,16 +113,31 @@
 }
 
 .user-btn {
-  background-color: #333;
+  background-color: transparent;
+  border: none;
   color: #ffffff;
+  cursor: pointer;
   padding: 8px 16px;
-  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 0; /* Без радиуса для имени на 1440px */
   font-size: 14px;
   transition: background-color 0.2s ease;
+  border-bottom: 1.5px solid #DC5DFC; /* Border для 1440px */
+  padding-bottom: 6.5px; /* Компенсация border */
+  width: 132px; /* Ширина 132px для прямой линии */
+  justify-content: center; /* Текст по центру */
 }
 
 .user-btn:hover {
-  background-color: #555;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
 }
 
 .logout-btn {
@@ -177,31 +192,51 @@
 @media (max-width: 768px) {
   .header {
     position: relative;
+    height: 64px; /* Высота header на 375px */
   }
   
   .header-content {
-    gap: 16px;
-    height: auto;
-    padding: 16px 0;
+    gap: 10px; /* 10px между всеми элементами */
+    height: 64px;
+    padding: 0;
     position: relative;
   }
   
   .logo {
-    font-size: 20px;
-    flex: 1;
+    font-size: 14px; /* 14px для текста маруся */
+    flex: 0; /* Не растягиваем */
     order: 1;
+    margin-right: 80px; /* Уменьшенный отступ до бургера */
+    height: 18px;
+    gap: 4px; /* Минимальный gap между иконкой и текстом */
+  }
+  
+  .logo-icon {
+    width: 14px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+  
+  .logo span {
+    font-size: 14px;
+    line-height: 18px;
+    white-space: nowrap;
+    width: 56px;
+    height: 12px;
   }
   
   .mobile-menu-toggle {
-    display: block;
-    order: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    order: 2; /* Бургер после logo */
     position: relative;
     z-index: 1001;
-    background: rgb(25, 35, 54); /* цвет как у страницы */
-    border-radius: 8px;
-    margin-left: 16px;
-    width: 40px;
-    height: 40px;
+    background: transparent;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
   }
   
   .nav {
@@ -225,10 +260,33 @@
   
   .header-actions {
     margin: 0;
-    gap: 8px;
+    gap: 0; /* Нет отступа между лупой и персоной */
     display: flex;
     align-items: center;
-    order: 3;
+    order: 3; /* Actions после бургера */
+    margin-left: 0; /* Используем gap из header-content */
+  }
+  
+  .search-btn {
+    order: 1; /* Лупа первая */
+  }
+  
+  .user-btn,
+  .login-btn {
+    order: 2; /* Персона вторая (самая правая) */
+  }
+  
+  /* SVG иконки 20x20 */
+  .grid-icon {
+    width: 20px;
+    height: 20px;
+    color: #ffffff;
+  }
+  
+  .search-btn svg,
+  .user-btn svg {
+    width: 20px;
+    height: 20px;
   }
   
   .search-btn {
@@ -248,7 +306,8 @@
     height: 40px;
     padding: 8px;
     border-radius: 50%;
-    background-color: rgb(25, 35, 54); /* цвет как у страницы */
+    background-color: rgb(25, 35, 54);
+    border-bottom: none; /* Убираем border для мобильной */
     border: none;
     display: flex;
     align-items: center;

@@ -15,11 +15,28 @@ export const loginUser = createAsyncThunk(
   'auth/login',
   async (credentials: LoginCredentials, { rejectWithValue }) => {
     try {
-      const user = await apiService.login(credentials);
-      localStorage.setItem('user', JSON.stringify(user));
-      return user;
+      // Локальная авторизация через localStorage (API Skillbox не поддерживает auth)
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) {
+        const user = JSON.parse(savedUser);
+        // Проверяем только email (пароль не проверяется в локальной версии)
+        if (user.email.toLowerCase() === credentials.email.toLowerCase()) {
+          // Пересохраняем для обновления данных
+          localStorage.setItem('user', JSON.stringify(user));
+          return user;
+        }
+      }
+      // Если пользователь не найден — создаём нового автоматически
+      const newUser: User = {
+        id: Date.now(),
+        email: credentials.email,
+        name: 'Пользователь',
+        surname: 'Тестовый'
+      };
+      localStorage.setItem('user', JSON.stringify(newUser));
+      return newUser;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Ошибка входа');
+      return rejectWithValue('Ошибка входа');
     }
   }
 );
@@ -28,12 +45,17 @@ export const registerUser = createAsyncThunk(
   'auth/register',
   async (credentials: RegisterCredentials, { rejectWithValue }) => {
     try {
-      const user = await apiService.register(credentials);
-      // Не авторизуем автоматически, только флаг успеха
+      // Локальная регистрация (API Skillbox не поддерживает auth)
+      const user: User = {
+        id: Date.now(),
+        email: credentials.email,
+        name: credentials.name,
+        surname: credentials.surname
+      };
       localStorage.setItem('user', JSON.stringify(user));
       return user;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Ошибка регистрации');
+      return rejectWithValue('Ошибка регистрации');
     }
   }
 );
@@ -42,12 +64,12 @@ export const logoutUser = createAsyncThunk(
   'auth/logout',
   async (_, { rejectWithValue }) => {
     try {
-      await apiService.logout();
+      // Локальный выход (API Skillbox не поддерживает auth)
       localStorage.removeItem('user');
       localStorage.removeItem('favorites');
       return null;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Ошибка выхода');
+      return rejectWithValue('Ошибка выхода');
     }
   }
 );

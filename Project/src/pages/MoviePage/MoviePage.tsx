@@ -12,11 +12,22 @@ const MoviePage: React.FC = () => {
   const dispatch = useAppDispatch();
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const { favorites } = useAppSelector((state) => state.movies);
-  const { isAuthModalOpen, isTrailerModalOpen, trailerUrl } = useAppSelector((state) => state.modal);
+  const { isAuthModalOpen, isTrailerModalOpen, trailerUrl, trailerTitle } = useAppSelector((state) => state.modal);
   
   const { movies } = useAppSelector((state) => state.movies);
   const [movie, setMovie] = useState<any>(null);
   const [isFavorited, setIsFavorited] = useState<boolean>(false);
+  
+  // Проверка ширины экрана для модификатора
+  const [isMobile375, setIsMobile375] = React.useState(window.innerWidth <= 375);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile375(window.innerWidth <= 375);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     if (!movieId) return;
@@ -58,7 +69,7 @@ const MoviePage: React.FC = () => {
 
   const handleTrailerClick = (): void => {
     if (movie) {
-      dispatch(openTrailerModal(movie.trailer));
+      dispatch(openTrailerModal({ url: movie.trailer, title: movie.title }));
     }
   };
 
@@ -72,7 +83,7 @@ const MoviePage: React.FC = () => {
   }
 
   return (
-    <div className="movie-page">
+    <div className={`movie-page ${isMobile375 ? 'movie-page--mobile-375' : ''}`}>
       <div className="container">
         <div className="movie-container">
         <div className="movie-content">
@@ -101,7 +112,9 @@ const MoviePage: React.FC = () => {
                 onClick={handleFavoriteClick}
                 title={isFavorited ? 'Удалить из избранного' : 'Добавить в избранное'}
               >
-                <span className="icon-heart">{isFavorited ? '❤️' : '🤍'}</span>
+                <svg className="icon-heart" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
               </button>
             </div>
           </div>
@@ -139,6 +152,9 @@ const MoviePage: React.FC = () => {
         </section>
             
           </div>
+        </section>
+            
+          </div>
         </div>
 
       <AuthModal 
@@ -150,6 +166,7 @@ const MoviePage: React.FC = () => {
         isOpen={isTrailerModalOpen}
         onClose={() => dispatch({ type: 'modal/closeTrailerModal' })}
         trailerUrl={trailerUrl}
+        trailerTitle={trailerTitle}
       />
     </div>
   );
