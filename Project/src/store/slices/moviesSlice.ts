@@ -78,34 +78,52 @@ export const fetchFavorites = createAsyncThunk(
   'movies/fetchFavorites',
   async (_, { rejectWithValue }) => {
     try {
-      const favorites = await apiService.getFavorites();
-      return favorites;
+      // Локальное хранение избранного (API Skillbox не поддерживает favorites)
+      const savedFavorites = localStorage.getItem('favorites');
+      if (savedFavorites) {
+        return JSON.parse(savedFavorites);
+      }
+      return [];
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки избранного');
+      return rejectWithValue('Ошибка загрузки избранного');
     }
   }
 );
 
 export const addToFavorites = createAsyncThunk(
   'movies/addToFavorites',
-  async (movieId: number, { rejectWithValue }) => {
+  async (movieId: number, { rejectWithValue, getState }) => {
     try {
-      await apiService.addToFavorites(movieId);
+      // Локальное хранение избранного (API Skillbox не поддерживает favorites)
+      const state: any = getState();
+      const movie = state.movies.movies.find((m: Movie) => m.id === movieId) ||
+                    state.movies.topMovies.find((m: Movie) => m.id === movieId) ||
+                    (state.movies.featuredMovie?.id === movieId ? state.movies.featuredMovie : null);
+      
+      if (movie) {
+        const currentFavorites = state.movies.favorites || [];
+        const updatedFavorites = [...currentFavorites, movie];
+        localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+      }
       return movieId;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Ошибка добавления в избранное');
+      return rejectWithValue('Ошибка добавления в избранное');
     }
   }
 );
 
 export const removeFromFavorites = createAsyncThunk(
   'movies/removeFromFavorites',
-  async (movieId: number, { rejectWithValue }) => {
+  async (movieId: number, { rejectWithValue, getState }) => {
     try {
-      await apiService.removeFromFavorites(movieId);
+      // Локальное хранение избранного (API Skillbox не поддерживает favorites)
+      const state: any = getState();
+      const currentFavorites = state.movies.favorites || [];
+      const updatedFavorites = currentFavorites.filter((m: Movie) => m.id !== movieId);
+      localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
       return movieId;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Ошибка удаления из избранного');
+      return rejectWithValue('Ошибка удаления из избранного');
     }
   }
 );
@@ -214,7 +232,9 @@ const moviesSlice = createSlice({
       })
       // Add to Favorites
       .addCase(addToFavorites.fulfilled, (state, action: PayloadAction<number>) => {
-        const movie = state.movies.find(m => m.id === action.payload);
+        const movie = state.movies.find(m => m.id === action.payload) ||
+                      state.topMovies.find(m => m.id === action.payload) ||
+                      (state.featuredMovie?.id === action.payload ? state.featuredMovie : null);
         if (movie && !state.favorites.find(f => f.id === movie.id)) {
           state.favorites.push(movie);
         }

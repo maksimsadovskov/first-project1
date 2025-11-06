@@ -185,22 +185,21 @@
   transform: translateY(-2px);
 }
 
-.btn--favorited {
-  background-color: #e74c3c;
-  border-color: #e74c3c;
-  color: #ffffff;
-  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+/* Высокая специфичность для страницы фильма — сиреневый, НЕ красный */
+.movie-page .movie-info .movie-actions .btn.btn--icon.btn--favorited {
+  background-color: #393B3C;
+  border: none;
+  color: #B4A9FF;
 }
 
-.btn--favorited:hover {
-  background-color: #c0392b;
-  border-color: #c0392b;
-  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+.movie-page .movie-info .movie-actions .btn.btn--icon.btn--favorited:hover {
+  background-color: #393B3C;
+  border: none;
+  color: #a599ee;
 }
 
-.btn--favorited .icon-heart {
-  color: #ffffff;
-  font-size: 20px;
+.movie-page .movie-info .movie-actions .btn.btn--icon.btn--favorited .icon-heart {
+  color: #B4A9FF;
 }
 
 .movie-details {
@@ -222,12 +221,7 @@
   gap: 16px;
 }
 
-.detail-item {
-  display: grid;
-  grid-template-columns: 150px 1fr;
-  gap: 16px;
-  align-items: center;
-}
+/* Убран конфликтующий .detail-item - используется из Dashboard.css */
 
 .detail-label {
   font-size: 14px;
@@ -476,6 +470,167 @@
     padding-right: 20px;
     margin-left: auto;
     margin-right: auto;
+  }
+}
+
+/* Remove debug highlight if present */
+@media (max-width: 768px) {
+  .movie-page .container { background: transparent; }
+}
+@media (max-width: 375px) {
+  body .movie-page > .container { background: transparent; }
+}
+
+/* Single source of side padding on mobile: container only */
+@media (max-width: 768px) {
+  .movie-page .container { padding-left: 20px; padding-right: 20px; }
+  /* Zero side paddings/margins on inner sections */
+  .movie-poster,
+  .movie-info,
+  .movie-page .container .movie-specs,
+  .movie-page .container .movie-details,
+  .movie-actions { padding-left: 0; padding-right: 0; margin-left: 0; margin-right: 0; }
+}
+@media (max-width: 375px) {
+  body .movie-page > .container { padding-left: 20px; padding-right: 20px; }
+  .movie-poster,
+  .movie-info,
+  .movie-page .container .movie-specs,
+  .movie-page .container .movie-details,
+  .movie-actions { padding-left: 0; padding-right: 0; margin-left: 0; margin-right: 0; }
+}
+
+/* Override: remove side padding from movie-page container on mobile */
+@media (max-width: 768px) {
+  .movie-page > .container { padding-left: 0; padding-right: 0; }
+}
+@media (max-width: 375px) {
+  body .movie-page > .container { padding-left: 0; padding-right: 0; }
+}
+
+/* Center inner blocks on mobile when container has no side padding */
+@media (max-width: 768px) {
+  .movie-page > .container { display: flex; flex-direction: column; align-items: center; }
+  .movie-page .movie-poster,
+  .movie-page .movie-info,
+  .movie-page .container .movie-specs,
+  .movie-page .container .movie-details { margin-left: auto; margin-right: auto; }
+}
+@media (max-width: 375px) {
+  .movie-page > .container { display: flex; flex-direction: column; align-items: center; }
+  .movie-page .movie-poster,
+  .movie-page .movie-info,
+  .movie-page .container .movie-specs,
+  .movie-page .container .movie-details { margin-left: auto; margin-right: auto; }
+}
+
+/* Mobile film page: left alignment with 20px side padding */
+@media (max-width: 768px) {
+  .movie-page > .container { padding-left: 20px; padding-right: 20px; display: block; }
+  /* stretch blocks to full available width */
+  .movie-page .movie-poster { width: 100%; height: 260px; min-height: 260px; border-radius: 16px; }
+  .movie-page .movie-poster img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
+  .movie-page .movie-info { width: 100%; margin-bottom: 24px; }
+  .movie-page .container .movie-specs,
+  .movie-page .container .movie-details { width: 100%; max-width: none; }
+  .movie-page .movie-poster,
+  .movie-page .movie-info,
+  .movie-page .container .movie-specs,
+  .movie-page .container .movie-details,
+  .movie-actions { margin-left: 0; margin-right: 0; }
+}
+/* ============================================ */
+/* МЕДИА-ЗАПРОС ДЛЯ 375PX - СТРАНИЦА ФИЛЬМА */
+/* ============================================ */
+@media (max-width: 375px) {
+  /* Контейнер с боковыми отступами 20px */
+  .movie-page.movie-page--mobile-375 .container {
+    padding: 0 20px;
+    display: block;
+  }
+  
+  .movie-page.movie-page--mobile-375 {
+    padding: 0;
+  }
+  
+  /* Постер - на всю ширину контейнера */
+  .movie-page.movie-page--mobile-375 .movie-poster {
+    width: 100%;
+    height: 260px;
+    min-height: 260px;
+    border-radius: 16px;
+    margin: 0 0 24px 0;
+  }
+  
+  .movie-page.movie-page--mobile-375 .movie-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+  }
+  
+  /* Инфо-блок на всю ширину БЕЗ дополнительных отступов */
+  .movie-page.movie-page--mobile-375 .movie-info {
+    width: 100%;
+    margin: 0 0 24px 0;
+    padding: 0; /* Без padding - отступы уже есть у контейнера */
+  }
+  
+  /* Секции фильма на всю ширину */
+  .movie-page.movie-page--mobile-375 .movie-specs,
+  .movie-page.movie-page--mobile-375 .movie-details {
+    width: 100%;
+    max-width: none;
+    margin: 0 0 40px 0;
+  }
+  
+  /* Кнопки действий */
+  .movie-page.movie-page--mobile-375 .movie-actions {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    margin: 0 0 24px 0;
+    padding: 0 20px; /* Боковые отступы 20px */
+    box-sizing: border-box;
+  }
+  
+  /* Кнопка "Трейлер" */
+  .movie-page.movie-page--mobile-375 .movie-actions .btn-trailer {
+    width: 251px;
+    height: 56px;
+    padding: 16px 24px;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    border-radius: 28px;
+    font-size: 18px;
+    line-height: 24px;
+  }
+  
+  /* Кнопка с иконкой (сердечко) */
+  .movie-page.movie-page--mobile-375 .movie-actions .btn--icon {
+    width: 56px;
+    height: 56px;
+    flex: 0 0 auto;
+    border-radius: 28px;
+    font-size: 24px;
+    background: #393B3C;
+    color: #ffffff;
+  }
+  
+  /* Активное состояние сердечка */
+  .movie-page.movie-page--mobile-375 .movie-actions .btn--icon.btn--favorited {
+    background-color: #393B3C;
+    color: #B4A9FF;
+  }
+  
+  /* Заголовки секций */
+  .movie-page.movie-page--mobile-375 .details-title {
+    font-size: 24px;
+    line-height: 32px;
+    margin-bottom: 40px;
   }
 }
 

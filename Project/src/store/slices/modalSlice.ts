@@ -6,6 +6,7 @@ const initialState: ModalState = {
   isSearchModalOpen: false,
   isTrailerModalOpen: false,
   trailerUrl: '',
+  trailerTitle: '',
 };
 
 const modalSlice = createSlice({
@@ -24,19 +25,22 @@ const modalSlice = createSlice({
     closeSearchModal: (state) => {
       state.isSearchModalOpen = false;
     },
-    openTrailerModal: (state, action: PayloadAction<string>) => {
+    openTrailerModal: (state, action: PayloadAction<{ url: string; title: string }>) => {
       state.isTrailerModalOpen = true;
-      state.trailerUrl = action.payload;
+      state.trailerUrl = action.payload.url;
+      state.trailerTitle = action.payload.title;
     },
     closeTrailerModal: (state) => {
       state.isTrailerModalOpen = false;
       state.trailerUrl = '';
+      state.trailerTitle = '';
     },
     closeAllModals: (state) => {
       state.isAuthModalOpen = false;
       state.isSearchModalOpen = false;
       state.isTrailerModalOpen = false;
       state.trailerUrl = '';
+      state.trailerTitle = '';
     },
   },
 });

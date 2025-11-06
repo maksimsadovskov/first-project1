@@ -2,14 +2,28 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchRandomMovie, fetchTopMovies, addToFavorites, removeFromFavorites } from '../../store/slices/moviesSlice';
-import { openAuthModal, openTrailerModal } from '../../store/slices/modalSlice';
+import { openAuthModal, openTrailerModal, closeTrailerModal } from '../../store/slices/modalSlice';
 import MovieCard from '../../components/MovieCard/MovieCard';
+import TrailerModal from '../../components/TrailerModal/TrailerModal';
+import AuthModal from '../../components/AuthModal/AuthModal';
 import './Dashboard.css';
 
 const Dashboard: React.FC = () => {
   const dispatch = useAppDispatch();
   const { featuredMovie, topMovies, isLoading, favorites } = useAppSelector((state) => state.movies);
   const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthModalOpen, isTrailerModalOpen, trailerUrl, trailerTitle } = useAppSelector((state) => state.modal);
+
+  // Проверка ширины экрана для модификатора
+  const [isMobile375, setIsMobile375] = React.useState(window.innerWidth <= 375);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile375(window.innerWidth <= 375);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     dispatch(fetchRandomMovie());
@@ -22,22 +36,27 @@ const Dashboard: React.FC = () => {
 
   const handleTrailerClick = (): void => {
     if (featuredMovie) {
-      dispatch(openTrailerModal(featuredMovie.trailer));
+      dispatch(openTrailerModal({ url: featuredMovie.trailer, title: featuredMovie.title }));
     }
   };
 
   const handleFavoriteClick = (): void => {
+    console.log('=== КЛИК НА СЕРДЕЧКО ===', { featuredMovie, isAuthenticated });
     if (!featuredMovie) return;
     
     if (!isAuthenticated) {
+      console.log('Не авторизован, открываю модалку');
       dispatch(openAuthModal());
       return;
     }
 
     const isFavorite = favorites.some(fav => fav.id === featuredMovie.id);
+    console.log('В избранном?', isFavorite);
     if (isFavorite) {
+      console.log('Удаляю из избранного');
       dispatch(removeFromFavorites(featuredMovie.id));
     } else {
+      console.log('Добавляю в избранное');
       dispatch(addToFavorites(featuredMovie.id));
     }
   };
@@ -50,10 +69,9 @@ const Dashboard: React.FC = () => {
     );
   }
 
-  console.log('Dashboard render:', { featuredMovie, topMovies, isLoading });
 
   return (
-    <div className="dashboard">
+    <div className={`dashboard ${isMobile375 ? 'dashboard--mobile-375' : ''}`}>
       <div className="container">
         {/* Featured Movie Section */}
         {featuredMovie && (
@@ -93,8 +111,8 @@ const Dashboard: React.FC = () => {
                     onClick={handleFavoriteClick}
                     aria-label="Добавить в избранное"
                   >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor"/>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                     </svg>
                   </button>
                   <button 
@@ -117,8 +135,8 @@ const Dashboard: React.FC = () => {
                       onClick={handleFavoriteClick}
                       aria-label="Добавить в избранное"
                     >
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor"/>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                       </svg>
                     </button>
                     <button 
@@ -152,6 +170,18 @@ const Dashboard: React.FC = () => {
           </div>
         </section>
       </div>
+
+      <AuthModal 
+        isOpen={isAuthModalOpen}
+        onClose={() => dispatch({ type: 'modal/closeAuthModal' })}
+      />
+
+      <TrailerModal 
+        isOpen={isTrailerModalOpen}
+        onClose={() => dispatch(closeTrailerModal())}
+        trailerUrl={trailerUrl}
+        trailerTitle={trailerTitle}
+      />
     </div>
   );
 };

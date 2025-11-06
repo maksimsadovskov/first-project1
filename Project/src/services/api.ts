@@ -13,7 +13,7 @@ class ApiService {
   private api: AxiosInstance;
 
   constructor() {
-    const baseURL = 'http://localhost:3001';
+    const baseURL = process.env.REACT_APP_API_URL || 'https://cinemaguide.skillbox.cc';
     this.api = axios.create({
       baseURL,
       withCredentials: true,
@@ -38,11 +38,7 @@ class ApiService {
         return response;
       },
       (error) => {
-        if (error.response?.status === 401) {
-          // Handle unauthorized access
-          localStorage.removeItem('user');
-          window.location.href = '/';
-        }
+        // Не редиректим при 401, т.к. используем локальную авторизацию
         return Promise.reject(error);
       }
     );
@@ -78,53 +74,168 @@ class ApiService {
 
   // Movies methods
   async getMovies(page: number = 1, limit: number = 10): Promise<MoviesResponse> {
-    const response: AxiosResponse<ApiResponse<MoviesResponse>> = await this.api.get(
-      `/movies?page=${page}&limit=${limit}`
+    const response: AxiosResponse<any[]> = await this.api.get(
+      `/movie?page=${page}&count=${limit}`
     );
-    return response.data.data;
+    const movies = response.data.map((data: any) => {
+      const firstGenre = data.genres?.[0] || '';
+      return {
+        id: data.id,
+        title: data.title || data.originalTitle,
+        year: data.releaseYear,
+        country: data.countriesOfOrigin?.[0] || '',
+        director: data.director || '',
+        actors: data.cast || [],
+        rating: data.tmdbRating || 0,
+        budget: data.budget ? `${data.budget}` : '',
+        boxOffice: data.revenue ? `${data.revenue}` : '',
+        genre: this.mapGenreToRussian(firstGenre),
+        poster: data.posterUrl || data.backdropUrl || '',
+        trailer: data.trailerYouTubeId ? `https://www.youtube.com/embed/${data.trailerYouTubeId}` : '',
+        description: data.plot || ''
+      };
+    });
+    return { movies, total: movies.length, page, limit };
   }
 
   async getMovieById(id: number): Promise<Movie> {
-    const response: AxiosResponse<ApiResponse<Movie>> = await this.api.get(
-      `/movies/${id}`
+    const response: AxiosResponse<any> = await this.api.get(
+      `/movie/${id}`
     );
-    return response.data.data;
+    const data = response.data;
+    const firstGenre = data.genres?.[0] || '';
+    return {
+      id: data.id,
+      title: data.title || data.originalTitle,
+      year: data.releaseYear,
+      country: data.countriesOfOrigin?.[0] || '',
+      director: data.director || '',
+      actors: data.cast || [],
+      rating: data.tmdbRating || 0,
+      budget: data.budget ? `${data.budget}` : '',
+      boxOffice: data.revenue ? `${data.revenue}` : '',
+      genre: this.mapGenreToRussian(firstGenre),
+      poster: data.posterUrl || data.backdropUrl || '',
+      trailer: data.trailerYouTubeId ? `https://www.youtube.com/embed/${data.trailerYouTubeId}` : '',
+      description: data.plot || '',
+      runtime: data.runtime || 0
+    };
+  }
+
+  private mapGenreToRussian(genre: string): string {
+    const genreMap: { [key: string]: string } = {
+      'action': 'боевик',
+      'adventure': 'приключения',
+      'comedy': 'комедия',
+      'drama': 'драма',
+      'fantasy': 'фантастика',
+      'horror': 'ужасы',
+      'mystery': 'детектив',
+      'romance': 'мелодрама',
+      'thriller': 'триллер',
+      'western': 'вестерн',
+      'animation': 'мультфильм',
+      'documentary': 'документальный',
+      'crime': 'криминал',
+      'family': 'семейный',
+      'music': 'музыка',
+      'war': 'военный',
+      'history': 'исторический',
+      'science fiction': 'фантастика',
+      'sci-fi': 'фантастика'
+    };
+    return genreMap[genre.toLowerCase()] || genre;
   }
 
   async getRandomMovie(): Promise<Movie> {
-    const response: AxiosResponse<ApiResponse<Movie>> = await this.api.get(
-      '/movies/random'
+    const response: AxiosResponse<any> = await this.api.get(
+      '/movie/random'
     );
-    return response.data.data;
+    const data = response.data;
+    const firstGenre = data.genres?.[0] || '';
+    return {
+      id: data.id,
+      title: data.title || data.originalTitle,
+      year: data.releaseYear,
+      country: data.countriesOfOrigin?.[0] || '',
+      director: data.director || '',
+      actors: data.cast || [],
+      rating: data.tmdbRating || 0,
+      budget: data.budget ? `${data.budget}` : '',
+      boxOffice: data.revenue ? `${data.revenue}` : '',
+      genre: this.mapGenreToRussian(firstGenre),
+      poster: data.posterUrl || data.backdropUrl || '',
+      trailer: data.trailerYouTubeId ? `https://www.youtube.com/embed/${data.trailerYouTubeId}` : '',
+      description: data.plot || ''
+    };
   }
 
   async getTopMovies(): Promise<Movie[]> {
-    const response: AxiosResponse<ApiResponse<Movie[]>> = await this.api.get(
-      '/movies/top'
+    const response: AxiosResponse<any[]> = await this.api.get(
+      '/movie/top10'
     );
-    return response.data.data;
+    return response.data.map((data: any) => {
+      const firstGenre = data.genres?.[0] || '';
+      return {
+        id: data.id,
+        title: data.title || data.originalTitle,
+        year: data.releaseYear,
+        country: data.countriesOfOrigin?.[0] || '',
+        director: data.director || '',
+        actors: data.cast || [],
+        rating: data.tmdbRating || 0,
+        budget: data.budget ? `${data.budget}` : '',
+        boxOffice: data.revenue ? `${data.revenue}` : '',
+        genre: this.mapGenreToRussian(firstGenre),
+        poster: data.posterUrl || data.backdropUrl || '',
+        trailer: data.trailerYouTubeId ? `https://www.youtube.com/embed/${data.trailerYouTubeId}` : '',
+        description: data.plot || ''
+      };
+    });
   }
 
   async getMoviesByGenre(genreId: number, page: number = 1, limit: number = 10): Promise<MoviesResponse> {
-    const response: AxiosResponse<ApiResponse<MoviesResponse>> = await this.api.get(
-      `/movies/genre/${genreId}?page=${page}&limit=${limit}`
+    const response: AxiosResponse<Movie[]> = await this.api.get(
+      `/movie?genre=${genreId}&page=${page}&count=${limit}`
     );
-    return response.data.data;
+    return { movies: response.data, total: response.data.length, page, limit };
   }
 
   async searchMovies(query: string): Promise<Movie[]> {
-    const response: AxiosResponse<ApiResponse<Movie[]>> = await this.api.get(
-      `/movies/search?q=${encodeURIComponent(query)}`
+    const response: AxiosResponse<any[]> = await this.api.get(
+      `/movie?title=${encodeURIComponent(query)}`
     );
-    return response.data.data;
+    return response.data.map((data: any) => {
+      const firstGenre = data.genres?.[0] || '';
+      return {
+        id: data.id,
+        title: data.title || data.originalTitle,
+        year: data.releaseYear,
+        country: data.countriesOfOrigin?.[0] || '',
+        director: data.director || '',
+        actors: data.cast || [],
+        rating: data.tmdbRating || 0,
+        budget: data.budget ? `${data.budget}` : '',
+        boxOffice: data.revenue ? `${data.revenue}` : '',
+        genre: this.mapGenreToRussian(firstGenre),
+        poster: data.posterUrl || data.backdropUrl || '',
+        trailer: data.trailerYouTubeId ? `https://www.youtube.com/embed/${data.trailerYouTubeId}` : '',
+        description: data.plot || '',
+        runtime: data.runtime || 0
+      };
+    });
   }
 
   // Genres methods
   async getGenres(): Promise<Genre[]> {
-    const response: AxiosResponse<ApiResponse<Genre[]>> = await this.api.get(
-      '/genres'
+    const response: AxiosResponse<string[]> = await this.api.get(
+      '/movie/genres'
     );
-    return response.data.data;
+    return response.data.map((name, index) => ({
+      id: index + 1,
+      name,
+      slug: name.toLowerCase().replace(/\s+/g, '-')
+    }));
   }
 
   // Favorites methods

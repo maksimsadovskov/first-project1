@@ -1,11 +1,57 @@
-.movie-card {
+.movie-card-wrapper {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+.movie-card-wrapper .movie-card {
   display: block;
   text-decoration: none;
   color: inherit;
   transition: transform 0.2s ease;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: visible;
   background-color: #2a2a2a;
+  width: 100%;
+}
+
+.movie-card-wrapper .movie-card-remove-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: none;
+  color: #000000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Крестик появляется при hover на карточку */
+.movie-card-wrapper:hover .movie-card-remove-btn {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Крестик увеличивается при hover на сам крестик */
+.movie-card-wrapper .movie-card-remove-btn:hover {
+  transform: translate(50%, -50%) scale(1.1);
+  background-color: #f5f5f5;
+}
+
+.movie-card-wrapper .movie-card-remove-btn:active {
+  transform: translate(50%, -50%) scale(0.95);
 }
 
 .movie-card:hover {
@@ -67,12 +113,12 @@
 }
 
 .favorite-btn--active {
-  background-color: #e74c3c;
+  background-color: #B4A9FF;
   color: #ffffff;
 }
 
 .favorite-btn--active:hover {
-  background-color: #c0392b;
+  background-color: #a599ee;
 }
 
 .movie-card__info {

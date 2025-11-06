@@ -77,15 +77,15 @@
 
 .featured-movie__details {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-direction: row;
+  gap: 16px;
   margin-bottom: 32px;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .detail-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  display: inline-block;
 }
 
 .detail-label {
@@ -110,6 +110,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 5px; /* отступ 5px между звездой и значением рейтинга */
 }
 
 .featured-movie__actions-container {
@@ -390,97 +391,71 @@
   }
 }
 
+/* МЕДИА-ЗАПРОС ДЛЯ 375PX - ГЛАВНАЯ СТРАНИЦА */
 @media (max-width: 375px) {
+  /* Контейнер БЕЗ боковых отступов для постера и инфо-блока */
   .dashboard .container {
-    padding: 0 20px; /* общий боковой отступ контейнера */
+    padding: 0;
   }
+  
   .featured-movie__content {
     flex-direction: column;
-    align-items: center;
-    gap: 24px;
+    align-items: stretch; /* На всю ширину */
+    gap: 0; /* Без gap */
     position: relative;
   }
 
-  .featured-movie__poster {
-    width: 338px;
+  /* Постер с боковыми отступами 20px */
+  .dashboard--mobile-375 .featured-movie__poster {
+    width: calc(100% - 40px); /* 375 - 20 - 20 = 335px */
     height: 234px;
     order: 1;
     position: relative;
-    margin-top: -10px; /* постер заходит на хедер на 10px */
+    margin: 0 20px; /* Боковые отступы 20px */
+    border-radius: 16px; /* Радиус 16px */
+  }
+  
+  .dashboard--mobile-375 .featured-movie__poster img {
+    border-radius: 16px;
+    object-fit: cover;
   }
 
-  .featured-movie__info {
-    width: 335px;
+  /* Инфо-блок с боковыми отступами 20px */
+  .dashboard--mobile-375 .featured-movie__info {
+    width: 100%;
     order: 2;
     display: flex;
     flex-direction: column;
+    padding: 20px; /* Отступы 20px по бокам */
+    box-sizing: border-box;
   }
   
-  .featured-movie__info > * {
+  .dashboard--mobile-375 .featured-movie__info > * {
     display: flex;
   }
 
-  /* Поряд介元素: постер -> details -> title -> description */
-  .featured-movie__details {
+  /* Порядок элементов: details -> title -> description -> actions */
+  .dashboard--mobile-375 .featured-movie__details {
     order: 1;
     flex-direction: row;
     gap: 12px;
-    margin-bottom: 0;
+    margin-bottom: 16px;
   }
 
-  .featured-movie__title {
+  .dashboard--mobile-375 .featured-movie__title {
     order: 2;
     font-size: 24px;
     line-height: 32px;
-    margin-bottom: 0;
+    margin-bottom: 16px;
     display: block;
   }
 
-  .featured-movie__description {
+  .dashboard--mobile-375 .featured-movie__description {
     order: 3;
     font-size: 18px;
     line-height: 24px;
     margin: 0 0 32px 0;
     display: block;
-  }
-  
-  .featured-movie__actions-container {
-    order: 4;
-    padding-top: 32px;
-    gap: 16px;
-  }
-  
-  .top-movies__grid {
-    display: flex;
-    overflow-x: auto;
-    gap: 12px;
-    padding: 0 0 8px 0; /* убираем внутренние боковые, остаётся только 20px у контейнера */
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    justify-content: flex-start;
-  }
-
-  .top-movies {
-    margin-bottom: 32px;
-  }
-  
-  .top-movies__grid::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .top-movies__grid .movie-card {
-    flex: 0 0 335px;
-    width: 335px;
-    scroll-snap-align: start;
-    margin: 0 0 24px 0;
-    border-radius: 24px;
-    border: 1px solid #3a3a3a;
-  }
-  
-  .movie-card:first-child {
-    margin-left: 0;
   }
 
   /* высота постера и инфо-блока под карточку 335x(220+84) */
@@ -502,74 +477,112 @@
     margin-bottom: 6px;
   }
   
-  .featured-movie__actions-container {
+  .dashboard--mobile-375 .featured-movie__actions-container {
+    order: 4;
+    padding-top: 0;
+    gap: 16px;
     flex-direction: column;
-    gap: 8px;
   }
   
-  .featured-movie__actions-container .btn--primary {
+  .dashboard--mobile-375 .featured-movie__actions-container .btn--primary {
     width: 100%;
   }
   
-  /* На мобилке скрываем десктопные элементы (колонку) */
-  .featured-movie__actions-container .btn--secondary,
-  .featured-movie__actions-container .action-btn {
+  /* На мобилке скрываем десктопные элементы */
+  .dashboard--mobile-375 .featured-movie__actions-container .btn--secondary,
+  .dashboard--mobile-375 .featured-movie__actions-container .action-btn {
     display: none;
   }
   
   /* На мобилке показываем мобильную версию (ряд) */
-  .mobile-second-row {
+  .dashboard--mobile-375 .mobile-second-row {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     width: 100%;
   }
   
-  .mobile-second-row .btn--secondary,
-  .mobile-second-row .action-btn {
+  .dashboard--mobile-375 .mobile-second-row .btn--secondary,
+  .dashboard--mobile-375 .mobile-second-row .action-btn {
     display: flex;
-    min-height: 45px;
+    flex: 1;
+    min-height: 50px;
   }
 
-  /* Кнопка "О фильме" визуально совпадает с соседями */
-  .mobile-second-row .btn--secondary {
+  /* Кнопка "О фильме" */
+  .dashboard--mobile-375 .mobile-second-row .btn--secondary {
     background-color: #393B3C;
     border: none;
-  }
-  
-  .second-row {
-    gap: 6px;
-  }
-  
-  .second-row .btn--secondary {
-    min-height: 45px;
-    font-size: 11px;
-    padding: 6px 10px;
-  }
-  
-  .second-row .action-btn {
-    min-height: 45px;
-  }
-  
-  .btn {
-    padding: 14px 20px;
     font-size: 14px;
-    min-width: 100px;
-    max-width: 120px;
   }
   
-  .btn--primary {
+  /* Заголовок секции */
+  .dashboard--mobile-375 .section-title {
+    font-size: 24px;
+    line-height: 32px;
+    margin-bottom: 24px;
+  }
+  
+  /* Общие кнопки */
+  .dashboard--mobile-375 .btn--primary {
     width: 100%;
     max-width: 100%;
     padding: 16px 24px;
-    font-size: 16px;
-    min-height: 60px;
+    font-size: 18px;
+    line-height: 24px;
+    min-height: 56px;
     text-align: center;
     justify-content: center;
   }
   
-  .action-btn {
-    width: 40px;
-    height: 40px;
+  /* Секция "Топ 10 фильмов" на 375px */
+  .dashboard--mobile-375 .top-movies {
+    margin-bottom: 32px;
+    padding: 0 20px; /* Боковые отступы только для этой секции */
+  }
+  
+  .dashboard--mobile-375 .top-movies__grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    padding: 0;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    justify-content: flex-start;
+  }
+  
+  .dashboard--mobile-375 .top-movies__grid::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Карточки фильмов в топ-10: только ПОСТЕР с border-radius 16px */
+  .dashboard--mobile-375 .top-movies__grid .movie-card {
+    flex: 0 0 224px;
+    width: 224px;
+    height: 336px;
+    scroll-snap-align: start;
+    margin: 0;
+    border-radius: 0; /* Карточка без радиуса */
+    border: none;
+  }
+  
+  /* ПОСТЕР с border-radius 16px со всех сторон */
+  .dashboard--mobile-375 .top-movies__grid .movie-card .movie-card__poster {
+    width: 224px;
+    height: 336px;
+    border-radius: 16px; /* Радиус только у постера */
+    aspect-ratio: auto;
+  }
+  
+  .dashboard--mobile-375 .top-movies__grid .movie-card .movie-card__poster img {
+    border-radius: 16px;
+    object-fit: cover;
+  }
+
+  /* Инфо-блок скрыт на 375px */
+  .dashboard--mobile-375 .top-movies__grid .movie-card .movie-card__info {
+    display: none;
   }
 }
 
@@ -592,10 +605,41 @@
   background-color: #2f3132;
 }
 
-.action-btn--favorite.active {
-  background-color: #e74c3c;
+/* Активное состояние сердечка на ГЛАВНОЙ — сиреневый цвет */
+.dashboard .featured-movie__actions-container .action-btn--favorite.active {
+  background-color: #393B3C;
+  color: #B4A9FF;
 }
 
-.action-btn--favorite.active svg {
-  fill: #ffffff;
+.dashboard .featured-movie__actions-container .action-btn--favorite.active:hover {
+  background-color: #393B3C;
+  color: #a599ee;
+}
+
+/* Стили для кнопки сердечка — как на странице фильма */
+.btn--icon {
+  width: 68px;
+  height: 56px;
+  padding: 0;
+  border-radius: 28px;
+  font-size: 24px;
+  background: #393B3C;
+  color: #ffffff;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn--favorited {
+  background-color: #393B3C;
+  color: #B4A9FF;
+}
+
+.btn--favorited:hover {
+  background-color: #393B3C;
+  color: #a599ee;
+}
+
+.icon-heart {
+  display: block;
+  line-height: 1;
 }

@@ -7,6 +7,17 @@ import './Genres.css';
 const Genres: React.FC = () => {
   const dispatch = useAppDispatch();
   const { genres, isLoading } = useAppSelector((state) => state.movies);
+  
+  // Проверка ширины экрана для модификатора
+  const [isMobile375, setIsMobile375] = React.useState(window.innerWidth <= 375);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile375(window.innerWidth <= 375);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     if (genres.length === 0) {
@@ -23,7 +34,7 @@ const Genres: React.FC = () => {
   }
 
   return (
-    <div className="genres">
+    <div className={`genres ${isMobile375 ? 'genres--mobile-375' : ''}`}>
       <div className="container">
         <div className="genres-header">
           <h1 className="genres-title">Жанры фильмов</h1>

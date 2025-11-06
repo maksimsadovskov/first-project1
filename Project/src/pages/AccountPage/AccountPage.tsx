@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { logoutUser } from '../../store/slices/authSlice';
-import { fetchFavorites } from '../../store/slices/moviesSlice';
+import { fetchFavorites, removeFromFavorites } from '../../store/slices/moviesSlice';
 import MovieCard from '../../components/MovieCard/MovieCard';
 import './AccountPage.css';
 
@@ -21,6 +21,10 @@ const AccountPage: React.FC = () => {
     dispatch(logoutUser());
   };
 
+  const handleRemoveFavorite = (movieId: number): void => {
+    dispatch(removeFromFavorites(movieId));
+  };
+
   if (!isAuthenticated || !user) {
     return (
       <div className="account-page-error">
@@ -38,18 +42,24 @@ const AccountPage: React.FC = () => {
         </div>
 
         <div className="account-tabs">
-          <button 
-            className={`tab-btn ${activeTab === 'favorites' ? 'tab-btn--active' : ''}`}
-            onClick={() => setActiveTab('favorites')}
-          >
-            Избранные фильмы
+          <button
+          className={`tab-btn ${activeTab === 'favorites' ? 'tab-btn--active' : ''}`}
+          onClick={() => setActiveTab('favorites')}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            <span className="tab-btn__text">Избранные фильмы</span>
           </button>
-          <button 
-            className={`tab-btn ${activeTab === 'settings' ? 'tab-btn--active' : ''}`}
-            onClick={() => setActiveTab('settings')}
-          >
-            Настройки аккаунта
-          </button>
+        <button
+          className={`tab-btn ${activeTab === 'settings' ? 'tab-btn--active' : ''}`}
+          onClick={() => setActiveTab('settings')}
+        >
+          <svg width="20" height="20" viewBox="88 0 24 24" fill="none">
+            <path d="M92 22C92 17.5817 95.5817 14 100 14C104.418 14 108 17.5817 108 22H106C106 18.6863 103.314 16 100 16C96.6863 16 94 18.6863 94 22H92ZM100 13C96.685 13 94 10.315 94 7C94 3.685 96.685 1 100 1C103.315 1 106 3.685 106 7C106 10.315 103.315 13 100 13ZM100 11C102.21 11 104 9.21 104 7C104 4.79 102.21 3 100 3C97.79 3 96 4.79 96 7C96 9.21 97.79 11 100 11Z" fill="white"/>
+          </svg>
+          <span className="tab-btn__text">Настройки аккаунта</span>
+        </button>
         </div>
 
         <div className="account-content">
@@ -69,7 +79,11 @@ const AccountPage: React.FC = () => {
               ) : (
                 <div className="favorites-grid">
                   {favorites.map(movie => (
-                    <MovieCard key={movie.id} movie={movie} />
+                    <MovieCard 
+                      key={movie.id} 
+                      movie={movie}
+                      onRemove={handleRemoveFavorite}
+                    />
                   ))}
                 </div>
               )}
@@ -78,22 +92,29 @@ const AccountPage: React.FC = () => {
 
           {activeTab === 'settings' && (
             <div className="settings-section">
-              <h2 className="section-title">Настройки аккаунта</h2>
-              
               <div className="user-info">
-                <div className="info-item">
-                  <label className="info-label">Имя:</label>
-                  <span className="info-value">{user.name}</span>
+                {/* Блок с именем */}
+                <div className="info-block">
+                  <div className="info-icon">
+                    <span className="initials">{user.name[0]}{user.surname[0]}</span>
+                  </div>
+                  <div className="info-text">
+                    <div className="info-label">Имя Фамилия</div>
+                    <div className="info-value">{user.name} {user.surname}</div>
+                  </div>
                 </div>
                 
-                <div className="info-item">
-                  <label className="info-label">Фамилия:</label>
-                  <span className="info-value">{user.surname}</span>
-                </div>
-                
-                <div className="info-item">
-                  <label className="info-label">Email:</label>
-                  <span className="info-value">{user.email}</span>
+                {/* Блок с email */}
+                <div className="info-block">
+                  <div className="info-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                    </svg>
+                  </div>
+                  <div className="info-text">
+                    <div className="info-label">Электронная почта</div>
+                    <div className="info-value">{user.email}</div>
+                  </div>
                 </div>
               </div>
               
