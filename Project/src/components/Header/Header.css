@@ -3,34 +3,39 @@
   top: 0;
   left: 0;
   right: 0;
-  background-color: rgb(25, 35, 54);
-  border-bottom: 1px solid #333;
+  background-color: var(--background-primary);
+  border-bottom: none;
   z-index: 1000;
   height: 80px;
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.header-content {
+.header .header-content {
   display: flex;
   align-items: center;
   height: 80px;
 }
 
-.logo {
+.header .logo {
   display: flex;
   align-items: center;
   gap: 12px;
   font-size: 24px;
   font-weight: bold;
-  color: #ffffff;
+  color: var(--logo-text-color);
   text-decoration: none;
   transition: all 0.3s ease;
   justify-content: flex-start;
+  border-radius: 13px;
+  background-color: var(--logo-background, transparent);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
 }
 
-.logo-icon {
+.header .logo-icon {
   width: 32px;
   height: 32px;
-  background: linear-gradient(45deg, #f5deb3, #9c27b0);
+  background: var(--logo-icon-gradient);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -38,36 +43,58 @@
   transition: all 0.3s ease;
 }
 
-.logo:hover .logo-icon {
-  background: linear-gradient(45deg, #ffd700, #e91e63);
+.header .logo span {
+  color: inherit;
 }
 
-.nav {
+.header .logo--dark {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.header .logo--light {
+  background-color: var(--logo-background, #ffffff);
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.2);
+}
+
+.header .logo--light span {
+  color: #161c2d;
+}
+
+.header .nav {
   display: flex;
   gap: 32px;
   margin-left: 60px;
   margin-right: 24px;
 }
 
-.nav-link {
-  color: #ffffff;
+.header .nav-link {
+  color: var(--text-primary);
   text-decoration: none;
   font-size: 16px;
   transition: color 0.2s ease;
+  display: inline-block;
+  padding-bottom: 4px;
+  border-bottom: 1px solid transparent;
 }
 
-.nav-link:hover {
+.header .nav-link:hover {
   color: #4285f4;
 }
 
-.header-actions {
+.header .nav-link--active {
+  color: #B4A9FF;
+  border-bottom: 1px solid #9747FF;
+}
+
+.header .header-actions {
   display: flex;
   align-items: center;
   gap: 24px;
   margin-left: auto;
 }
 
-.search-btn {
+.header .search-btn {
   background-color: #2a2a2a;
   border: none;
   color: #ffffff;
@@ -80,15 +107,17 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  width: 700px;
+  max-width: 700px;
+  width: 100%;
+  flex: 1;
 }
 
-.search-btn:hover {
+.header .search-btn:hover {
   background-color: #333;
 }
 
-.login-btn {
-  background-color: rgb(25, 35, 54); /* цвет как у страницы */
+.header .login-btn {
+  background-color: transparent; /* цвет как у страницы */
   color: #ffffff;
   padding: 8px 16px;
   border-radius: 4px;
@@ -98,21 +127,21 @@
   align-items: center;
   gap: 8px;
 }
-.login-btn .login-text { display: inline; }
-.login-btn .login-icon { display: none; }
+.header .login-btn .login-text { display: inline; }
+.header .login-btn .login-icon { display: none; }
 
 
-.login-btn:hover {
+.header .login-btn:hover {
   background-color: rgba(255, 255, 255, 0.1); /* лёгкий hover-эффект */
 }
 
-.user-menu {
+.header .user-menu {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.user-btn {
+.header .user-btn {
   background-color: transparent;
   border: none;
   color: #ffffff;
@@ -130,17 +159,17 @@
   justify-content: center; /* Текст по центру */
 }
 
-.user-btn:hover {
+.header .user-btn:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-.user-name {
+.header .user-name {
   font-size: 14px;
   font-weight: 500;
   color: #ffffff;
 }
 
-.logout-btn {
+.header .logout-btn {
   background-color: transparent;
   color: #888;
   padding: 8px 12px;
@@ -149,12 +178,12 @@
   transition: color 0.2s ease;
 }
 
-.logout-btn:hover {
+.header .logout-btn:hover {
   color: #ffffff;
 }
 
 /* Бургер-меню */
-.mobile-menu-toggle {
+.header .mobile-menu-toggle {
   display: none;
   background: none;
   border: none;
@@ -165,14 +194,14 @@
 
 /* Принудительно показываем бургер на мобильных */
 @media (max-width: 768px) {
-  .mobile-menu-toggle {
+  .header .mobile-menu-toggle {
     display: block;
     visibility: visible;
     opacity: 1;
   }
 }
 
-.burger-icon {
+.header .burger-icon {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
@@ -180,7 +209,7 @@
   height: 24px;
 }
 
-.burger-icon span {
+.header .burger-icon span {
   width: 10px;
   height: 10px;
   background-color: #ffffff;
@@ -189,152 +218,135 @@
   box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
 }
 
+.header .container {
+  position: relative;
+}
+
 @media (max-width: 768px) {
   .header {
-    position: relative;
-    height: 64px; /* Высота header на 375px */
-  }
-  
-  .header-content {
-    gap: 10px; /* 10px между всеми элементами */
     height: 64px;
-    padding: 0;
-    position: relative;
   }
-  
-  .logo {
-    font-size: 14px; /* 14px для текста маруся */
-    flex: 0; /* Не растягиваем */
-    order: 1;
-    margin-right: 80px; /* Уменьшенный отступ до бургера */
-    height: 18px;
-    gap: 4px; /* Минимальный gap между иконкой и текстом */
+
+  .header > .container {
+    padding: 0 20px 0 20px;
   }
-  
-  .logo-icon {
+
+  .header .header-content {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0;
+  }
+
+  .header .logo {
+    width: 80px;
+    flex: 0 0 80px;
+    margin-left: 0;
+    padding-left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+  }
+
+  .header .logo-icon {
     width: 14px;
     height: 18px;
     flex-shrink: 0;
   }
-  
-  .logo span {
-    font-size: 14px;
-    line-height: 18px;
-    white-space: nowrap;
+
+  .header .logo span {
+    display: inline-block;
     width: 56px;
-    height: 12px;
+    font-size: 12px;
+    line-height: 16px;
+    text-align: left;
   }
-  
-  .mobile-menu-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    order: 2; /* Бургер после logo */
-    position: relative;
-    z-index: 1001;
-    background: transparent;
-    width: 20px;
-    height: 20px;
-    padding: 0;
-    border: none;
-  }
-  
-  .nav {
+
+  .header .nav {
     display: none;
     position: absolute;
-    top: 100%;
+    top: 64px;
     left: 0;
     right: 0;
-    background-color: #1a1a1a;
     flex-direction: column;
-    padding: 16px;
     gap: 16px;
-    border-top: 1px solid #333;
-    z-index: 1000;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    padding: 24px 20px;
+    background-color: var(--background-primary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 999;
   }
-  
-  .nav--open {
+
+  .header .nav.nav--open {
     display: flex;
   }
-  
-  .header-actions {
-    margin: 0;
-    gap: 0; /* Нет отступа между лупой и персоной */
+
+  .header .nav-link {
+    font-size: 18px;
+    border-bottom: none;
+  }
+
+  .header .header-actions {
+    margin-left: auto;
     display: flex;
     align-items: center;
-    order: 3; /* Actions после бургера */
-    margin-left: 0; /* Используем gap из header-content */
+    gap: 20px;
   }
-  
-  .search-btn {
-    order: 1; /* Лупа первая */
-  }
-  
-  .user-btn,
-  .login-btn {
-    order: 2; /* Персона вторая (самая правая) */
-  }
-  
-  /* SVG иконки 20x20 */
-  .grid-icon {
-    width: 20px;
-    height: 20px;
-    color: #ffffff;
-  }
-  
-  .search-btn svg,
-  .user-btn svg {
-    width: 20px;
-    height: 20px;
-  }
-  
-  .search-btn {
-    width: 40px;
-    height: 40px;
-    padding: 8px;
-    border-radius: 50%;
-    background-color: rgb(25, 35, 54); /* цвет как у страницы */
+
+  .header .search-btn {
+    background: transparent;
     border: none;
+    width: auto;
+    height: auto;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  
-  .login-btn, .user-btn {
-    width: 40px;
-    height: 40px;
-    padding: 8px;
-    border-radius: 50%;
-    background-color: rgb(25, 35, 54);
-    border-bottom: none; /* Убираем border для мобильной */
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+
+  .header .mobile-menu-toggle {
+    padding: 0;
   }
-  /* На мобиле показываем иконку входа и скрываем текст */
-  .login-btn .login-text { display: none; }
-  .login-btn .login-icon { display: inline; }
+
+  .header .user-btn {
+    padding: 0;
+    border: none;
+    width: auto;
+    border-bottom: none;
+    justify-content: center;
+    background: transparent;
+  }
 }
 
-@media (max-width: 768px) {
-  /* Унифицированные боковые отступы 20px у хедера */
-  .header .container { padding: 0 20px; }
+body[data-theme='light'] .header {
+  background-color: var(--surface-elevated);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Final mobile override: force 20px side padding in header container */
-@media (max-width: 768px) {
-  body .header > .container { padding-left: 20px; padding-right: 20px; margin: 0 auto; }
-}
-@media (max-width: 375px) {
-  body .header > .container { padding-left: 20px; padding-right: 20px; margin: 0 auto; }
+body[data-theme='light'] .header .logo,
+body[data-theme='light'] .header .logo span {
+  color: var(--logo-text-color);
 }
 
-/* Remove debug highlight */
-@media (max-width: 768px) {
-  body .header > .container { background: transparent; padding-left: 20px; padding-right: 20px; }
+body[data-theme='light'] .header .logo-icon {
+  background: var(--logo-icon-gradient);
 }
-@media (max-width: 375px) {
-  body .header > .container { background: transparent; padding-left: 20px; padding-right: 20px; }
+
+body[data-theme='light'] .header .search-btn svg path,
+body[data-theme='light'] .header .user-btn svg path {
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+.header .mobile-menu-toggle img,
+.header .search-btn img,
+.header .user-btn img,
+.header .login-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.header .mobile-menu-toggle img {
+  display: block;
 }

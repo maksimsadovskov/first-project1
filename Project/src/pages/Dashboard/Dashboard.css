@@ -11,7 +11,7 @@
 
 .loading-spinner {
   font-size: 18px;
-  color: #888;
+  color: var(--text-secondary);
 }
 
 .featured-movie {
@@ -20,7 +20,10 @@
 
 .dashboard .container {
   max-width: 1440px;
-  padding: 0 80px; /* боковые поля 80px */
+  padding: 0 50px; /* уменьшил padding до 50px для точного размещения сетки */
+  margin: 0 auto;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .featured-movie__content {
@@ -61,7 +64,7 @@
   font-size: 48px;
   line-height: 56px;
   letter-spacing: 0;
-  color: #ffffff;
+  color: var(--text-primary);
   margin-bottom: 16px;
 }
 
@@ -71,8 +74,9 @@
   font-size: 24px;
   line-height: 32px;
   letter-spacing: 0;
-  color: #ffffffb2;
+  color: var(--text-secondary);
   margin-bottom: 60px; /* отступ до блока кнопок */
+  margin-right: 60px; /* правый отступ 60px на десктопе */
 }
 
 .featured-movie__details {
@@ -90,33 +94,62 @@
 
 .detail-label {
   font-size: 14px;
-  color: #888;
+  color: var(--text-secondary);
   min-width: 80px;
 }
 
 .detail-value {
   font-size: 14px;
-  color: #ffffff;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
 /* Рейтинг со звездой — зелёный фон */
 .detail-value--rating {
-  background: #308E21;
-  color: #ffffff;
   width: 70px;
   height: 32px;
   border-radius: 16px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px; /* отступ 5px между звездой и значением рейтинга */
+  gap: 6px;
+  color: #ffffff;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+}
+
+.detail-value--rating .rating-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.detail-value--rating .rating-value {
+  display: inline-block;
+}
+
+.detail-value--rating--excellent {
+  background-color: #A59400;
+}
+
+.detail-value--rating--good {
+  background-color: #308E21;
+}
+
+.detail-value--rating--average {
+  background-color: #777777;
+}
+
+.detail-value--rating--poor {
+  background-color: #C82020;
 }
 
 .featured-movie__actions-container {
   display: flex;
   gap: 16px; /* расстояние между кнопками */
   align-items: center;
+  margin-right: 60px; /* правый отступ 60px на десктопе */
 }
 
 /* На десктопе скрываем мобильную версию */
@@ -145,23 +178,29 @@
 }
 
 .btn--primary {
-  background-color: #67A5EB;
+  background-color: #00000066;
+  border: 1px solid #00000066;
   color: #ffffff;
 }
 
-.btn--primary:hover {
-  background-color: #5b97da;
+.btn--primary:hover,
+.btn--primary:focus {
+  background-color: #67A5EB;
+  border-color: #67A5EB;
+  color: #ffffff;
   transform: translateY(-2px);
 }
 
 .btn--secondary {
-  background-color: #393B3C;
-  color: #ffffff;
-  border: 1px solid var(--content-placeholder, #00000066);
+  background-color: #747474;
+  color: #FFFFFF80;
+  border: none;
 }
 
-.btn--secondary:hover {
-  background-color: #2f3132;
+.btn--secondary:hover,
+.btn--secondary:focus {
+  background-color: #45526E;
+  color: #FFFFFF80;
   transform: translateY(-2px);
 }
 
@@ -170,7 +209,7 @@
   font-size: 40px;
   line-height: 48px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-primary);
   margin: 0 0 64px 0; /* обнуляем все отступы, задаем только 64px вниз до списка */
   text-align: left; /* "Топ 10 фильмов" выровнено влево */
 }
@@ -181,11 +220,11 @@
 
 .top-movies__grid {
   display: grid;
-  grid-template-columns: repeat(5, 224px);
-  grid-auto-rows: 336px;
-  gap: 40px; /* по умолчанию 40px */
-  row-gap: 64px; /* вертикальный гап 64px */
+  grid-template-columns: repeat(5, 1fr); /* используем fr для автоматического размещения */
+  gap: 40px; /* боковой отступ 40px */
+  row-gap: 64px; /* вертикальный отступ 64px */
   justify-content: flex-start; /* выравниваем влево */
+  width: 100%; /* занимает всю ширину контейнера */
 }
 
 .top-movie-item {
@@ -248,6 +287,7 @@
   .featured-movie__description {
     font-size: 14px;
     margin: 0 0 32px 0;
+    margin-right: 0; /* убираем правый отступ на мобиле */
   }
   
   /* На мобиле: сначала details в одну строку, затем title, затем description, затем actions */
@@ -269,10 +309,12 @@
     order: 3;
     margin-bottom: 0;
     line-height: 24px;
+    margin-right: 0; /* убираем правый отступ на мобиле */
   }
   
   .featured-movie__actions-container {
     order: 4;
+    margin-right: 0; /* убираем правый отступ на мобиле */
   }
   
   .featured-movie__actions-container {
@@ -306,7 +348,8 @@
     min-height: 50px;
     font-size: 12px;
     padding: 8px 12px;
-    background-color: #393B3C;
+    background-color: #747474;
+    color: #FFFFFF80;
     border: none; /* выравниваем визуально с action-btn */
   }
   
@@ -391,6 +434,21 @@
   }
 }
 
+@media (max-width: 768px) {
+  .header-content {
+    justify-content: space-between;
+  }
+
+  .logo {
+    margin: 0 auto;
+    padding: 8px 16px;
+  }
+
+  .header-actions {
+    margin-left: 0;
+  }
+}
+
 /* МЕДИА-ЗАПРОС ДЛЯ 375PX - ГЛАВНАЯ СТРАНИЦА */
 @media (max-width: 375px) {
   /* Контейнер БЕЗ боковых отступов для постера и инфо-блока */
@@ -434,6 +492,23 @@
     display: flex;
   }
 
+  .dashboard--mobile-375 .detail-value--rating {
+    width: 47px;
+    height: 20px;
+    border-radius: 10px;
+    gap: 4px;
+  }
+
+  .dashboard--mobile-375 .detail-value--rating .rating-icon {
+    width: 10px;
+    height: 10px;
+  }
+
+  .dashboard--mobile-375 .detail-value--rating .rating-value {
+    font-size: 12px;
+    line-height: 16px;
+  }
+
   /* Порядок элементов: details -> title -> description -> actions */
   .dashboard--mobile-375 .featured-movie__details {
     order: 1;
@@ -455,6 +530,7 @@
     font-size: 18px;
     line-height: 24px;
     margin: 0 0 32px 0;
+    margin-right: 0; /* убираем правый отступ на мобиле 375px */
     display: block;
   }
 
@@ -482,6 +558,7 @@
     padding-top: 0;
     gap: 16px;
     flex-direction: column;
+    margin-right: 0; /* убираем правый отступ на мобиле 375px */
   }
   
   .dashboard--mobile-375 .featured-movie__actions-container .btn--primary {
@@ -557,9 +634,10 @@
   }
   
   /* Карточки фильмов в топ-10: только ПОСТЕР с border-radius 16px */
-  .dashboard--mobile-375 .top-movies__grid .movie-card {
+  .dashboard--mobile-375 .top-movies__grid .movie-card,
+  .dashboard--mobile-375 .top-movies__grid .movie-card.movie-card--small {
     flex: 0 0 224px;
-    width: 224px;
+    width: 224px; /* переопределяем общее правило 335px для главной страницы */
     height: 336px;
     scroll-snap-align: start;
     margin: 0;

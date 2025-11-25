@@ -140,6 +140,15 @@
   overflow-y: auto;
 }
 
+.auth-modal__error-message {
+  margin: 0 0 12px 0;
+  color: #E5484D;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  font-family: 'Play', sans-serif;
+}
+
 .form-group {
   margin-bottom: 0;
 }

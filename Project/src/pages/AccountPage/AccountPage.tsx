@@ -4,6 +4,9 @@ import { logoutUser } from '../../store/slices/authSlice';
 import { fetchFavorites, removeFromFavorites } from '../../store/slices/moviesSlice';
 import MovieCard from '../../components/MovieCard/MovieCard';
 import './AccountPage.css';
+import iconPersonaOutline from '../../assets/icons/icon-persona.svg';
+import iconEnvelope from '../../assets/icons/icon-envelop.svg';
+import iconHeart from '../../assets/icons/icon-heart.svg';
 
 const AccountPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -43,13 +46,18 @@ const AccountPage: React.FC = () => {
 
         <div className="account-tabs">
           <button
-          className={`tab-btn ${activeTab === 'favorites' ? 'tab-btn--active' : ''}`}
-          onClick={() => setActiveTab('favorites')}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-            </svg>
+            className={`tab-btn ${activeTab === 'favorites' ? 'tab-btn--active' : ''}`}
+            onClick={() => setActiveTab('favorites')}
+          >
+            <img src={iconHeart} alt="Избранное" width={20} height={20} />
             <span className="tab-btn__text">Избранные фильмы</span>
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'settings' ? 'tab-btn--active' : ''}`}
+            onClick={() => setActiveTab('settings')}
+          >
+            <img src={iconPersonaOutline} alt="Настройки" width={20} height={20} />
+            <span className="tab-btn__text">Настройки аккаунта</span>
           </button>
         <button
           className={`tab-btn ${activeTab === 'settings' ? 'tab-btn--active' : ''}`}
@@ -95,7 +103,7 @@ const AccountPage: React.FC = () => {
               <div className="user-info">
                 {/* Блок с именем */}
                 <div className="info-block">
-                  <div className="info-icon">
+                  <div className="info-icon info-icon--persona">
                     <span className="initials">{user.name[0]}{user.surname[0]}</span>
                   </div>
                   <div className="info-text">
@@ -106,10 +114,8 @@ const AccountPage: React.FC = () => {
                 
                 {/* Блок с email */}
                 <div className="info-block">
-                  <div className="info-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-                    </svg>
+                  <div className="info-icon info-icon--mail">
+                    <img src={iconEnvelope} alt="Email" width={24} height={24} />
                   </div>
                   <div className="info-text">
                     <div className="info-label">Электронная почта</div>

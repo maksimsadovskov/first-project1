@@ -2,7 +2,8 @@
   display: block;
   text-decoration: none;
   color: inherit;
-  width: 290px;
+  width: 100%; /* занимает всю ширину ячейки grid */
+  max-width: 290px; /* максимальная ширина как было */
   height: 304px;
   border-radius: 24px;
   border: 1px solid #3a3a3a;
@@ -57,4 +58,12 @@
   }
   
   .genre-card__footer { height: 84px; padding: 0 10px; }
+}
+
+@media (max-width: 375px) {
+  .genres.genres--mobile-375 .genres-grid .genre-card,
+  .genre-card {
+    width: 100%;
+    max-width: none;
+  }
 }

@@ -26,8 +26,6 @@ const MovieCard: React.FC<MovieCardProps> = ({
   const [isFavoriteState, setIsFavoriteState] = useState<boolean>(
     favorites.some(fav => fav.id === movie.id)
   );
-  const [isHovered, setIsHovered] = useState<boolean>(false);
-
   const handleFavoriteClick = (e: React.MouseEvent): void => {
     e.preventDefault();
     e.stopPropagation();

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loginUser, registerUser, clearRegistrationSuccess } from '../../store/slices/authSlice';
-import { closeAuthModal } from '../../store/slices/modalSlice';
 import { LoginCredentials, RegisterCredentials } from '../../types';
 import logoMarusya from '../../assets/logos/mask-group.svg';
 import './AuthModal.css';
@@ -30,7 +29,7 @@ interface FormErrors {
 
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const dispatch = useAppDispatch();
-  const { isLoading, error, isRegistrationSuccess } = useAppSelector((state) => state.auth);
+  const { isLoading, error: authError, isRegistrationSuccess } = useAppSelector((state) => state.auth);
   
   const [isLogin, setIsLogin] = useState<boolean>(true);
   const [formData, setFormData] = useState<FormData>({
@@ -219,6 +218,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         </div>
         
         <form className="auth-modal__form" onSubmit={handleSubmit}>
+          {authError && (
+            <div className="auth-modal__error-message">
+              {authError}
+            </div>
+          )}
           
           {isLogin ? (
             <>
