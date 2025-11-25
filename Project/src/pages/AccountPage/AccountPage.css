@@ -1,5 +1,6 @@
 .account-page {
   padding: 40px 0;
+  color: var(--text-primary);
 }
 
 .account-page-error {
@@ -18,7 +19,7 @@
 }
 
 .account-page-error p {
-  color: #888;
+  color: var(--text-secondary);
   font-size: 16px;
 }
 
@@ -30,7 +31,7 @@
 .account-title {
   font-size: 36px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-primary);
   margin-top: 0;
 }
 
@@ -38,13 +39,13 @@
   display: flex;
   justify-content: center;
   margin-bottom: 40px;
-  border-bottom: 1px solid #444;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .tab-btn {
   background: none;
   border: none;
-  color: #888;
+  color: var(--text-secondary);
   font-size: 24px;
   line-height: 32px;
   font-weight: 400;
@@ -57,12 +58,8 @@
   justify-content: center;
 }
 
-.tab-btn:hover {
-  color: #ffffff;
-}
-
 .tab-btn--active {
-  color: #ffffff;
+  color: var(--text-primary);
   border-bottom: 1.5px solid #DC5DFC;
 }
 
@@ -86,7 +83,7 @@
 .section-title {
   font-size: 24px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text-primary);
   margin-bottom: 24px;
 }
 
@@ -118,12 +115,12 @@
 .empty-favorites {
   text-align: center;
   padding: 60px 20px;
-  background-color: #2a2a2a;
+  background-color: var(--surface-elevated);
   border-radius: 12px;
 }
 
 .empty-favorites p {
-  color: #888;
+  color: var(--text-secondary);
   font-size: 16px;
   margin-bottom: 8px;
 }
@@ -166,9 +163,11 @@
 }
 
 .info-icon .initials {
-  font-size: 20px;
+  font-size: 24px;
+  line-height: 32px;
   font-weight: 700;
   text-transform: uppercase;
+  color: #FFFFFF;
 }
 
 .info-icon svg {
@@ -186,14 +185,14 @@
 .info-label {
   font-size: 14px; /* 14/20 для "Имя Фамилия" */
   line-height: 20px;
-  color: #ffffff80;
+  color: #FFFFFF;
   font-weight: 400;
 }
 
 .info-value {
   font-size: 18px; /* 18/24 для "Константин" */
   line-height: 24px;
-  color: #ffffff;
+  color: #FFFFFF;
   font-weight: 400;
 }
 
@@ -298,10 +297,6 @@
   .info-icon {
     width: 48px;
     height: 48px;
-  }
-  
-  .info-icon .initials {
-    font-size: 16px; /* Меньше шрифт для меньшего круга */
   }
   
   /* Контейнер с padding 10px по бокам */
@@ -435,4 +430,44 @@
     object-fit: cover;
     border-radius: 16px;
   }
+}
+
+/* Light theme overrides */
+body[data-theme='light'] .tab-btn {
+  color: rgba(22, 28, 45, 0.6);
+}
+
+body[data-theme='light'] .tab-btn--active {
+  color: #161c2d;
+}
+
+body[data-theme='light'] .empty-favorites {
+  background-color: var(--background-secondary);
+}
+
+body[data-theme='light'] .info-label {
+  color: rgba(22, 28, 45, 0.6);
+}
+
+body[data-theme='light'] .info-value {
+  color: #161c2d;
+}
+
+.tab-btn img {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.info-icon--mail {
+  background-color: #ffffff1a;
+}
+
+.info-icon--mail img {
+  width: 24px;
+  height: 24px;
+}
+
+.info-icon--persona {
+  background-color: #ffffff1a;
 }

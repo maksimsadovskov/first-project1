@@ -59,7 +59,8 @@
 }
 
 .movie-card--small {
-  width: 224px;
+  width: 100%; /* занимает всю ширину ячейки grid */
+  max-width: 224px; /* максимальная ширина как было */
   height: 336px;
 }
 

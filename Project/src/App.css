@@ -1,9 +1,45 @@
+:root {
+  color-scheme: dark;
+  --background-primary: #0f172a;
+  --background-secondary: #0f172a;
+  --surface-elevated: #0f172a;
+  --surface-muted: #0f172a;
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --logo-icon-gradient: linear-gradient(45deg, #f5deb3, #9c27b0);
+  --logo-text-color: #ffffff;
+}
+
+body {
+  margin: 0;
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  font-family: 'Play', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body[data-theme='light'] {
+  color-scheme: dark;
+  --background-primary: #0f172a;
+  --background-secondary: #0f172a;
+  --surface-elevated: #0f172a;
+  --surface-muted: #0f172a;
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --logo-icon-gradient: linear-gradient(45deg, #6f6cf3, #dc5dfc);
+  --logo-text-color: #b4a9ff;
+  --logo-background: #0f172a;
+}
+
 /* Base layout */
 .App {
   min-height: 100vh;
-  background-color: rgb(25, 35, 54);
+  background-color: var(--background-primary);
   display: flex;            /* for desktop sticky footer */
   flex-direction: column;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 .main-content {
@@ -17,7 +53,7 @@
     display: block;     /* no flex stretching */
   }
   .main-content {
-    padding-top: 0;
+    padding-top: 64px;
     flex: initial;   /* don't stretch on mobile */
   }
 }
@@ -29,7 +65,7 @@
   }
   
   .main-content {
-    padding-top: 0;
+    padding-top: 64px;
     flex: initial;
     overflow-x: hidden; /* Убираем горизонтальный скролл */
   }

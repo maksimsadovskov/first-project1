@@ -17,6 +17,7 @@ import AccountPage from './pages/AccountPage/AccountPage';
 
 // Styles
 import './App.css';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 const AppContent: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -68,7 +69,9 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <Provider store={store}>
-      <AppContent />
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
     </Provider>
   );
 };

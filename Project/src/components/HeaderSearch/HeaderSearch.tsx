@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setQuery, searchMovies } from '../../store/slices/searchSlice';
 import './HeaderSearch.css';
+import iconSearch from '../../assets/icons/icon-search.svg';
+import closeButton from '../../assets/icons/close-button.svg';
 
 const HeaderSearch: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -39,12 +41,18 @@ const HeaderSearch: React.FC = () => {
     dispatch(setQuery(''));
   };
 
+  const handleClear = () => {
+    dispatch(setQuery(''));
+    setIsOpen(false);
+  };
+
   // Показываем первые 5 результатов
   const displayResults = results.slice(0, 5);
 
   return (
     <div className="header-search" ref={searchRef}>
       <div className="header-search__input-container">
+        <img className="header-search__icon" src={iconSearch} alt="Иконка поиска" width={20} height={20} />
         <input
           type="text"
           className="header-search__input"
@@ -53,9 +61,11 @@ const HeaderSearch: React.FC = () => {
           onChange={handleInputChange}
           onFocus={() => query.trim() && setIsOpen(true)}
         />
-        <svg className="header-search__icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
+        {query.trim().length > 0 && (
+          <button className="header-search__clear" onClick={handleClear} aria-label="Очистить поиск">
+            <img src={closeButton} alt="Очистить" width={13} height={13} />
+          </button>
+        )}
       </div>
 
       {isOpen && query.trim() && (
@@ -80,7 +90,7 @@ const HeaderSearch: React.FC = () => {
                     <div className="header-search__result-meta">
                       <span className="header-search__result-rating">
                         <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                         </svg>
                         {movie.rating.toFixed(1)}
                       </span>

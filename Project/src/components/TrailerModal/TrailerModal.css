@@ -10,6 +10,21 @@
   align-items: center;
   justify-content: center;
   z-index: 10000; /* Очень высокий z-index */
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@media (min-width: 1025px) {
+  .trailer-modal-overlay {
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+  }
+
+  .trailer-modal__close-btn {
+    top: -24px;
+    right: -24px;
+  }
 }
 
 /* Модальное окно с точными размерами для 1440px */
@@ -48,6 +63,15 @@
 .trailer-modal__close-btn img {
   width: 24px;
   height: 24px;
+  filter: invert(1);
+}
+
+@media (max-width: 768px) {
+  .trailer-modal__close-btn img {
+    width: 16px;
+    height: 16px;
+    filter: none;
+  }
 }
 
 /* Обертка для видео */
@@ -259,16 +283,14 @@
   .trailer-modal__close-btn {
     top: 16px; /* 16px от верха модального окна */
     right: 16px; /* 16px от правого края модального окна (НЕ video-wrapper!) */
-    width: 32px;
-    height: 32px;
-    background-color: #ffffff;
-    z-index: 10001; /* Поверх всего */
+    width: 48px;
+    height: 48px;
   }
   
   .trailer-modal__close-btn img {
-    width: 16px;
-    height: 16px;
-    filter: none;
+    width: 24px;
+    height: 24px;
+    filter: invert(1);
   }
   
   /* Блок полутона - показывается */
@@ -330,13 +352,15 @@
     width: 32px;
     height: 32px;
     background-color: #ffffff;
-    z-index: 10001;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   }
   
   .trailer-modal__close-btn img {
-    width: 16px;
-    height: 16px;
-    filter: none;
+    width: 13px;
+    height: 13px;
+    filter: invert(1);
   }
   
   /* Блок полутона - НЕТ на вертикальной */

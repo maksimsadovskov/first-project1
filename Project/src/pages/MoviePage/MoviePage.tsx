@@ -73,6 +73,34 @@ const MoviePage: React.FC = () => {
     }
   };
 
+  const parseRating = (rating: number | string | null | undefined): number | null => {
+    if (typeof rating === 'number') {
+      return Number.isNaN(rating) ? null : rating;
+    }
+    if (typeof rating === 'string') {
+      const numeric = Number.parseFloat(rating.replace(',', '.'));
+      return Number.isNaN(numeric) ? null : numeric;
+    }
+    return null;
+  };
+
+  const getRatingVariant = (rating: number | string | null | undefined): 'excellent' | 'good' | 'average' | 'poor' => {
+    const numeric = parseRating(rating);
+    if (numeric === null) return 'average';
+    if (numeric >= 8) return 'excellent';
+    if (numeric >= 7) return 'good';
+    if (numeric >= 5) return 'average';
+    return 'poor';
+  };
+
+  const formatRatingValue = (rating: number | string | null | undefined): string => {
+    const numeric = parseRating(rating);
+    if (numeric === null) {
+      return '--';
+    }
+    return numeric.toFixed(1).replace('.', ',');
+  };
+
   if (!movie) {
     return (
       <div className="movie-page-error">
@@ -86,76 +114,79 @@ const MoviePage: React.FC = () => {
     <div className={`movie-page ${isMobile375 ? 'movie-page--mobile-375' : ''}`}>
       <div className="container">
         <div className="movie-container">
-        <div className="movie-content">
-          <div className="movie-poster">
-            <img src={movie.poster} alt={movie.title} />
-          </div>
+          <div className="movie-content">
+            <div className="movie-poster">
+              <img src={movie.poster} alt={movie.title} />
+            </div>
           
-          <div className="movie-info">
+            <div className="movie-info">
             <div className="movie-top-details">
-              <div className="detail-item"><span className="detail-value detail-value--rating">★{movie.rating}</span></div>
-              <div className="detail-item"><span className="detail-value">{movie.year}</span></div>
-              <div className="detail-item"><span className="detail-value">{movie.genre}</span></div>
-              <div className="detail-item"><span className="detail-value">{movie.duration || '1 ч 7 мин'}</span></div>
-            </div>
-            <h1 className="movie-title">{movie.title}</h1>
-            <p className="movie-description">{movie.description}</p>
-            <div className="movie-actions">
-              <button 
-                className="btn btn--primary btn-trailer"
-                onClick={handleTrailerClick}
-              >
-                Трейлер
-              </button>
-              <button 
-                className={`btn btn--icon ${isFavorited ? 'btn--favorited' : ''}`}
-                onClick={handleFavoriteClick}
-                title={isFavorited ? 'Удалить из избранного' : 'Добавить в избранное'}
-              >
-                <svg className="icon-heart" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                </svg>
-              </button>
+              <div className="detail-item">
+                <span className={`detail-value detail-value--rating detail-value--rating--${getRatingVariant(movie.rating)}`}>
+                  <svg className="rating-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M12 17.27L18.18 21 16.54 13.97 22 9.24 14.81 8.63 12 2 9.19 8.63 2 9.24 7.46 13.97 5.82 21 12 17.27Z" />
+                  </svg>
+                  <span className="rating-value">{formatRatingValue(movie.rating)}</span>
+                </span>
+              </div>
+                <div className="detail-item"><span className="detail-value">{movie.year}</span></div>
+                <div className="detail-item"><span className="detail-value">{movie.genre}</span></div>
+                <div className="detail-item"><span className="detail-value">{movie.duration || '1 ч 7 мин'}</span></div>
+              </div>
+              <h1 className="movie-title">{movie.title}</h1>
+              <p className="movie-description">{movie.description}</p>
+              <div className="movie-actions">
+                <button 
+                  className="btn btn--primary btn-trailer"
+                  onClick={handleTrailerClick}
+                >
+                  Трейлер
+                </button>
+                <button 
+                  className={`btn btn--icon ${isFavorited ? 'btn--favorited' : ''}`}
+                  onClick={handleFavoriteClick}
+                  title={isFavorited ? 'Удалить из избранного' : 'Добавить в избранное'}
+                >
+                  <svg className="icon-heart" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
+
+          {/* Раздел О фильме ниже */}
+          <section className="movie-specs">
+            <h2 className="details-title">О фильме</h2>
+            <div className="details-grid">
+              <div className="detail-item">
+                <span className="detail-label">Язык оригинала:</span>
+                <span className="detail-value">Русский</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-label">Бюджет:</span>
+                <span className="detail-value">{movie.budget || '2 500 000 руб.'}</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-label">Выручка:</span>
+                <span className="detail-value">{movie.boxOffice || '3 000 000 руб.'}</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-label">Режиссер:</span>
+                <span className="detail-value">{movie.director || 'Игорь Иванов'}</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-label">Продакшн:</span>
+                <span className="detail-value">Ленфильм</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-label">Награды:</span>
+                <span className="detail-value">Топ-20</span>
+              </div>
+            </div>
+          </section>
         </div>
-        
-        {/* Раздел О фильме ниже */}
-        <section className="movie-specs">
-          <h2 className="details-title">О фильме</h2>
-          <div className="details-grid">
-            <div className="detail-item">
-              <span className="detail-label">Язык оригинала:</span>
-              <span className="detail-value">Русский</span>
-            </div>
-            <div className="detail-item">
-              <span className="detail-label">Бюджет:</span>
-              <span className="detail-value">{movie.budget || '2 500 000 руб.'}</span>
-            </div>
-            <div className="detail-item">
-              <span className="detail-label">Выручка:</span>
-              <span className="detail-value">{movie.boxOffice || '3 000 000 руб.'}</span>
-            </div>
-            <div className="detail-item">
-              <span className="detail-label">Режиссер:</span>
-              <span className="detail-value">{movie.director || 'Игорь Иванов'}</span>
-            </div>
-            <div className="detail-item">
-              <span className="detail-label">Продакшн:</span>
-              <span className="detail-value">Ленфильм</span>
-            </div>
-            <div className="detail-item">
-              <span className="detail-label">Награды:</span>
-              <span className="detail-value">Топ-20</span>
-            </div>
-          </div>
-        </section>
-            
-          </div>
-        </section>
-            
-          </div>
-        </div>
+      </div>
 
       <AuthModal 
         isOpen={isAuthModalOpen}

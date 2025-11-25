@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setQuery, searchMovies, clearResults } from '../../store/slices/searchSlice';
 import './MobileSearchModal.css';
+import iconSearch from '../../assets/icons/icon-search.svg';
+import closeButton from '../../assets/icons/close-button.svg';
 
 interface MobileSearchModalProps {
   isOpen: boolean;
@@ -47,9 +49,7 @@ const MobileSearchModal: React.FC<MobileSearchModalProps> = ({ isOpen, onClose }
     <div className="mobile-search-modal">
       {/* Хедер поиска поверх всего */}
       <div className="mobile-search-modal__header">
-        <svg className="mobile-search-modal__search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
+        <img className="mobile-search-modal__search-icon" src={iconSearch} alt="Поиск" width={20} height={20} />
         <input
           type="text"
           className="mobile-search-modal__input"
@@ -59,9 +59,7 @@ const MobileSearchModal: React.FC<MobileSearchModalProps> = ({ isOpen, onClose }
           autoFocus
         />
         <button className="mobile-search-modal__close" onClick={onClose}>
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-          </svg>
+          <img src={closeButton} alt="Закрыть" width={12} height={12} />
         </button>
       </div>
 

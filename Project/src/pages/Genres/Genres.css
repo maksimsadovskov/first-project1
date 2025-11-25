@@ -1,5 +1,9 @@
 .genres {
-  padding: 64px 80px 80px 80px;
+  padding: 32px 0 0 0; /* только сверху, боковой padding у контейнера */
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  overflow: visible;
 }
 
 .genres-loading {
@@ -30,9 +34,20 @@
 
 .genres-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
-  justify-items: center; /* карты имеют фиксированную ширину 290px */
+  grid-template-columns: repeat(4, 1fr); /* используем fr для автоматического размещения */
+  gap: 40px; /* боковой отступ 40px */
+  row-gap: 64px; /* вертикальный отступ 64px */
+  justify-content: flex-start;
+  width: 100%; /* занимает всю ширину контейнера */
+}
+
+/* Контейнер на странице жанров: 4 карточки по 290px + 3 отступа по 40px = 1280px + padding 100px = 1380px */
+.genres .container {
+  max-width: 1440px;
+  padding: 0 50px; /* уменьшил padding до 50px для точного размещения сетки */
+  margin: 0 auto;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 @media (max-width: 768px) {
@@ -61,6 +76,10 @@
   .genres.genres--mobile-375 {
     padding: 16px 0; /* Только вертикальные отступы */
   }
+
+  .genres.genres--mobile-375 .container {
+    padding: 0 20px;
+  }
   
   /* Контейнер уже имеет padding: 0 20px из index.css */
   
@@ -88,10 +107,10 @@
 
   /* Карточки жанров на всю доступную ширину */
   .genres.genres--mobile-375 .genres-grid .genre-card {
-    width: 100%; /* На всю ширину контейнера (335px) */
-    max-width: 335px;
+    width: 100%; /* На всю ширину контейнера */
+    max-width: none;
     height: 304px;
     border-radius: 24px;
-    margin: 0 auto;
+    margin: 0;
   }
 }

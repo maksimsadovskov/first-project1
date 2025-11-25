@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppDispatch } from '../../store/hooks';
 import { closeTrailerModal } from '../../store/slices/modalSlice';
 import './TrailerModal.css';
@@ -34,41 +34,7 @@ const TrailerModal: React.FC<TrailerModalProps> = ({
   const [playerReady, setPlayerReady] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (!isOpen) {
-      document.body.style.overflow = 'unset';
-      if (playerRef.current) {
-        try {
-          playerRef.current.destroy();
-        } catch (e) {}
-        playerRef.current = null;
-      }
-      setIsPaused(false);
-      setPlayerReady(false);
-      setIsLoading(true);
-      return;
-    }
-
-    document.body.style.overflow = 'hidden';
-    setIsPaused(false);
-    setIsLoading(true);
-
-    if (!window.YT) {
-      const script = document.createElement('script');
-      script.src = 'https://www.youtube.com/iframe_api';
-      script.async = true;
-      document.body.appendChild(script);
-      window.onYouTubeIframeAPIReady = initPlayer;
-    } else {
-      initPlayer();
-    }
-
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen, trailerUrl]);
-
-  const initPlayer = () => {
+  const initPlayer = useCallback(() => {
     if (!containerRef.current || !trailerUrl) return;
 
     const videoId = trailerUrl.match(/embed\/([^?]+)/)?.[1];
@@ -109,7 +75,41 @@ const TrailerModal: React.FC<TrailerModalProps> = ({
         },
       },
     });
-  };
+  }, [trailerUrl]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      document.body.style.overflow = 'unset';
+      if (playerRef.current) {
+        try {
+          playerRef.current.destroy();
+        } catch (e) {}
+        playerRef.current = null;
+      }
+      setIsPaused(false);
+      setPlayerReady(false);
+      setIsLoading(true);
+      return;
+    }
+
+    document.body.style.overflow = 'hidden';
+    setIsPaused(false);
+    setIsLoading(true);
+
+    if (!window.YT) {
+      const script = document.createElement('script');
+      script.src = 'https://www.youtube.com/iframe_api';
+      script.async = true;
+      document.body.appendChild(script);
+      window.onYouTubeIframeAPIReady = initPlayer;
+    } else {
+      initPlayer();
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen, initPlayer]);
 
   const handleClose = () => {
     dispatch(closeTrailerModal());

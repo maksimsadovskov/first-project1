@@ -1,5 +1,8 @@
 .genre-page {
   padding: 64px 80px 64px 80px;
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .genre-page-loading,
