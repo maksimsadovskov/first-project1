@@ -30,6 +30,16 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     document.body.dataset.theme = theme;
     window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+    
+    // Обновляем цвет текста логотипа при смене темы
+    const logoSpans = document.querySelectorAll('.header .logo span');
+    logoSpans.forEach((span) => {
+      if (theme === 'dark') {
+        (span as HTMLElement).style.color = '#ffffff';
+      } else {
+        (span as HTMLElement).style.color = '#161c2d';
+      }
+    });
   }, [theme]);
 
   const toggleTheme = () => {

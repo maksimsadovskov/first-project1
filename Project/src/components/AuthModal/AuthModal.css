@@ -8,8 +8,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: 99999; /* Очень высокий z-index, чтобы модальное окно было поверх всех элементов, включая карточки фильмов */
   padding: 20px;
+  isolation: isolate; /* Создаем новый контекст наложения */
 }
 
 .auth-modal {
@@ -22,6 +23,8 @@
   display: flex;
   flex-direction: column;
   overflow: visible;
+  z-index: 100000; /* Очень высокий z-index модального окна */
+  isolation: isolate; /* Создаем новый контекст наложения */
 }
 
 .auth-modal--registration {
@@ -48,7 +51,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 2001;
+  z-index: 100001; /* Очень высокий z-index кнопки закрытия */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   opacity: 1;
   visibility: visible;
@@ -250,6 +253,26 @@
   font-family: 'Play', sans-serif;
 }
 
+.error-message--field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #FF9800;
+  color: #000000;
+  font-size: 14px;
+  line-height: 20px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-top: 8px;
+  font-family: 'Play', sans-serif;
+}
+
+.error-message--field::before {
+  content: '⚠';
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
 .error-message--general {
   background-color: rgba(231, 76, 60, 0.1);
   border: 1px solid rgba(231, 76, 60, 0.3);
@@ -435,7 +458,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 2001;
+    z-index: 100001; /* Очень высокий z-index для мобильной версии */
     box-shadow: none;
   }
   

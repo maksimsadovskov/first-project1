@@ -21,6 +21,13 @@ const HeaderSearch: React.FC = () => {
     }
   }, [query, dispatch]);
 
+  // Открываем выпадающий список при наличии результатов или при поиске
+  useEffect(() => {
+    if (query.trim() && (isSearching || results.length > 0)) {
+      setIsOpen(true);
+    }
+  }, [query, isSearching, results]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -56,7 +63,7 @@ const HeaderSearch: React.FC = () => {
         <input
           type="text"
           className="header-search__input"
-          placeholder="Поиск фильмов..."
+          placeholder="Поиск"
           value={query}
           onChange={handleInputChange}
           onFocus={() => query.trim() && setIsOpen(true)}
@@ -81,21 +88,27 @@ const HeaderSearch: React.FC = () => {
                   className="header-search__result-item"
                   onClick={handleResultClick}
                 >
-                  <img
-                    src={movie.poster}
-                    alt={movie.title}
-                    className="header-search__result-poster"
-                  />
+                  {movie.poster && (
+                    <img
+                      src={movie.poster}
+                      alt={movie.title}
+                      className="header-search__result-poster"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                      }}
+                    />
+                  )}
                   <div className="header-search__result-info">
                     <div className="header-search__result-meta">
                       <span className="header-search__result-rating">
                         <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor">
                           <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                         </svg>
-                        {movie.rating.toFixed(1)}
+                        {movie.rating ? movie.rating.toFixed(1) : '0.0'}
                       </span>
-                      <span className="header-search__result-year">{movie.year}</span>
-                      <span className="header-search__result-genre">{movie.genre}</span>
+                      <span className="header-search__result-year">{movie.year || '—'}</span>
+                      <span className="header-search__result-genre">{movie.genre || '—'}</span>
                       <span className="header-search__result-duration">{movie.runtime || 127} мин</span>
                     </div>
                     <h4 className="header-search__result-title">{movie.title}</h4>

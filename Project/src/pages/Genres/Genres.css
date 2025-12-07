@@ -24,8 +24,12 @@
 }
 
 .genres-title {
-  font-size: 36px;
-  font-weight: 700;
+  font-family: 'Play', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 32px;
+  letter-spacing: 0;
   color: #ffffff;
   margin-bottom: 16px;
 }
@@ -39,12 +43,13 @@
   row-gap: 64px; /* вертикальный отступ 64px */
   justify-content: flex-start;
   width: 100%; /* занимает всю ширину контейнера */
+  overflow: visible; /* Чтобы тени не обрезались */
 }
 
-/* Контейнер на странице жанров: 4 карточки по 290px + 3 отступа по 40px = 1280px + padding 100px = 1380px */
+/* Контейнер на странице жанров */
 .genres .container {
   max-width: 1440px;
-  padding: 0 50px; /* уменьшил padding до 50px для точного размещения сетки */
+  padding: 0 80px; /* боковой отступ 80px на экранах 1440px */
   margin: 0 auto;
   box-sizing: border-box;
   width: 100%;
@@ -110,7 +115,7 @@
     width: 100%; /* На всю ширину контейнера */
     max-width: none;
     height: 304px;
-    border-radius: 24px;
+    border-radius: 16px;
     margin: 0;
   }
 }

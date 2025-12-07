@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { logoutUser } from '../../store/slices/authSlice';
+import { logoutUser, fetchUser } from '../../store/slices/authSlice';
 import { fetchFavorites, removeFromFavorites } from '../../store/slices/moviesSlice';
 import MovieCard from '../../components/MovieCard/MovieCard';
 import './AccountPage.css';
@@ -16,6 +16,7 @@ const AccountPage: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
+      // Загружаем избранные фильмы
       dispatch(fetchFavorites());
     }
   }, [dispatch, isAuthenticated]);
@@ -49,23 +50,34 @@ const AccountPage: React.FC = () => {
             className={`tab-btn ${activeTab === 'favorites' ? 'tab-btn--active' : ''}`}
             onClick={() => setActiveTab('favorites')}
           >
-            <img src={iconHeart} alt="Избранное" width={20} height={20} />
+            <img 
+              src={iconHeart} 
+              alt="Избранное" 
+              width={20} 
+              height={20}
+              onError={(e) => {
+                console.error('Ошибка загрузки iconHeart:', iconHeart);
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+              }}
+            />
             <span className="tab-btn__text">Избранные фильмы</span>
           </button>
           <button
             className={`tab-btn ${activeTab === 'settings' ? 'tab-btn--active' : ''}`}
             onClick={() => setActiveTab('settings')}
           >
-            <img src={iconPersonaOutline} alt="Настройки" width={20} height={20} />
-            <span className="tab-btn__text">Настройки аккаунта</span>
-          </button>
-        <button
-          className={`tab-btn ${activeTab === 'settings' ? 'tab-btn--active' : ''}`}
-          onClick={() => setActiveTab('settings')}
-        >
-          <svg width="20" height="20" viewBox="88 0 24 24" fill="none">
-            <path d="M92 22C92 17.5817 95.5817 14 100 14C104.418 14 108 17.5817 108 22H106C106 18.6863 103.314 16 100 16C96.6863 16 94 18.6863 94 22H92ZM100 13C96.685 13 94 10.315 94 7C94 3.685 96.685 1 100 1C103.315 1 106 3.685 106 7C106 10.315 103.315 13 100 13ZM100 11C102.21 11 104 9.21 104 7C104 4.79 102.21 3 100 3C97.79 3 96 4.79 96 7C96 9.21 97.79 11 100 11Z" fill="white"/>
-          </svg>
+            <img 
+              src={iconPersonaOutline} 
+              alt="Настройки" 
+              width={20} 
+              height={20}
+              onError={(e) => {
+                console.error('Ошибка загрузки iconPersonaOutline:', iconPersonaOutline);
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+              }}
+            />
           <span className="tab-btn__text">Настройки аккаунта</span>
         </button>
         </div>
@@ -104,7 +116,10 @@ const AccountPage: React.FC = () => {
                 {/* Блок с именем */}
                 <div className="info-block">
                   <div className="info-icon info-icon--persona">
-                    <span className="initials">{user.name[0]}{user.surname[0]}</span>
+                    <span className="initials">
+                      {user.name && user.name.length > 0 ? user.name[0].toUpperCase() : ''}
+                      {user.surname && user.surname.length > 0 ? user.surname[0].toUpperCase() : ''}
+                    </span>
                   </div>
                   <div className="info-text">
                     <div className="info-label">Имя Фамилия</div>
@@ -115,7 +130,17 @@ const AccountPage: React.FC = () => {
                 {/* Блок с email */}
                 <div className="info-block">
                   <div className="info-icon info-icon--mail">
-                    <img src={iconEnvelope} alt="Email" width={24} height={24} />
+                    <img 
+                      src={iconEnvelope} 
+                      alt="Email" 
+                      width={24} 
+                      height={24}
+                      onError={(e) => {
+                        console.error('Ошибка загрузки iconEnvelope:', iconEnvelope);
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                      }}
+                    />
                   </div>
                   <div className="info-text">
                     <div className="info-label">Электронная почта</div>

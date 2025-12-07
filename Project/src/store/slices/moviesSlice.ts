@@ -189,18 +189,28 @@ const moviesSlice = createSlice({
         state.error = action.payload;
       })
       // Fetch Movies by Genre
-      .addCase(fetchMoviesByGenre.pending, (state) => {
+      .addCase(fetchMoviesByGenre.pending, (state, action) => {
         state.isLoading = true;
         state.error = null;
+        // Очищаем предыдущие фильмы при загрузке нового жанра (первая страница)
+        if (action.meta.arg.page === 1) {
+          state.movies = [];
+        }
       })
       .addCase(fetchMoviesByGenre.fulfilled, (state, action: PayloadAction<MoviesResponse & { genreId: number }>) => {
         state.isLoading = false;
+        // Всегда заменяем фильмы на новые (показываем только 15 за раз)
         state.movies = action.payload.movies;
         state.error = null;
       })
-      .addCase(fetchMoviesByGenre.rejected, (state, action: PayloadAction<any>) => {
+      .addCase(fetchMoviesByGenre.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+        // Если это первая страница и произошла ошибка, очищаем фильмы
+        if (action.meta && action.meta.arg && action.meta.arg.page === 1) {
+          state.movies = [];
+        }
+        console.error('Ошибка загрузки фильмов по жанру:', action.payload);
       })
       // Fetch Genres
       .addCase(fetchGenres.pending, (state) => {
@@ -209,7 +219,36 @@ const moviesSlice = createSlice({
       })
       .addCase(fetchGenres.fulfilled, (state, action: PayloadAction<Genre[]>) => {
         state.isLoading = false;
-        state.genres = action.payload;
+        // Используем изображения из payload (могут быть URL постеров или SVG data URI)
+        state.genres = action.payload.map(genre => {
+          // Проверяем, что image валидный (может быть data URI или http URL)
+          let imageUrl = genre.image || '';
+          
+          // Если URL не валидный, создаем SVG data URI как fallback
+          if (!imageUrl || 
+              typeof imageUrl !== 'string' || 
+              (!imageUrl.startsWith('data:') && !imageUrl.startsWith('http://') && !imageUrl.startsWith('https://'))) {
+            // Создаем SVG placeholder только если нет валидного URL
+            const genreColorMap: { [key: string]: string } = {
+              'Драма': '4285f4', 'Комедия': '34a853', 'Боевик': 'ea4335', 'Триллер': '9c27b0',
+              'Ужасы': 'ff9800', 'Фантастика': '00bcd4', 'Приключения': '4caf50', 'Мультфильмы': 'ff5722',
+              'Мультфильм': 'ff5722', 'Мелодрама': 'e91e63', 'Детектив': '607d8b', 'Криминал': '607d8b',
+              'Военный': '795548', 'Исторический': '9e9e9e', 'Документальный': '009688', 'Семейный': 'ffc107',
+              'Музыка': 'ff4081', 'Вестерн': '8d6e63', 'Стендап': '9c27b0'
+            };
+            const bgColor = genreColorMap[genre.name] || '666666';
+            const svg = `<svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
+              <rect width="300" height="200" fill="#${bgColor}"/>
+              <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="24" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">${genre.name}</text>
+            </svg>`;
+            imageUrl = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
+          }
+          
+          return {
+            ...genre,
+            image: imageUrl
+          };
+        });
         state.error = null;
       })
       .addCase(fetchGenres.rejected, (state, action: PayloadAction<any>) => {

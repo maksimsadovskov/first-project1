@@ -14,6 +14,7 @@ import iconPersonaSolid from '../../assets/icons/user-white.svg';
 import iconPersonaFilled from '../../assets/icons/user-white.svg';
 import iconEnvelope from '../../assets/icons/icon-envelop.svg';
 import iconHeart from '../../assets/icons/icon-heart.svg';
+import logoMarusya from '../../assets/logos/маруся.png';
 
 const Header: React.FC = () => {
   const dispatch = useAppDispatch();

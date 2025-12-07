@@ -3,6 +3,14 @@
   color: var(--text-primary);
 }
 
+.account-page .container {
+  max-width: 1440px;
+  padding: 0 80px; /* боковой отступ 80px на экранах 1440px */
+  margin: 0 auto;
+  box-sizing: border-box;
+  width: 100%;
+}
+
 .account-page-error {
   display: flex;
   flex-direction: column;
@@ -24,7 +32,7 @@
 }
 
 .account-header {
-  text-align: center;
+  text-align: left; /* По умолчанию слева */
   margin-bottom: 40px;
 }
 
@@ -37,7 +45,7 @@
 
 .account-tabs {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start; /* По умолчанию слева */
   margin-bottom: 40px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
@@ -56,6 +64,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 4px; /* 4px между SVG иконкой и текстом */
 }
 
 .tab-btn--active {

@@ -15,17 +15,35 @@ const GenrePage: React.FC = () => {
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [hasMoreMovies, setHasMoreMovies] = useState<boolean>(true);
 
-  const MOVIES_PER_PAGE = 10;
+  const MOVIES_PER_PAGE = 15; // 5 постеров в ряду × 3 ряда = 15 фильмов
 
   useEffect(() => {
     if (genreId) {
+      console.log('Загрузка фильмов для жанра ID:', genreId);
+      // Очищаем фильмы перед загрузкой
+      setCurrentPage(1);
+      setHasMoreMovies(true);
+      
       dispatch(fetchMoviesByGenre({ 
         genreId: parseInt(genreId), 
         page: 1, 
         limit: MOVIES_PER_PAGE 
-      }));
-      setCurrentPage(1);
-      setHasMoreMovies(true);
+      })).then((result) => {
+        if (result.type === 'movies/fetchMoviesByGenre/fulfilled') {
+          const response = result.payload as any;
+          if (response && response.movies) {
+            console.log('Загружено фильмов:', response.movies.length);
+            if (response.movies.length < MOVIES_PER_PAGE) {
+              setHasMoreMovies(false);
+            } else {
+              setHasMoreMovies(true);
+            }
+          }
+        } else if (result.type === 'movies/fetchMoviesByGenre/rejected') {
+          console.error('Ошибка загрузки фильмов:', result);
+          setHasMoreMovies(false);
+        }
+      });
     }
   }, [genreId, dispatch]);
 
@@ -35,6 +53,7 @@ const GenrePage: React.FC = () => {
     setLoadingMore(true);
     const nextPage = currentPage + 1;
     
+    // Загружаем следующую страницу, которая заменит текущие фильмы
     dispatch(fetchMoviesByGenre({ 
       genreId: parseInt(genreId), 
       page: nextPage, 
@@ -42,15 +61,19 @@ const GenrePage: React.FC = () => {
     })).then((result) => {
       if (result.payload && typeof result.payload === 'object' && result.payload !== null && 'movies' in result.payload) {
         const response = result.payload as any;
+        console.log('Загружено фильмов для страницы', nextPage, ':', response.movies.length);
         if (response.movies.length < MOVIES_PER_PAGE) {
           setHasMoreMovies(false);
         }
-        dispatch(addMoreMovies(response.movies));
         setCurrentPage(nextPage);
+      } else if (result.type === 'movies/fetchMoviesByGenre/rejected') {
+        console.error('Ошибка загрузки фильмов:', result);
+        setHasMoreMovies(false);
       }
       setLoadingMore(false);
     }).catch(() => {
       setLoadingMore(false);
+      setHasMoreMovies(false);
     });
   };
 
@@ -99,11 +122,11 @@ const GenrePage: React.FC = () => {
           <>
             <div className="movies-grid">
               {movies.map(movie => (
-                <MovieCard key={movie.id} movie={movie} />
+                <MovieCard key={movie.id} movie={movie} size="small" />
               ))}
             </div>
 
-            {hasMoreMovies && (
+            {hasMoreMovies && movies.length >= 15 && (
               <div className="load-more-container">
                 <button 
                   className="load-more-btn"

@@ -1,8 +1,31 @@
 .header-search {
   position: relative;
-  max-width: 655px;
-  width: 100%;
-  flex: 1;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+/* На экранах 1440px и больше - фиксированная ширина 665px */
+@media (min-width: 1440px) {
+  .header-search {
+    width: 665px;
+    max-width: 665px;
+    min-width: 665px;
+    flex: 0 0 665px;
+    flex-shrink: 0;
+    flex-grow: 0;
+  }
+}
+
+/* На экранах меньше 1440px - плавно уменьшается */
+@media (max-width: 1439px) {
+  .header-search {
+    width: 100%;
+    max-width: 665px;
+    min-width: 200px;
+    flex: 1 1 auto;
+    flex-shrink: 1;
+    flex-grow: 1;
+  }
 }
 
 .header-search__input-container {
@@ -23,6 +46,8 @@
   font-family: 'Play', sans-serif;
   outline: none;
   transition: all 0.2s ease;
+  position: relative;
+  z-index: 0; /* Убедимся, что input под иконкой */
 }
 
 .header-search__input::placeholder {
@@ -41,6 +66,27 @@
   height: 20px;
   opacity: 0.7;
   pointer-events: none;
+  z-index: 1; /* Убедимся, что иконка поверх input */
+}
+
+.header-search__clear {
+  position: absolute;
+  right: 16px;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.header-search__clear img {
+  width: 13px;
+  height: 13px;
+  opacity: 0.5; /* #FFFFFF80 */
 }
 
 .header-search__clear {
@@ -72,9 +118,27 @@
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   overflow: hidden;
-  z-index: 1000;
+  z-index: 10000;
   max-height: 400px;
   overflow-y: auto;
+}
+
+/* Убираем все стили ссылок внутри выпадающего списка */
+.header-search__dropdown a,
+.header-search__dropdown a:link,
+.header-search__dropdown a:visited,
+.header-search__dropdown a:hover,
+.header-search__dropdown a:active,
+.header-search__dropdown a:focus,
+.header-search__dropdown a:focus-visible {
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+  outline-offset: 0;
+  border: none;
+  box-shadow: none;
+  background-color: transparent;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .header-search__results {
@@ -90,6 +154,45 @@
   color: inherit;
   transition: background-color 0.2s ease;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  border: none;
+  background-color: transparent;
+}
+
+.header-search__result-item,
+.header-search__result-item:link,
+.header-search__result-item:visited,
+.header-search__result-item:hover,
+.header-search__result-item:active,
+.header-search__result-item:focus,
+.header-search__result-item:focus-visible {
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+  outline-offset: 0;
+  border: none;
+  box-shadow: none;
+  background-color: transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Дополнительная специфичность для React Router Link */
+.header-search__results a.header-search__result-item,
+.header-search__results a.header-search__result-item:link,
+.header-search__results a.header-search__result-item:visited,
+.header-search__results a.header-search__result-item:hover,
+.header-search__results a.header-search__result-item:active,
+.header-search__results a.header-search__result-item:focus,
+.header-search__results a.header-search__result-item:focus-visible {
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+  outline-offset: 0;
+  border: none;
+  box-shadow: none;
+  background-color: transparent;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .header-search__result-item:last-child {
