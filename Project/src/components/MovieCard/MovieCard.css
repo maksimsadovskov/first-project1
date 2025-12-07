@@ -10,8 +10,10 @@
   text-decoration: none;
   color: inherit;
   transition: transform 0.2s ease;
-  border-radius: 8px;
-  overflow: visible;
+  border-radius: 16px;
+  border: 1px solid #FFFFFF40;
+  box-shadow: 0px 0px 80px 0px #FFFFFF54;
+  overflow: hidden;
   background-color: #2a2a2a;
   width: 100%;
 }
@@ -77,6 +79,7 @@
   width: 100%;
   aspect-ratio: 2/3;
   overflow: hidden;
+  border-radius: 16px 16px 0 0;
 }
 
 .movie-card__poster img {
@@ -124,6 +127,8 @@
 
 .movie-card__info {
   padding: 16px;
+  border-radius: 0 0 16px 16px;
+  background-color: #2a2a2a;
 }
 
 .movie-card__title {
@@ -177,12 +182,13 @@
   }
 }
 
-/* Mobile 375px: карточка 335x(220+84), радиус 24, бордер 1, отступ снизу 24 */
+/* Mobile 375px: карточка 335x(220+84), радиус 16, бордер 1, отступ снизу 24 */
 @media (max-width: 375px) {
   .movie-card {
     width: 335px;
-    border-radius: 24px;
-    border: 1px solid #3a3a3a;
+    border-radius: 16px;
+    border: 1px solid #FFFFFF40;
+    box-shadow: 0px 0px 80px 0px #FFFFFF54;
     margin-bottom: 24px;
   }
 

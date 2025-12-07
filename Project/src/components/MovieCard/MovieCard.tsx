@@ -60,7 +60,17 @@ const MovieCard: React.FC<MovieCardProps> = ({
     >
       <Link to={`/movie/${movie.id}`} className={cardClassName}>
         <div className="movie-card__poster">
-          <img src={movie.poster} alt={movie.title} />
+          <img 
+            src={movie.poster || `https://picsum.photos/300/450?random=${movie.id}`} 
+            alt={movie.title}
+            onError={(e) => {
+              // Если изображение не загрузилось, используем placeholder
+              const target = e.target as HTMLImageElement;
+              if (!target.src.includes('picsum.photos')) {
+                target.src = `https://picsum.photos/300/450?random=${movie.id}`;
+              }
+            }}
+          />
           {showFavorite && !onRemove && (
             <button 
               className={`favorite-btn ${isFavoriteState ? 'favorite-btn--active' : ''}`}

@@ -15,6 +15,9 @@
   display: flex;
   align-items: center;
   height: 80px;
+  width: 100%;
+  gap: 24px;
+  min-width: 0;
 }
 
 .header .logo {
@@ -30,6 +33,7 @@
   border-radius: 13px;
   background-color: var(--logo-background, transparent);
   box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  flex-shrink: 0;
 }
 
 .header .logo-icon {
@@ -41,15 +45,32 @@
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
+.header .logo--dark .logo-icon {
+  background-image: url('../../assets/logos/маруся.png');
+  background-size: 143px 32px;
+  background-position: left center;
+  background-repeat: no-repeat;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+
 .header .logo span {
-  color: inherit;
+  color: #ffffff;
 }
 
 .header .logo--dark {
   background-color: transparent;
   box-shadow: none;
+}
+
+.header .logo--dark span {
+  color: #ffffff;
 }
 
 .header .logo--light {
@@ -66,12 +87,18 @@
   gap: 32px;
   margin-left: 60px;
   margin-right: 24px;
+  flex-shrink: 0;
 }
 
 .header .nav-link {
+  font-family: 'Play', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: 0;
   color: var(--text-primary);
   text-decoration: none;
-  font-size: 16px;
   transition: color 0.2s ease;
   display: inline-block;
   padding-bottom: 4px;
@@ -91,7 +118,14 @@
   display: flex;
   align-items: center;
   gap: 24px;
+  flex-shrink: 1;
+  flex-grow: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
   margin-left: auto;
+  justify-content: flex-end;
 }
 
 .header .search-btn {
@@ -117,11 +151,16 @@
 }
 
 .header .login-btn {
+  font-family: 'Play', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: 0;
   background-color: transparent; /* цвет как у страницы */
   color: #ffffff;
   padding: 8px 16px;
   border-radius: 4px;
-  font-size: 14px;
   transition: background-color 0.2s ease;
   display: inline-flex;
   align-items: center;
@@ -142,6 +181,12 @@
 }
 
 .header .user-btn {
+  font-family: 'Play', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: 0;
   background-color: transparent;
   border: none;
   color: #ffffff;
@@ -151,7 +196,6 @@
   align-items: center;
   gap: 8px;
   border-radius: 0; /* Без радиуса для имени на 1440px */
-  font-size: 14px;
   transition: background-color 0.2s ease;
   border-bottom: 1.5px solid #DC5DFC; /* Border для 1440px */
   padding-bottom: 6.5px; /* Компенсация border */
@@ -220,6 +264,11 @@
 
 .header .container {
   position: relative;
+  max-width: 1440px;
+  padding: 0 80px; /* боковой отступ 80px на экранах 1440px */
+  margin: 0 auto;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 @media (max-width: 768px) {
@@ -292,30 +341,72 @@
     display: flex;
     align-items: center;
     gap: 20px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: auto;
   }
 
   .header .search-btn {
     background: transparent;
     border: none;
-    width: auto;
-    height: auto;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    max-width: 20px;
     padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .header .mobile-menu-toggle {
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    max-width: 20px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  .header .mobile-menu-toggle {
-    padding: 0;
-  }
-
   .header .user-btn {
     padding: 0;
     border: none;
-    width: auto;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    max-width: 20px;
     border-bottom: none;
     justify-content: center;
     background: transparent;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .header .login-btn {
+    padding: 0;
+    border: none;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    max-width: 20px;
+    background: transparent;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .header .login-btn .login-text {
+    display: none;
+  }
+
+  .header .login-btn .login-icon {
+    display: block;
   }
 }
 

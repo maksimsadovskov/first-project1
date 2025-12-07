@@ -35,9 +35,19 @@ code {
     monospace;
 }
 
-a {
+a,
+a:link,
+a:visited,
+a:hover,
+a:active,
+a:focus,
+a:focus-visible {
   color: inherit;
   text-decoration: none;
+  outline: none;
+  outline-offset: 0;
+  box-shadow: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 button {

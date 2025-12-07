@@ -20,10 +20,13 @@ const Genres: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (genres.length === 0) {
-      dispatch(fetchGenres());
-    }
-  }, [dispatch, genres.length]);
+    // Принудительно загружаем жанры при каждом монтировании
+    dispatch(fetchGenres()).then((result) => {
+      if (result.payload) {
+        console.log('Genres with images:', result.payload);
+      }
+    });
+  }, [dispatch]);
 
   if (isLoading && genres.length === 0) {
     return (

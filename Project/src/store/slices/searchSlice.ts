@@ -26,23 +26,43 @@ export const searchMovies = createAsyncThunk(
         ...(state.movies?.featuredMovie ? [state.movies.featuredMovie] : [])
       ];
       
-      // Клиентский поиск по загруженным фильмам (поддержка русских названий)
-      const clientResults = allMovies.filter((movie: any) => 
-        movie.title?.toLowerCase().includes(lowerQuery)
-      );
+      console.log('Search query:', query, 'Total movies in store:', allMovies.length);
       
-      // Если нашли на клиенте или запрос на русском — возвращаем клиентские результаты
-      if (clientResults.length > 0 || /[а-яА-ЯЁё]/.test(query)) {
+      // Сначала ищем в локальных данных (работает для русского и английского)
+      // Ищем по названию и жанру
+      const clientResults = allMovies.filter((movie: any) => {
+        const title = movie.title?.toLowerCase() || '';
+        const genre = movie.genre?.toLowerCase() || '';
+        const matches = title.includes(lowerQuery) || genre.includes(lowerQuery);
+        if (matches) {
+          console.log('Found match in local:', movie.title, 'genre:', movie.genre);
+        }
+        return matches;
+      });
+      
+      // Если нашли в локальных данных, возвращаем их
+      if (clientResults.length > 0) {
+        console.log('Local search found results:', clientResults.length);
         return clientResults;
       }
       
-      // Иначе пробуем API (для английских названий)
+      // Если не нашли в локальных данных, пробуем API (для русского и английского)
       try {
         const apiResults = await apiService.searchMovies(query);
-        return apiResults;
-      } catch {
-        return clientResults;
+        // Если API вернул результаты, возвращаем их
+        if (apiResults && Array.isArray(apiResults) && apiResults.length > 0) {
+          console.log('API search found results:', apiResults.length);
+          return apiResults;
+        } else {
+          console.log('API search returned no results');
+        }
+      } catch (apiError) {
+        console.warn('API search failed:', apiError);
       }
+      
+      // Если ничего не нашли, возвращаем пустой массив
+      console.log('No results found for query:', query);
+      return [];
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка поиска');
     }

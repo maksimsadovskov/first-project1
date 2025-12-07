@@ -20,7 +20,7 @@
 
 .dashboard .container {
   max-width: 1440px;
-  padding: 0 50px; /* уменьшил padding до 50px для точного размещения сетки */
+  padding: 0 80px; /* боковой отступ 80px на экранах 1440px */
   margin: 0 auto;
   box-sizing: border-box;
   width: 100%;
@@ -66,6 +66,7 @@
   letter-spacing: 0;
   color: var(--text-primary);
   margin-bottom: 16px;
+  order: 0; /* По умолчанию порядок 0 */
 }
 
 .featured-movie__description {
@@ -86,6 +87,42 @@
   margin-bottom: 32px;
   align-items: center;
   justify-content: flex-start;
+  order: 0; /* По умолчанию порядок 0 */
+}
+
+/* От самого широкого экрана до мобильной версии: details над заголовком, отступ 16px */
+@media (min-width: 769px) {
+  .dashboard .featured-movie__info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dashboard .featured-movie__info > * {
+    display: flex;
+  }
+
+  .dashboard .featured-movie__details {
+    order: 1;
+    margin-bottom: 16px;
+    margin-top: 0;
+  }
+
+  .dashboard .featured-movie__title {
+    order: 2;
+    margin-top: 0;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .dashboard .featured-movie__description {
+    order: 3;
+    display: block;
+  }
+
+  .dashboard .featured-movie__actions-container {
+    order: 4;
+    display: flex;
+  }
 }
 
 .detail-item {
@@ -206,9 +243,11 @@
 
 .section-title {
   font-family: 'Play', sans-serif;
-  font-size: 40px;
-  line-height: 48px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 32px;
+  letter-spacing: 0;
   color: var(--text-primary);
   margin: 0 0 64px 0; /* обнуляем все отступы, задаем только 64px вниз до списка */
   text-align: left; /* "Топ 10 фильмов" выровнено влево */
