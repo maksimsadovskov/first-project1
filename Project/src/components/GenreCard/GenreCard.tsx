@@ -43,16 +43,10 @@ const GenreCard: React.FC<GenreCardProps> = ({ genre }) => {
   // Используем изображение из genre.image (может быть URL постер или SVG placeholder)
   let imageSrc = genre.image || '';
   
-  // Логируем для отладки
-  if (imageSrc && (imageSrc.startsWith('http://') || imageSrc.startsWith('https://'))) {
-    console.log(`GenreCard: Используем постер для жанра ${genre.name}:`, imageSrc);
-  }
-  
   // Если изображение не задано или это не валидный URL, создаем SVG placeholder
   if (!imageSrc || (!imageSrc.startsWith('http://') && !imageSrc.startsWith('https://') && !imageSrc.startsWith('data:'))) {
     const bgColor = genreColorMap[genre.name] || '666666';
     imageSrc = createPlaceholderImage(genre.name, bgColor, 'ffffff');
-    console.log(`GenreCard: Используем placeholder для жанра ${genre.name}, genre.image:`, genre.image);
   }
   
   return (

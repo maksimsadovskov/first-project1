@@ -40,21 +40,21 @@
 
 .genre-header {
   text-align: left;
-  margin-bottom: 64px; /* расстояние от заголовка до списка */
+  margin-bottom: 48px;
 }
 
 .genre-back-btn {
   background: none;
   border: none;
   color: #ffffff;
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 12px;
-  margin: 0 auto 16px auto;
+  margin: 0;
   transition: opacity 0.2s ease;
 }
 
@@ -63,33 +63,28 @@
 }
 
 .back-arrow {
-  font-size: 36px;
-  font-weight: 700;
+  display: inline-flex;
+  width: 13px;
+  height: 22px;
 }
 
 .genre-title {
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 700;
   color: #ffffff;
   margin: 0;
 }
 
-.genre-description {
-  font-size: 18px;
-  color: #ccc;
-  line-height: 1.6;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
 .movies-grid {
   display: grid;
-  grid-template-columns: repeat(5, 224px);
-  grid-auto-rows: 336px;
-  gap: 40px; /* горизонтальный и вертикальный по умолчанию */
-  row-gap: 64px; /* вертикальный между рядами */
-  justify-content: center;
+  grid-template-columns: repeat(5, 1fr); /* 5 колонок, растягиваются равномерно */
+  grid-auto-rows: auto;
+  gap: 40px; /* 40px между постерами по горизонтали */
+  row-gap: 64px; /* 64px между рядами по вертикали */
+  justify-content: start; /* Выравнивание по левому краю */
   overflow: visible; /* Чтобы тени не обрезались */
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .no-movies {
@@ -145,9 +140,66 @@
   transform: none;
 }
 
+/* На десктопе всегда 5 колонок, растягиваются на всю ширину */
+@media (min-width: 769px) {
+  .movies-grid {
+    grid-template-columns: repeat(5, 1fr);
+    justify-content: start;
+  }
+  
+  /* Карточки растягиваются на всю ширину ячейки */
+  .movies-grid .movie-card-wrapper,
+  .movies-grid .movie-card-wrapper .movie-card {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+/* На странице жанра скрываем информационный блок (название, рейтинг) - только постеры */
+.genre-page .movies-grid .movie-card__info {
+  display: none;
+}
+
+.genre-page .movies-grid .movie-card {
+  height: auto;
+}
+
+.genre-page .movies-grid .movie-card__poster {
+  height: auto;
+  aspect-ratio: 2 / 3;
+}
+
+.genre-page .movies-grid .movie-card__poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Убираем желтые обводки у ссылок на странице жанра */
+.genre-page a,
+.genre-page a:link,
+.genre-page a:visited,
+.genre-page a:hover,
+.genre-page a:active,
+.genre-page a:focus,
+.genre-page a:focus-visible {
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+  outline-offset: 0;
+  border: none;
+  box-shadow: none;
+  background-color: transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+
 @media (max-width: 768px) {
   .genre-page {
     padding: 20px 0;
+  }
+  
+  .genre-page .container {
+    padding: 0 20px;
   }
   
   .genre-header {
@@ -173,12 +225,25 @@
   
   .movies-grid {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 20px;
+    row-gap: 24px;
+    justify-items: center;
   }
   
   .load-more-btn {
     padding: 12px 24px;
     font-size: 14px;
+  }
+
+  .genre-page .movie-card--small {
+    width: 100% !important;
+    max-width: 335px;
+    height: auto;
+  }
+
+  .genre-page .movie-card__poster {
+    aspect-ratio: 2 / 3;
+    height: auto;
   }
 }
 
@@ -202,5 +267,12 @@
   
   .movies-grid {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .movies-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-items: stretch;
   }
 }

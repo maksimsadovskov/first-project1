@@ -56,7 +56,6 @@ const AccountPage: React.FC = () => {
               width={20} 
               height={20}
               onError={(e) => {
-                console.error('Ошибка загрузки iconHeart:', iconHeart);
                 const target = e.target as HTMLImageElement;
                 target.style.display = 'none';
               }}
@@ -73,7 +72,6 @@ const AccountPage: React.FC = () => {
               width={20} 
               height={20}
               onError={(e) => {
-                console.error('Ошибка загрузки iconPersonaOutline:', iconPersonaOutline);
                 const target = e.target as HTMLImageElement;
                 target.style.display = 'none';
               }}
@@ -136,7 +134,6 @@ const AccountPage: React.FC = () => {
                       width={24} 
                       height={24}
                       onError={(e) => {
-                        console.error('Ошибка загрузки iconEnvelope:', iconEnvelope);
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';
                       }}

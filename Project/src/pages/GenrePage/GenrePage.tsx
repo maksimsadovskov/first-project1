@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { fetchMoviesByGenre, addMoreMovies } from '../../store/slices/moviesSlice';
+import { store } from '../../store';
+import { fetchMoviesByGenre, addMoreMovies, clearMovies } from '../../store/slices/moviesSlice';
 import MovieCard from '../../components/MovieCard/MovieCard';
 import './GenrePage.css';
 
@@ -14,39 +15,35 @@ const GenrePage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [hasMoreMovies, setHasMoreMovies] = useState<boolean>(true);
+  const [isInitialLoading, setIsInitialLoading] = useState<boolean>(false);
 
-  const MOVIES_PER_PAGE = 15; // 5 постеров в ряду × 3 ряда = 15 фильмов
+  const INITIAL_MOVIES_COUNT = 15;
+  const LOAD_MORE_COUNT = 10;
 
   useEffect(() => {
-    if (genreId) {
-      console.log('Загрузка фильмов для жанра ID:', genreId);
-      // Очищаем фильмы перед загрузкой
-      setCurrentPage(1);
-      setHasMoreMovies(true);
-      
-      dispatch(fetchMoviesByGenre({ 
-        genreId: parseInt(genreId), 
-        page: 1, 
-        limit: MOVIES_PER_PAGE 
-      })).then((result) => {
+    if (!genreId) return;
+    const parsedGenreId = parseInt(genreId);
+    setIsInitialLoading(true);
+    setHasMoreMovies(true);
+    setCurrentPage(1);
+    dispatch(clearMovies());
+    dispatch(fetchMoviesByGenre({ genreId: parsedGenreId, page: 1, limit: INITIAL_MOVIES_COUNT }))
+      .then((result) => {
         if (result.type === 'movies/fetchMoviesByGenre/fulfilled') {
           const response = result.payload as any;
-          if (response && response.movies) {
-            console.log('Загружено фильмов:', response.movies.length);
-            if (response.movies.length < MOVIES_PER_PAGE) {
-              setHasMoreMovies(false);
-            } else {
-              setHasMoreMovies(true);
-            }
-          }
-        } else if (result.type === 'movies/fetchMoviesByGenre/rejected') {
-          console.error('Ошибка загрузки фильмов:', result);
+          const total = (response && typeof response.total === 'number') ? response.total : 0;
+          const state = store.getState();
+          const count = state.movies.movies.length;
+          setHasMoreMovies(total > count);
+        } else {
           setHasMoreMovies(false);
         }
+      })
+      .finally(() => {
+        setIsInitialLoading(false);
       });
-    }
   }, [genreId, dispatch]);
-
+  
   const loadMoreMovies = (): void => {
     if (!genreId || loadingMore || !hasMoreMovies) return;
     
@@ -57,19 +54,18 @@ const GenrePage: React.FC = () => {
     dispatch(fetchMoviesByGenre({ 
       genreId: parseInt(genreId), 
       page: nextPage, 
-      limit: MOVIES_PER_PAGE 
+      limit: LOAD_MORE_COUNT 
     })).then((result) => {
-      if (result.payload && typeof result.payload === 'object' && result.payload !== null && 'movies' in result.payload) {
-        const response = result.payload as any;
-        console.log('Загружено фильмов для страницы', nextPage, ':', response.movies.length);
-        if (response.movies.length < MOVIES_PER_PAGE) {
+        if (result.payload && typeof result.payload === 'object' && result.payload !== null && 'movies' in result.payload) {
+          const response = result.payload as any;
+          const total = response && typeof response.total === 'number' ? response.total : 0;
+          const state = store.getState();
+          const newCount = state.movies.movies.length;
+          setHasMoreMovies(total > 0 && newCount < total);
+          setCurrentPage(nextPage);
+        } else if (result.type === 'movies/fetchMoviesByGenre/rejected') {
           setHasMoreMovies(false);
         }
-        setCurrentPage(nextPage);
-      } else if (result.type === 'movies/fetchMoviesByGenre/rejected') {
-        console.error('Ошибка загрузки фильмов:', result);
-        setHasMoreMovies(false);
-      }
       setLoadingMore(false);
     }).catch(() => {
       setLoadingMore(false);
@@ -77,19 +73,20 @@ const GenrePage: React.FC = () => {
     });
   };
 
-  const genre = genres.find(g => g.id === parseInt(genreId || '0'));
-
   const handleGoBack = (): void => {
-    navigate(-1); // Возврат на предыдущую страницу
+    navigate(-1);
   };
 
-  if (isLoading && movies.length === 0) {
+  if (isInitialLoading && movies.length === 0) {
     return (
       <div className="genre-page-loading">
         <div className="loading-spinner">Загрузка...</div>
       </div>
     );
   }
+
+  const genre = genres.find(g => g.id === parseInt(genreId || '0')) || 
+                (genreId ? { id: parseInt(genreId), name: `Жанр ${genreId}`, slug: '', image: '' } : null);
 
   if (!genre) {
     return (
@@ -105,12 +102,13 @@ const GenrePage: React.FC = () => {
       <div className="container">
         <div className="genre-header">
           <button className="genre-back-btn" onClick={handleGoBack}>
-            <span className="back-arrow">←</span>
+            <span className="back-arrow" aria-hidden="true">
+              <svg width="13" height="22" viewBox="0 0 13 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4.714 10.6066L12.9637 18.8561L10.6067 21.2131L0 10.6066L10.6067 0L12.9637 2.35702L4.714 10.6066Z" fill="white"/>
+              </svg>
+            </span>
             <span className="genre-title">{genre.name}</span>
           </button>
-          <p className="genre-description">
-            Лучшие фильмы в жанре "{genre.name}". Всего найдено: {movies.length} фильмов.
-          </p>
         </div>
 
         {movies.length === 0 ? (
@@ -121,19 +119,19 @@ const GenrePage: React.FC = () => {
         ) : (
           <>
             <div className="movies-grid">
-              {movies.map(movie => (
+              {movies.slice(0, currentPage === 1 ? INITIAL_MOVIES_COUNT : movies.length).map(movie => (
                 <MovieCard key={movie.id} movie={movie} size="small" />
               ))}
             </div>
 
-            {hasMoreMovies && movies.length >= 15 && (
+            {hasMoreMovies && movies.length >= INITIAL_MOVIES_COUNT && !isInitialLoading && (
               <div className="load-more-container">
                 <button 
                   className="load-more-btn"
                   onClick={loadMoreMovies}
                   disabled={loadingMore}
                 >
-                  {loadingMore ? 'Загрузка...' : 'Загрузить еще'}
+                  {loadingMore ? 'Загрузка...' : 'Показать еще'}
                 </button>
               </div>
             )}

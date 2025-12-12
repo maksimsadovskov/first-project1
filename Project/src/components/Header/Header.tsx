@@ -126,7 +126,7 @@ const Header: React.FC = () => {
                   {isMobile ? (
                     <img src={iconPersonaOutline} alt="Профиль" width={20} height={20} />
                   ) : (
-                    user.surname
+                    user.name
                   )}
                 </button>
               ) : (

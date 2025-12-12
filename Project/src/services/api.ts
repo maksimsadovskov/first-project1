@@ -72,7 +72,6 @@ class ApiService {
     return response.data.data;
   }
 
-  // Movies methods
   async getMovies(page: number = 1, limit: number = 10): Promise<MoviesResponse> {
     const response: AxiosResponse<any[]> = await this.api.get(
       `/movie?page=${page}&count=${limit}`
@@ -196,77 +195,128 @@ class ApiService {
 
   async getMoviesByGenre(genreId: number, page: number = 1, limit: number = 10): Promise<MoviesResponse> {
     try {
-      // Пробуем разные варианты запроса
-      let response: AxiosResponse<any[]>;
-      let movies: any[] = [];
+      const genresResponse = await this.api.get('/movie/genres');
+      const genreNames = genresResponse.data || [];
+      const genreName = genreNames[genreId - 1] || '';
       
-      const attempts = [
-        () => this.api.get(`/movie?genre=${genreId}&page=${page}&count=${limit}`),
-        () => this.api.get(`/movie?genre=${genreId}&page=${page}`),
-        () => this.api.get(`/movie?genre=${genreId}`),
-        () => this.api.get(`/movie?page=${page}&count=${limit * 2}`) // Запрашиваем больше фильмов для фильтрации
-      ];
-      
-      for (const attempt of attempts) {
-        try {
-          response = await attempt();
-          if (response && response.data && Array.isArray(response.data) && response.data.length > 0) {
-            movies = response.data;
-            console.log(`Найдено ${movies.length} фильмов для жанра ID ${genreId} (попытка ${attempts.indexOf(attempt) + 1})`);
+      const collectGenrePages = async (): Promise<any[]> => {
+        const collected: any[] = [];
+        for (let p = 1; p <= 5; p++) {
+          try {
+            const resp = await this.api.get(`/movie?genre=${encodeURIComponent(genreName)}&page=${p}&count=200`);
+            if (resp && Array.isArray(resp.data) && resp.data.length > 0) {
+              collected.push(...resp.data);
+              if (resp.data.length < 200) break;
+            } else {
+              break;
+            }
+          } catch (err) {
             break;
           }
-        } catch (err) {
-          console.warn(`Попытка загрузки фильмов по жанру ${genreId} не удалась:`, err);
-          continue;
         }
-      }
+        return collected;
+      };
       
-      // Если не нашли через запрос по жанру, пробуем найти среди всех фильмов
-      if (movies.length === 0) {
-        try {
-          console.log(`Не найдено фильмов через запрос по жанру, ищем среди всех фильмов...`);
-          // Запрашиваем только необходимое количество + небольшой запас для фильтрации
-          const requestCount = limit * 5; // Запрашиваем в 5 раз больше для фильтрации
-          const allMoviesResponse = await this.api.get(`/movie?page=1&count=${requestCount}`);
-          if (allMoviesResponse && allMoviesResponse.data && Array.isArray(allMoviesResponse.data)) {
-            // Получаем название жанра по ID
-            const genresResponse = await this.api.get('/movie/genres');
-            const genreNames = genresResponse.data || [];
-            const genreName = genreNames[genreId - 1] || '';
-            const russianGenreName = this.mapGenreToRussian(genreName);
-            
-            // Фильтруем фильмы по жанру
-            const filteredMovies = allMoviesResponse.data.filter((movie: any) => {
-              if (!movie.genres || !Array.isArray(movie.genres)) return false;
-              const movieGenres = movie.genres.map((g: string) => this.mapGenreToRussian(g.toLowerCase()));
-              return movieGenres.includes(russianGenreName) || movieGenres.some((g: string) => 
-                g.toLowerCase().includes(genreName.toLowerCase())
-              );
-            });
-            
-            // Применяем пагинацию - берем только нужное количество для текущей страницы
-            const start = (page - 1) * limit;
-            const end = start + limit;
-            movies = filteredMovies.slice(start, end);
-            
-            console.log(`Найдено ${movies.length} фильмов жанра "${russianGenreName}" среди всех фильмов (из ${filteredMovies.length} отфильтрованных, страница ${page})`);
+      const directMovies = await collectGenrePages();
+      
+      let filteredMovies: any[] = [];
+      try {
+        const requestCount = 4000;
+        const allMoviesResponse = await this.api.get(`/movie?page=1&count=${requestCount}`);
+        if (allMoviesResponse && Array.isArray(allMoviesResponse.data)) {
+          const russianGenreName = this.mapGenreToRussian(genreName);
+          
+          const russianToEnglishMap: { [key: string]: string[] } = {
+            'Драма': ['drama'],
+            'Комедия': ['comedy'],
+            'Боевик': ['action'],
+            'Триллер': ['thriller'],
+            'Ужасы': ['horror'],
+            'Фантастика': ['fantasy', 'science fiction', 'sci-fi'],
+            'Приключения': ['adventure'],
+            'Мультфильмы': ['animation'],
+            'Мелодрама': ['romance'],
+            'Детектив': ['mystery'],
+            'Криминал': ['crime'],
+            'Военный': ['war'],
+            'Исторический': ['history', 'historical'],
+            'Документальный': ['documentary'],
+            'Семейный': ['family'],
+            'Музыка': ['music'],
+            'Вестерн': ['western'],
+            'Стендап': ['stand-up', 'standup']
+          };
+          
+          const searchTerms: string[] = [russianGenreName.toLowerCase(), genreName.toLowerCase()];
+          if (russianToEnglishMap[russianGenreName]) {
+            searchTerms.push(...russianToEnglishMap[russianGenreName]);
           }
-        } catch (err) {
-          console.error(`Ошибка при поиске фильмов среди всех:`, err);
+          
+          const normalizedTerms = searchTerms
+            .filter(Boolean)
+            .map(t => t.toLowerCase().trim())
+            .flatMap(t => {
+              const clean = t.replace(/\s+/g, '');
+              return clean ? [t, clean] : [t];
+            });
+          
+          filteredMovies = allMoviesResponse.data.filter((movie: any) => {
+            if (!movie.genres || !Array.isArray(movie.genres)) return false;
+            
+            const movieGenresLower = movie.genres
+              .filter((g: string) => typeof g === 'string')
+              .map((g: string) => g.toLowerCase().trim());
+            const movieGenresClean = movieGenresLower.map((g: string) => g.replace(/\s+/g, ''));
+            const movieGenresRussian = movie.genres
+              .filter((g: string) => typeof g === 'string')
+              .map((g: string) => this.mapGenreToRussian(g.toLowerCase().trim()));
+            const movieGenresRussianClean = movieGenresRussian.map((g: string) => g.replace(/\s+/g, ''));
+            
+            for (const term of normalizedTerms) {
+              if (
+                movieGenresLower.includes(term) ||
+                movieGenresRussian.includes(term) ||
+                movieGenresClean.includes(term) ||
+                movieGenresRussianClean.includes(term) ||
+                movieGenresLower.some((g: string) => g.includes(term)) ||
+                movieGenresRussian.some((g: string) => g.includes(term)) ||
+                movieGenresClean.some((g: string) => g.includes(term)) ||
+                movieGenresRussianClean.some((g: string) => g.includes(term)) ||
+                term.includes(movieGenresLower[0] || '') ||
+                term.includes(movieGenresRussian[0] || '')
+              ) {
+                return true;
+              }
+            }
+            
+            return false;
+          });
         }
-      } else {
-        // Если нашли через запрос по жанру, ограничиваем до нужного количества
-        const start = (page - 1) * limit;
-        const end = start + limit;
-        movies = movies.slice(start, end);
-        console.log(`Ограничено до ${movies.length} фильмов для страницы ${page}`);
+      } catch (err) {
       }
       
-      const mappedMovies = movies.map((data: any) => {
+      const combinedUnique: any[] = [];
+      const seenIds = new Set<number>();
+      const pushUnique = (items: any[]) => {
+        for (const m of items) {
+          if (!seenIds.has(m.id)) {
+            seenIds.add(m.id);
+            combinedUnique.push(m);
+          }
+        }
+      };
+      
+      pushUnique(directMovies);
+      pushUnique(filteredMovies);
+      
+      const total = combinedUnique.length;
+      const start = page === 1 ? 0 : 15 + (page - 2) * limit;
+      const end = page === 1 ? 15 : start + limit;
+      const pageMovies = combinedUnique.slice(start, end);
+      
+      const mappedMovies = pageMovies.map((data: any) => {
         const firstGenre = data.genres?.[0] || '';
-        // Используем posterUrl, backdropUrl или placeholder
         let poster = data.posterUrl || data.backdropUrl || '';
-        // Если постер пустой, используем placeholder
         if (!poster || poster.trim() === '') {
           poster = `https://picsum.photos/300/450?random=${data.id}`;
         }
@@ -288,9 +338,8 @@ class ApiService {
         };
       });
       
-      return { movies: mappedMovies, total: mappedMovies.length, page, limit };
+      return { movies: mappedMovies, total, page, limit };
     } catch (error: any) {
-      console.error(`Ошибка загрузки фильмов по жанру ${genreId}:`, error);
       return { movies: [], total: 0, page, limit };
     }
   }
@@ -303,13 +352,10 @@ class ApiService {
       
       // Проверяем, что response.data существует и является массивом
       if (!response.data || !Array.isArray(response.data)) {
-        console.warn('API search returned invalid data:', response.data);
         return [];
       }
       
-      // Если массив пустой, возвращаем пустой массив
       if (response.data.length === 0) {
-        console.log('API search returned no results for query:', query);
         return [];
       }
       
@@ -333,8 +379,6 @@ class ApiService {
         };
       });
     } catch (error: any) {
-      console.error('API search error:', error);
-      // Возвращаем пустой массив вместо выброса ошибки
       return [];
     }
   }
@@ -377,7 +421,6 @@ class ApiService {
         <rect width="300" height="200" fill="#${bgColor}"/>
         <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="24" fill="#${textColor}" text-anchor="middle" dominant-baseline="middle">${text}</text>
       </svg>`;
-      // Используем btoa для кодирования base64 в браузере
       return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
     };
     
@@ -404,59 +447,45 @@ class ApiService {
       'Стендап': '9c27b0'
     };
     
-    // Загружаем постер первого фильма для каждого жанра
+    // Оптимизация: загружаем все фильмы один раз для поиска постеров
+    let allMoviesCache: any[] = [];
+    try {
+      const allMoviesResponse = await this.api.get(`/movie?page=1&count=200`);
+      if (allMoviesResponse && allMoviesResponse.data && Array.isArray(allMoviesResponse.data)) {
+        allMoviesCache = allMoviesResponse.data;
+      }
+    } catch (err) {
+    }
+    
     const genresWithImages = await Promise.allSettled(
       response.data.map(async (name, index) => {
-        // Преобразуем английское название в русское
         const lowerName = name.toLowerCase().trim();
         const russianName = genreNameMap[lowerName] || name;
         const genreId = index + 1;
         
         let imageUrl = '';
+        let foundMovie = null;
         
         try {
-          // Пытаемся получить фильмы из жанра (пробуем разные варианты запроса)
-          let moviesResponse;
-          let foundMovie = null;
-          
-          // Сначала пробуем запрос по жанру с разными параметрами
-          const attempts = [
-            () => this.api.get(`/movie?genre=${genreId}&page=1&count=50`),
-            () => this.api.get(`/movie?genre=${genreId}&page=1&count=30`),
-            () => this.api.get(`/movie?genre=${genreId}&page=1&count=20`),
-            () => this.api.get(`/movie?genre=${genreId}&page=1`),
-            () => this.api.get(`/movie?genre=${genreId}`)
-          ];
-          
-          for (const attempt of attempts) {
-            try {
-              moviesResponse = await attempt();
-              if (moviesResponse && moviesResponse.data && Array.isArray(moviesResponse.data) && moviesResponse.data.length > 0) {
-                foundMovie = moviesResponse.data[0];
-                break;
-              }
-            } catch (err) {
-              continue;
-            }
+          // Сначала пробуем найти в кэше всех фильмов
+          if (allMoviesCache.length > 0) {
+            foundMovie = allMoviesCache.find((movie: any) => {
+              if (!movie.genres || !Array.isArray(movie.genres)) return false;
+              const movieGenres = movie.genres.map((g: string) => g.toLowerCase());
+              const targetGenre = name.toLowerCase();
+              return movieGenres.includes(targetGenre);
+            });
           }
           
-          // Если не нашли через запрос по жанру, пробуем найти среди всех фильмов
+          // Если не нашли в кэше, пробуем один запрос по жанру
           if (!foundMovie) {
             try {
-              // Запрашиваем много фильмов и ищем среди них фильм нужного жанра
-              const allMoviesResponse = await this.api.get(`/movie?page=1&count=100`);
-              if (allMoviesResponse && allMoviesResponse.data && Array.isArray(allMoviesResponse.data)) {
-                // Ищем фильм с нужным жанром (проверяем по genres массиву)
-                foundMovie = allMoviesResponse.data.find((movie: any) => {
-                  if (!movie.genres || !Array.isArray(movie.genres)) return false;
-                  // Проверяем, есть ли в жанрах фильма нужный жанр
-                  const movieGenres = movie.genres.map((g: string) => g.toLowerCase());
-                  const targetGenre = name.toLowerCase();
-                  return movieGenres.includes(targetGenre);
-                });
+              const moviesResponse = await this.api.get(`/movie?genre=${genreId}&page=1&count=10`);
+              if (moviesResponse && moviesResponse.data && Array.isArray(moviesResponse.data) && moviesResponse.data.length > 0) {
+                foundMovie = moviesResponse.data[0];
               }
             } catch (err) {
-              console.warn(`Не удалось загрузить все фильмы для поиска жанра ${russianName}:`, err);
+              // Игнорируем ошибку, используем placeholder
             }
           }
           
@@ -464,25 +493,13 @@ class ApiService {
             // Проверяем наличие постеров
             imageUrl = foundMovie.posterUrl || foundMovie.backdropUrl || '';
             
-            // Логируем для отладки
-            if (imageUrl) {
-              console.log(`Постер для жанра ${russianName} (ID: ${genreId}):`, imageUrl);
-            } else {
-              console.warn(`Постер не найден для жанра ${russianName} (ID: ${genreId}), фильм:`, foundMovie);
-            }
-            
             // Проверяем, что URL валидный
-            if (imageUrl && (imageUrl.startsWith('http://') || imageUrl.startsWith('https://'))) {
-              // URL валидный, используем его
-            } else {
+            if (!imageUrl || (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://'))) {
               imageUrl = '';
             }
-          } else {
-            console.warn(`Нет фильмов для жанра ${russianName} (ID: ${genreId})`);
           }
         } catch (error: any) {
           // Если не удалось загрузить фильм, используем placeholder
-          console.warn(`Не удалось загрузить фильм для жанра ${russianName} (ID: ${genreId}):`, error?.message || error);
           imageUrl = '';
         }
         

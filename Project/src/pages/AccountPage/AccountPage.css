@@ -85,8 +85,27 @@
 /* Полный текст для десктопа - без ::after */
 
 .account-content {
+  max-width: none;
+  margin: 0;
+  width: 100%;
+}
+
+.favorites-section {
   max-width: 800px;
   margin: 0 auto;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  /* Всегда слева на десктопе */
+  margin-left: 0;
+  margin-right: auto;
 }
 
 .section-title {
@@ -233,7 +252,23 @@
   transform: translateY(-2px);
 }
 
+/* На мобильных устройствах (до 768px) */
 @media (max-width: 768px) {
+  .account-content {
+    max-width: none;
+    margin: 0;
+  }
+  
+  .favorites-section {
+    max-width: none;
+    margin: 0;
+  }
+  
+  .settings-section {
+    max-width: none;
+    margin: 0;
+  }
+  
   .account-page {
     padding: 0;
   }
