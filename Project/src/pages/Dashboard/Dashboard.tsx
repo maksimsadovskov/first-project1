@@ -26,9 +26,15 @@ const Dashboard: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(fetchRandomMovie());
-    dispatch(fetchTopMovies());
-  }, [dispatch]);
+    // Загружаем только если данные еще не загружены (они уже загружаются в App.tsx)
+    // Но если данных нет, загружаем их здесь
+    if (!featuredMovie) {
+      dispatch(fetchRandomMovie());
+    }
+    if (topMovies.length === 0) {
+      dispatch(fetchTopMovies());
+    }
+  }, [dispatch, featuredMovie, topMovies.length]);
 
   const handleGetNewMovie = (): void => {
     dispatch(fetchRandomMovie());
@@ -41,22 +47,17 @@ const Dashboard: React.FC = () => {
   };
 
   const handleFavoriteClick = (): void => {
-    console.log('=== КЛИК НА СЕРДЕЧКО ===', { featuredMovie, isAuthenticated });
     if (!featuredMovie) return;
     
     if (!isAuthenticated) {
-      console.log('Не авторизован, открываю модалку');
       dispatch(openAuthModal());
       return;
     }
 
     const isFavorite = favorites.some(fav => fav.id === featuredMovie.id);
-    console.log('В избранном?', isFavorite);
     if (isFavorite) {
-      console.log('Удаляю из избранного');
       dispatch(removeFromFavorites(featuredMovie.id));
     } else {
-      console.log('Добавляю в избранное');
       dispatch(addToFavorites(featuredMovie.id));
     }
   };

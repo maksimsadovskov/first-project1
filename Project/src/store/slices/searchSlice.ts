@@ -9,59 +9,72 @@ const initialState: SearchState = {
   isSearching: false,
 };
 
+// Кэш для предотвращения дублирования запросов
+const searchCache = new Map<string, { results: any[]; timestamp: number }>();
+const CACHE_DURATION = 60000; // 1 минута
+
 // Async thunk
 export const searchMovies = createAsyncThunk(
   'search/searchMovies',
-  async (query: string, { rejectWithValue, getState }) => {
+  async (query: string, { rejectWithValue, getState, signal }) => {
     try {
       if (!query.trim()) {
         return [];
       }
       
-      const lowerQuery = query.toLowerCase();
+      // Проверяем кэш
+      const cached = searchCache.get(query);
+      if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+        return cached.results;
+      }
+      
+      // Проверяем, не выполняется ли уже запрос с таким же query
       const state: any = getState();
+      if (state.search.isSearching && state.search.query === query) {
+        // Запрос уже выполняется, возвращаем текущие результаты
+        return state.search.results;
+      }
+      
+      const lowerQuery = query.toLowerCase();
       const allMovies = [
         ...(state.movies?.movies || []),
         ...(state.movies?.topMovies || []),
         ...(state.movies?.featuredMovie ? [state.movies.featuredMovie] : [])
       ];
       
-      console.log('Search query:', query, 'Total movies in store:', allMovies.length);
-      
       // Сначала ищем в локальных данных (работает для русского и английского)
       // Ищем по названию и жанру
       const clientResults = allMovies.filter((movie: any) => {
         const title = movie.title?.toLowerCase() || '';
         const genre = movie.genre?.toLowerCase() || '';
-        const matches = title.includes(lowerQuery) || genre.includes(lowerQuery);
-        if (matches) {
-          console.log('Found match in local:', movie.title, 'genre:', movie.genre);
-        }
-        return matches;
+        return title.includes(lowerQuery) || genre.includes(lowerQuery);
       });
       
-      // Если нашли в локальных данных, возвращаем их
+      // Если нашли в локальных данных, кэшируем и возвращаем
       if (clientResults.length > 0) {
-        console.log('Local search found results:', clientResults.length);
+        searchCache.set(query, { results: clientResults, timestamp: Date.now() });
         return clientResults;
       }
       
       // Если не нашли в локальных данных, пробуем API (для русского и английского)
-      try {
-        const apiResults = await apiService.searchMovies(query);
-        // Если API вернул результаты, возвращаем их
-        if (apiResults && Array.isArray(apiResults) && apiResults.length > 0) {
-          console.log('API search found results:', apiResults.length);
-          return apiResults;
-        } else {
-          console.log('API search returned no results');
-        }
-      } catch (apiError) {
-        console.warn('API search failed:', apiError);
+      // Проверяем, не отменен ли запрос
+      if (signal.aborted) {
+        return [];
       }
       
-      // Если ничего не нашли, возвращаем пустой массив
-      console.log('No results found for query:', query);
+      try {
+        const apiResults = await apiService.searchMovies(query);
+        // Если API вернул результаты, кэшируем и возвращаем
+        if (apiResults && Array.isArray(apiResults) && apiResults.length > 0) {
+          searchCache.set(query, { results: apiResults, timestamp: Date.now() });
+          return apiResults;
+        }
+      } catch (apiError) {
+        // Игнорируем ошибки API, возвращаем пустой массив
+      }
+      
+      // Если ничего не нашли, кэшируем пустой результат
+      searchCache.set(query, { results: [], timestamp: Date.now() });
       return [];
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка поиска');

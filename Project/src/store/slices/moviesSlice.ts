@@ -28,12 +28,29 @@ export const fetchMovies = createAsyncThunk(
 
 export const fetchRandomMovie = createAsyncThunk(
   'movies/fetchRandomMovie',
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, getState }) => {
     try {
+      // Проверяем, не загружен ли уже featured movie
+      const state: any = getState();
+      if (state.movies.featuredMovie && !state.movies.isLoading) {
+        // Фильм уже загружен, возвращаем его (или загружаем новый по требованию)
+        // Но если это не явный запрос нового фильма, можно вернуть существующий
+      }
+      
       const movie = await apiService.getRandomMovie();
       return movie;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки случайного фильма');
+    }
+  },
+  {
+    condition: (_, { getState }) => {
+      // Предотвращаем выполнение, если уже выполняется запрос
+      const state: any = getState();
+      if (state.movies.isLoading) {
+        return false; // Отменяем дублирующий запрос
+      }
+      return true;
     }
   }
 );
@@ -47,6 +64,21 @@ export const fetchTopMovies = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки топ фильмов');
     }
+  },
+  {
+    condition: (_, { getState }) => {
+      // Предотвращаем выполнение, если уже выполняется запрос или топ фильмы уже загружены
+      const state: any = getState();
+      // Если топ фильмы уже загружены, не выполняем запрос повторно
+      if (state.movies.topMovies && state.movies.topMovies.length > 0) {
+        return false;
+      }
+      // Если уже выполняется какой-то запрос, не выполняем новый
+      if (state.movies.isLoading) {
+        return false;
+      }
+      return true;
+    }
   }
 );
 
@@ -59,17 +91,42 @@ export const fetchMoviesByGenre = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки фильмов по жанру');
     }
+  },
+  {
+    condition: (arg, { getState }) => {
+      // Предотвращаем выполнение, если уже выполняется запрос
+      const state: any = getState();
+      if (state.movies.isLoading) {
+        return false; // Отменяем дублирующий запрос
+      }
+      return true;
+    }
   }
 );
 
 export const fetchGenres = createAsyncThunk(
   'movies/fetchGenres',
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, getState }) => {
     try {
       const genres = await apiService.getGenres();
       return genres as unknown as Genre[];
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки жанров');
+    }
+  },
+  {
+    condition: (_, { getState }) => {
+      // Предотвращаем выполнение, если уже выполняется запрос или жанры уже загружены
+      const state: any = getState();
+      // Если жанры уже загружены, не выполняем запрос повторно
+      if (state.movies.genres && state.movies.genres.length > 0) {
+        return false;
+      }
+      // Если уже выполняется какой-то запрос, не выполняем новый
+      if (state.movies.isLoading) {
+        return false;
+      }
+      return true;
     }
   }
 );
@@ -197,20 +254,27 @@ const moviesSlice = createSlice({
           state.movies = [];
         }
       })
-      .addCase(fetchMoviesByGenre.fulfilled, (state, action: PayloadAction<MoviesResponse & { genreId: number }>) => {
+      .addCase(fetchMoviesByGenre.fulfilled, (state, action) => {
         state.isLoading = false;
-        // Всегда заменяем фильмы на новые (показываем только 15 за раз)
-        state.movies = action.payload.movies;
+        const page = (action.meta?.arg as any)?.page || 1;
+        // Если первая страница - заменяем, если следующая - добавляем
+        if (page === 1) {
+          state.movies = action.payload.movies;
+        } else {
+          // Добавляем новые фильмы к существующим, исключая дубликаты
+          const existingIds = new Set(state.movies.map(m => m.id));
+          const newMovies = action.payload.movies.filter((m: Movie) => !existingIds.has(m.id));
+          state.movies = [...state.movies, ...newMovies];
+        }
         state.error = null;
       })
       .addCase(fetchMoviesByGenre.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload;
+        state.error = action.payload as string;
         // Если это первая страница и произошла ошибка, очищаем фильмы
         if (action.meta && action.meta.arg && action.meta.arg.page === 1) {
           state.movies = [];
         }
-        console.error('Ошибка загрузки фильмов по жанру:', action.payload);
       })
       // Fetch Genres
       .addCase(fetchGenres.pending, (state) => {

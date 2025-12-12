@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setQuery, searchMovies } from '../../store/slices/searchSlice';
@@ -11,15 +11,48 @@ const HeaderSearch: React.FC = () => {
   const { query, results, isSearching } = useAppSelector((state) => state.search);
   const [isOpen, setIsOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Debounced search function
+  const debouncedSearch = useCallback((searchQuery: string) => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    
+    debounceTimerRef.current = setTimeout(() => {
+      if (searchQuery.trim()) {
+        dispatch(searchMovies(searchQuery));
+      }
+    }, 300); // 300ms delay
+  }, [dispatch]);
 
   useEffect(() => {
     if (query.trim()) {
-      dispatch(searchMovies(query));
+      debouncedSearch(query);
       setIsOpen(true);
     } else {
       setIsOpen(false);
+      // Очищаем таймер при очистке запроса
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
+      }
     }
-  }, [query, dispatch]);
+    
+    // Cleanup function
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [query, debouncedSearch]);
+
+  // Открываем выпадающий список при наличии результатов или при поиске
+  useEffect(() => {
+    if (query.trim() && (isSearching || results.length > 0)) {
+      setIsOpen(true);
+    }
+  }, [query, isSearching, results]);
 
   // Открываем выпадающий список при наличии результатов или при поиске
   useEffect(() => {
@@ -89,15 +122,15 @@ const HeaderSearch: React.FC = () => {
                   onClick={handleResultClick}
                 >
                   {movie.poster && (
-                    <img
-                      src={movie.poster}
-                      alt={movie.title}
-                      className="header-search__result-poster"
+                  <img
+                    src={movie.poster}
+                    alt={movie.title}
+                    className="header-search__result-poster"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';
                       }}
-                    />
+                  />
                   )}
                   <div className="header-search__result-info">
                     <div className="header-search__result-meta">

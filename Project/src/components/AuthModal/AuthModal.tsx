@@ -172,26 +172,21 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           name: formData.name,
           surname: formData.surname
         };
-        await dispatch(registerUser(credentials)).unwrap();
-        // Не закрываем модальное окно, чтобы показать экран успешной регистрации
-        setFormData({ email: '', password: '', confirmPassword: '', name: '', surname: '' });
-        setErrors({});
-        // Не сбрасываем isLogin, чтобы при переходе к входу форма была правильной
+        try {
+          await dispatch(registerUser(credentials)).unwrap();
+          // Регистрация успешна, не закрываем модальное окно - показываем экран успешной регистрации
+          setFormData({ email: '', password: '', confirmPassword: '', name: '', surname: '' });
+          setErrors({});
+          // Не сбрасываем isLogin, чтобы при переходе к входу форма была правильной
+        } catch (registerError: any) {
+          // Ошибки от API обрабатываются в authSlice, здесь не показываем их пользователю
+          // Локальная регистрация должна была сработать автоматически
+        }
         return;
       }
     } catch (error: any) {
-      console.error('=== Ошибка авторизации ===', error);
-      // Игнорируем ошибки валидации от API про символы в email (это требование API, но не критично)
-      const errorMessage = error?.message || error || '';
-      if (typeof errorMessage === 'string' && (errorMessage.includes('символ') || errorMessage.includes('не должна содержать'))) {
-        // Игнорируем эту ошибку, так как это нестандартное требование API
-        // Используем локальную авторизацию
-        return;
-      }
-      // Для других ошибок показываем сообщение
-      if (error && typeof error === 'string' && !error.includes('символ') && !error.includes('не должна содержать')) {
-        setErrors({ general: error });
-      }
+      // Ошибки от API обрабатываются в authSlice, здесь не показываем их пользователю
+      // Локальная авторизация должна была сработать автоматически
     }
   };
 
@@ -214,7 +209,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   };
 
   const handleGoToLogin = (): void => {
-    console.log('Переход к форме входа');
     dispatch(clearRegistrationSuccess());
     setIsLogin(true);
     setErrors({});
