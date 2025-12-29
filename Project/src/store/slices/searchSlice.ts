@@ -30,10 +30,6 @@ export const searchMovies = createAsyncThunk(
       
       // Проверяем, не выполняется ли уже запрос с таким же query
       const state: any = getState();
-      if (state.search.isSearching && state.search.query === query) {
-        // Запрос уже выполняется, возвращаем текущие результаты
-        return state.search.results;
-      }
       
       const lowerQuery = query.toLowerCase();
       const allMovies = [
@@ -62,6 +58,7 @@ export const searchMovies = createAsyncThunk(
         return [];
       }
       
+      // Всегда пробуем API, даже если есть локальные данные (для полноты результатов)
       try {
         const apiResults = await apiService.searchMovies(query);
         // Если API вернул результаты, кэшируем и возвращаем
@@ -70,7 +67,7 @@ export const searchMovies = createAsyncThunk(
           return apiResults;
         }
       } catch (apiError) {
-        // Игнорируем ошибки API, возвращаем пустой массив
+        // Игнорируем ошибки API, продолжаем поиск
       }
       
       // Если ничего не нашли, кэшируем пустой результат

@@ -4,8 +4,8 @@
 
 /* Контейнер как на главной: ширина 1440 и боковые поля 80px */
 .movie-page .container {
-  max-width: 1440px;
-  padding: 0 80px;
+  max-width: 1340px; /* 1440px - 100px (50px с каждой стороны) */
+  padding: 0 30px; /* боковой отступ 30px */
   margin: 0 auto;
   box-sizing: border-box;
   width: 100%;
@@ -190,14 +190,10 @@
   padding: 0;
   border-radius: 28px;
   font-size: 24px;
-  background: var(--background-secondary, #393B3C);
+  background: transparent;
   color: #ffffff;
   border: none;
   transition: all 0.2s ease;
-}
-
-.btn--icon:hover {
-  transform: translateY(-2px);
 }
 
 .icon-heart {
@@ -236,22 +232,20 @@
   transform: translateY(-2px);
 }
 
-/* Высокая специфичность для страницы фильма — сиреневый, НЕ красный */
+/* Активное состояние на странице фильма — тот же фон, белое залитое сердце */
 .movie-page .movie-info .movie-actions .btn.btn--icon.btn--favorited {
-  background-color: #393B3C;
-  border: none;
-  color: #B4A9FF;
+  background-color: #333333;
+  border: 1px solid var(--content-placeholder, #00000066);
+  color: #ffffff; /* сердце остаётся белым */
 }
 
 .movie-page .movie-info .movie-actions .btn.btn--icon.btn--favorited:hover {
-  background-color: #393B3C;
-  border: none;
-  color: #a599ee;
+  background-color: #333333;
+  border: 1px solid var(--content-placeholder, #00000066);
+  color: #ffffff;
 }
 
-.movie-page .movie-info .movie-actions .btn.btn--icon.btn--favorited .icon-heart {
-  color: #B4A9FF;
-}
+/* Контур и заливка сердца на странице фильма задаются прямо в SVG */
 
 .movie-details {
   background-color: var(--background-primary);
@@ -301,7 +295,7 @@
 }
 
 /* Reset for top line items so they are flex pills */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .movie-page {
     padding: 20px 0;
   }
@@ -466,7 +460,7 @@
   .movie-specs .detail-value, .movie-details .detail-value { display: block; width: 100%; font-size: 18px; line-height: 24px; color: var(--text-primary); }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   /* Контейнер: 20px слева/справа на всей моб. ширине */
   .movie-page .container { padding: 0 20px; }
   .movie-page { padding: 0; }
@@ -540,7 +534,7 @@
 }
 
 /* Remove debug highlight if present */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .movie-page .container { background: transparent; }
 }
 @media (max-width: 375px) {
@@ -548,7 +542,7 @@
 }
 
 /* Single source of side padding on mobile: container only */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .movie-page .container { padding-left: 20px; padding-right: 20px; }
   /* Zero side paddings/margins on inner sections */
   .movie-poster,
@@ -567,7 +561,7 @@
 }
 
 /* Override: remove side padding from movie-page container on mobile */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .movie-page > .container { padding-left: 0; padding-right: 0; }
 }
 @media (max-width: 375px) {
@@ -575,7 +569,7 @@
 }
 
 /* Center inner blocks on mobile when container has no side padding */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .movie-page > .container { display: flex; flex-direction: column; align-items: center; }
   .movie-page .movie-poster,
   .movie-page .movie-info,
@@ -591,7 +585,7 @@
 }
 
 /* Mobile film page: left alignment with 20px side padding */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .movie-page > .container { padding-left: 20px; padding-right: 20px; display: block; }
   /* stretch blocks to full available width */
   .movie-page .movie-poster { width: 100%; height: 260px; min-height: 260px; border-radius: 16px; }
@@ -701,7 +695,7 @@
 }
 
 /* Remove debug highlight if present */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .movie-page .container { background: transparent; }
 }
 @media (max-width: 375px) {
@@ -709,7 +703,7 @@
 }
 
 /* Single source of side padding on mobile: container only */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .movie-page .container { padding-left: 20px; padding-right: 20px; }
   /* Zero side paddings/margins on inner sections */
   .movie-poster,
@@ -728,7 +722,7 @@
 }
 
 /* Override: remove side padding from movie-page container on mobile */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .movie-page > .container { padding-left: 0; padding-right: 0; }
 }
 @media (max-width: 375px) {
@@ -736,7 +730,7 @@
 }
 
 /* Center inner blocks on mobile when container has no side padding */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .movie-page > .container { display: flex; flex-direction: column; align-items: center; }
   .movie-page .movie-poster,
   .movie-page .movie-info,
@@ -752,7 +746,7 @@
 }
 
 /* Mobile film page: left alignment with 20px side padding */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .movie-page > .container { padding-left: 20px; padding-right: 20px; display: block; }
   /* stretch blocks to full available width */
   .movie-page .movie-poster { width: 100%; height: 260px; min-height: 260px; border-radius: 16px; }

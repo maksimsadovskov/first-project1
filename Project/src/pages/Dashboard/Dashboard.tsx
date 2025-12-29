@@ -14,12 +14,12 @@ const Dashboard: React.FC = () => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const { isAuthModalOpen, isTrailerModalOpen, trailerUrl, trailerTitle } = useAppSelector((state) => state.modal);
 
-  // Проверка ширины экрана для модификатора
-  const [isMobile375, setIsMobile375] = React.useState(window.innerWidth <= 375);
+  // Проверка ширины экрана для модификатора (до 888px, как в хедере)
+  const [isMobile375, setIsMobile375] = React.useState(window.innerWidth <= 888);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile375(window.innerWidth <= 375);
+      setIsMobile375(window.innerWidth <= 888);
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -35,6 +35,57 @@ const Dashboard: React.FC = () => {
       dispatch(fetchTopMovies());
     }
   }, [dispatch, featuredMovie, topMovies.length]);
+
+  useEffect(() => {
+    // Диагностика обрезки номеров на мобиле
+    if (window.innerWidth <= 768 && topMovies.length > 0) {
+      const timer = setTimeout(() => {
+        const grid = document.getElementById('top-movies-grid');
+        if (grid) {
+          const gridPadding = window.getComputedStyle(grid).paddingTop;
+          const gridPaddingLeft = window.getComputedStyle(grid).paddingLeft;
+          const firstRank = grid.querySelector('.top-movie-item__rank');
+          const firstItem = grid.querySelector('.top-movie-item');
+          if (firstRank && firstItem) {
+            const rankRect = firstRank.getBoundingClientRect();
+            const gridRect = grid.getBoundingClientRect();
+            const itemRect = firstItem.getBoundingClientRect();
+            const rankTop = rankRect.top;
+            const gridTop = gridRect.top;
+            const rankLeft = rankRect.left;
+            const gridLeft = gridRect.left;
+            const itemLeft = itemRect.left;
+            const visibleTop = rankTop - gridTop;
+            const visibleLeft = rankLeft - gridLeft;
+            console.log('🔍 Диагностика обрезки номеров:');
+            console.log(`  - Padding-top grid: ${gridPadding}`);
+            console.log(`  - Padding-left grid: ${gridPaddingLeft}`);
+            console.log(`  - Позиция номера от верха grid: ${visibleTop}px`);
+            console.log(`  - Позиция номера слева от grid: ${visibleLeft}px`);
+            console.log(`  - Позиция первого элемента слева от grid: ${itemLeft - gridLeft}px`);
+            console.log(`  - Высота номера: ${rankRect.height}px`);
+            console.log(`  - Ширина номера: ${rankRect.width}px`);
+            console.log(`  - Номер должен быть на: -12px (top: -12px, left: -12px)`);
+            console.log(`  - Видимая часть сверху: ${Math.max(0, visibleTop)}px`);
+            console.log(`  - Видимая часть слева: ${Math.max(0, visibleLeft)}px`);
+            if (visibleTop < 0) {
+              console.warn(`  ⚠️ Номер обрезан сверху на ${Math.abs(visibleTop)}px`);
+              console.log(`  💡 Нужно увеличить padding-top до ${parseInt(gridPadding) + Math.abs(visibleTop) + 12}px`);
+            } else {
+              console.log(`  ✅ Номер не обрезан сверху`);
+            }
+            if (visibleLeft < 0) {
+              console.warn(`  ⚠️ Номер обрезан слева на ${Math.abs(visibleLeft)}px`);
+              console.log(`  💡 Нужно увеличить padding-left до ${parseInt(gridPaddingLeft) + Math.abs(visibleLeft) + 12}px`);
+            } else {
+              console.log(`  ✅ Номер не обрезан слева`);
+            }
+          }
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [topMovies.length]);
 
   const handleGetNewMovie = (): void => {
     dispatch(fetchRandomMovie());
@@ -99,6 +150,10 @@ const Dashboard: React.FC = () => {
   }
 
 
+  const isFeaturedFavorite = featuredMovie
+    ? favorites.some((fav) => fav.id === featuredMovie.id)
+    : false;
+
   return (
     <div className={`dashboard ${isMobile375 ? 'dashboard--mobile-375' : ''}`}>
       <div className="container">
@@ -141,12 +196,26 @@ const Dashboard: React.FC = () => {
                     О фильме
                   </Link>
                   <button 
-                    className={`action-btn action-btn--favorite ${favorites.some(fav => fav.id === featuredMovie.id) ? 'active' : ''}`}
+                    className={`action-btn action-btn--favorite ${isFeaturedFavorite ? 'active' : ''}`}
                     onClick={handleFavoriteClick}
                     aria-label="Добавить в избранное"
                   >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    <svg width="68" height="56" viewBox="0 0 68 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect width="68" height="56" rx="28" fill="#393B3C"/>
+                      <rect x="0.5" y="0.5" width="67" height="55" rx="27.5" stroke="black" strokeOpacity="0.4"/>
+                      {isFeaturedFavorite ? (
+                        <path
+                          d="M38.5 19C41.5376 19 44 21.5 44 25C44 32 36.5 36 34 37.5C31.5 36 24 32 24 25C24 21.5 26.5 19 29.5 19C31.36 19 33 20 34 21C35 20 36.64 19 38.5 19Z"
+                          fill="#B4A9FF"
+                        />
+                      ) : (
+                        <path
+                          d="M38.5 19C41.5376 19 44 21.5 44 25C44 32 36.5 36 34 37.5C31.5 36 24 32 24 25C24 21.5 26.5 19 29.5 19C31.36 19 33 20 34 21C35 20 36.64 19 38.5 19Z"
+                          fill="none"
+                          stroke="white"
+                          strokeWidth="1.2"
+                        />
+                      )}
                     </svg>
                   </button>
                   <button 
@@ -154,8 +223,8 @@ const Dashboard: React.FC = () => {
                     onClick={handleGetNewMovie}
                     aria-label="Получить новый фильм"
                   >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                      <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor"/>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M10 2C12.7486 2 15.1749 3.38626 16.6156 5.5H14V7.5H20V1.5H18V3.99936C16.1762 1.57166 13.2724 0 10 0C4.47715 0 0 4.47715 0 10H2C2 5.58172 5.58172 2 10 2ZM18 10C18 14.4183 14.4183 18 10 18C7.25144 18 4.82508 16.6137 3.38443 14.5H6V12.5H0V18.5H2V16.0006C3.82381 18.4283 6.72764 20 10 20C15.5228 20 20 15.5228 20 10H18Z" fill="white"/>
                     </svg>
                   </button>
                   
@@ -165,12 +234,26 @@ const Dashboard: React.FC = () => {
                       О фильме
                     </Link>
                     <button 
-                      className={`action-btn action-btn--favorite ${favorites.some(fav => fav.id === featuredMovie.id) ? 'active' : ''}`}
+                      className={`action-btn action-btn--favorite ${isFeaturedFavorite ? 'active' : ''}`}
                       onClick={handleFavoriteClick}
                       aria-label="Добавить в избранное"
                     >
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                      <svg width="68" height="56" viewBox="0 0 68 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="68" height="56" rx="28" fill="#393B3C"/>
+                        <rect x="0.5" y="0.5" width="67" height="55" rx="27.5" stroke="black" strokeOpacity="0.4"/>
+                        {isFeaturedFavorite ? (
+                          <path
+                            d="M38.5 19C41.5376 19 44 21.5 44 25C44 32 36.5 36 34 37.5C31.5 36 24 32 24 25C24 21.5 26.5 19 29.5 19C31.36 19 33 20 34 21C35 20 36.64 19 38.5 19Z"
+                            fill="#B4A9FF"
+                          />
+                        ) : (
+                          <path
+                            d="M38.5 19C41.5376 19 44 21.5 44 25C44 32 36.5 36 34 37.5C31.5 36 24 32 24 25C24 21.5 26.5 19 29.5 19C31.36 19 33 20 34 21C35 20 36.64 19 38.5 19Z"
+                            fill="none"
+                            stroke="white"
+                            strokeWidth="1.2"
+                          />
+                        )}
                       </svg>
                     </button>
                     <button 
@@ -178,8 +261,12 @@ const Dashboard: React.FC = () => {
                       onClick={handleGetNewMovie}
                       aria-label="Получить новый фильм"
                     >
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                        <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor"/>
+                      <svg width="68" height="56" viewBox="0 0 68 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="68" height="56" rx="28" fill="#393B3C"/>
+                        <rect x="0.5" y="0.5" width="67" height="55" rx="27.5" stroke="black" strokeOpacity="0.4"/>
+                        <g transform="translate(24, 18)">
+                          <path d="M10 2C12.7486 2 15.1749 3.38626 16.6156 5.5H14V7.5H20V1.5H18V3.99936C16.1762 1.57166 13.2724 0 10 0C4.47715 0 0 4.47715 0 10H2C2 5.58172 5.58172 2 10 2ZM18 10C18 14.4183 14.4183 18 10 18C7.25144 18 4.82508 16.6137 3.38443 14.5H6V12.5H0V18.5H2V16.0006C3.82381 18.4283 6.72764 20 10 20C15.5228 20 20 15.5228 20 10H18Z" fill="white"/>
+                        </g>
                       </svg>
                     </button>
                   </div>
@@ -192,13 +279,13 @@ const Dashboard: React.FC = () => {
         {/* Top 10 Movies Section */}
         <section className="top-movies">
           <h2 className="section-title">Топ 10 фильмов</h2>
-          <div className="top-movies__grid">
+          <div className="top-movies__grid" id="top-movies-grid">
             {topMovies.map((movie, index) => (
               <div key={movie.id} className="top-movie-item">
                 <div className="top-movie-item__rank">
                   {index + 1}
                 </div>
-                <MovieCard movie={movie} size="small" />
+                <MovieCard movie={movie} size="small" showFavorite={false} />
               </div>
             ))}
           </div>

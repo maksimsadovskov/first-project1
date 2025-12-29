@@ -54,11 +54,17 @@ class ApiService {
   }
 
   async register(credentials: RegisterCredentials): Promise<User> {
-    const response: AxiosResponse<ApiResponse<User>> = await this.api.post(
-      '/auth/register',
-      credentials
-    );
-    return response.data.data;
+    try {
+      const response: AxiosResponse<ApiResponse<User>> = await this.api.post(
+        '/auth/register',
+        credentials
+      );
+      return response.data.data;
+    } catch (error: any) {
+      // Всегда выбрасываем ошибку для локальной регистрации в authSlice
+      // Не проверяем тип ошибки, так как используем локальную регистрацию
+      throw error;
+    }
   }
 
   async logout(): Promise<void> {

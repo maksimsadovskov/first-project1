@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { User, LoginCredentials, RegisterCredentials, AuthState } from '../../types';
 import apiService from '../../services/api';
+
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
@@ -9,79 +10,29 @@ const initialState: AuthState = {
   isRegistrationSuccess: false,
 };
 
-// Async thunks
 export const loginUser = createAsyncThunk(
   'auth/login',
   async (credentials: LoginCredentials, { rejectWithValue }) => {
     try {
-      // Пытаемся войти через API
-      try {
-        const user = await apiService.login(credentials);
-        localStorage.setItem('user', JSON.stringify(user));
-        return user;
-      } catch (apiError: any) {
-        // При любой ошибке от API (400, 404 и т.д.) используем локальную авторизацию
-        // Используем локальную авторизацию
-        const savedUser = localStorage.getItem('user');
-        if (savedUser) {
-          const user = JSON.parse(savedUser);
-          // Проверяем только email (пароль не проверяется в локальной версии)
-          if (user.email.toLowerCase() === credentials.email.toLowerCase()) {
-            // Пересохраняем для обновления данных
-            localStorage.setItem('user', JSON.stringify(user));
-            return user;
-          }
-        }
-        // Если пользователь не найден — создаём нового автоматически
-        const newUser: User = {
-          id: Date.now(),
-          email: credentials.email,
-          name: 'Пользователь',
-          surname: 'Тестовый'
-        };
-        localStorage.setItem('user', JSON.stringify(newUser));
-        return newUser;
-      }
+      const user = await apiService.login(credentials);
+      localStorage.setItem('user', JSON.stringify(user));
+      return user;
     } catch (error: any) {
-      // При любой ошибке используем локальную авторизацию
+      // Проверяем, есть ли пользователь в localStorage (зарегистрированный ранее)
       const savedUser = localStorage.getItem('user');
+
       if (savedUser) {
-        const user = JSON.parse(savedUser);
+        const user: User = JSON.parse(savedUser);
+
+        // Вход возможен только для зарегистрированных пользователей
         if (user.email.toLowerCase() === credentials.email.toLowerCase()) {
           localStorage.setItem('user', JSON.stringify(user));
           return user;
         }
-        
-        // Используем локальную авторизацию
-        const savedUser = localStorage.getItem('user');
-        if (savedUser) {
-          const user = JSON.parse(savedUser);
-          // Проверяем только email (пароль не проверяется в локальной версии)
-          if (user.email.toLowerCase() === credentials.email.toLowerCase()) {
-            // Пересохраняем для обновления данных
-            localStorage.setItem('user', JSON.stringify(user));
-            return user;
-          }
-        }
-        // Если пользователь не найден — создаём нового автоматически
-        const newUser: User = {
-          id: Date.now(),
-          email: credentials.email,
-          name: 'Пользователь',
-          surname: 'Тестовый'
-        };
-        localStorage.setItem('user', JSON.stringify(newUser));
-        return newUser;
       }
-      // Создаём нового пользователя
-      const newUser: User = {
-        id: Date.now(),
-        email: credentials.email,
-        name: 'Пользователь',
-        surname: 'Тестовый'
-      };
-      localStorage.setItem('user', JSON.stringify(newUser));
-      return newUser;
+
+      // Если пользователь не найден, возвращаем ошибку
+      return rejectWithValue('Неверный email или пароль');
     }
   }
 );

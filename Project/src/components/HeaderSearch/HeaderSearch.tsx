@@ -13,23 +13,28 @@ const HeaderSearch: React.FC = () => {
   const searchRef = useRef<HTMLDivElement>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Debounced search function
+  // Debounced search function - уменьшенная задержка для быстрого отклика
   const debouncedSearch = useCallback((searchQuery: string) => {
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
     
+    // Если это первая буква, ищем сразу, иначе с небольшой задержкой
+    const delay = searchQuery.length === 1 ? 50 : 200;
+    
     debounceTimerRef.current = setTimeout(() => {
       if (searchQuery.trim()) {
         dispatch(searchMovies(searchQuery));
       }
-    }, 300); // 300ms delay
+    }, delay);
   }, [dispatch]);
 
   useEffect(() => {
     if (query.trim()) {
-      debouncedSearch(query);
+      // Открываем список сразу при вводе
       setIsOpen(true);
+      // Запускаем поиск
+      debouncedSearch(query);
     } else {
       setIsOpen(false);
       // Очищаем таймер при очистке запроса
@@ -46,13 +51,6 @@ const HeaderSearch: React.FC = () => {
       }
     };
   }, [query, debouncedSearch]);
-
-  // Открываем выпадающий список при наличии результатов или при поиске
-  useEffect(() => {
-    if (query.trim() && (isSearching || results.length > 0)) {
-      setIsOpen(true);
-    }
-  }, [query, isSearching, results]);
 
   // Открываем выпадающий список при наличии результатов или при поиске
   useEffect(() => {
@@ -92,14 +90,18 @@ const HeaderSearch: React.FC = () => {
   return (
     <div className="header-search" ref={searchRef}>
       <div className="header-search__input-container">
-        <img className="header-search__icon" src={iconSearch} alt="Иконка поиска" width={20} height={20} />
+        <img className="header-search__icon" src={iconSearch} alt="Иконка поиска" />
         <input
           type="text"
           className="header-search__input"
           placeholder="Поиск"
           value={query}
           onChange={handleInputChange}
-          onFocus={() => query.trim() && setIsOpen(true)}
+          onFocus={() => {
+            if (query.trim()) {
+              setIsOpen(true);
+            }
+          }}
         />
         {query.trim().length > 0 && (
           <button className="header-search__clear" onClick={handleClear} aria-label="Очистить поиск">
@@ -112,7 +114,7 @@ const HeaderSearch: React.FC = () => {
         <div className="header-search__dropdown">
           {isSearching ? (
             <div className="header-search__loading">Поиск...</div>
-          ) : displayResults.length > 0 ? (
+          ) : results.length > 0 ? (
             <div className="header-search__results">
               {displayResults.map((movie) => (
                 <Link

@@ -147,8 +147,22 @@ const MoviePage: React.FC = () => {
                   onClick={handleFavoriteClick}
                   title={isFavorited ? 'Удалить из избранного' : 'Добавить в избранное'}
                 >
-                  <svg className="icon-heart" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  <svg className="icon-heart" width="68" height="56" viewBox="0 0 68 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="68" height="56" rx="28" fill="#393B3C"/>
+                    <rect x="0.5" y="0.5" width="67" height="55" rx="27.5" stroke="black" strokeOpacity="0.4"/>
+                    {isFavorited ? (
+                      <path
+                        d="M38.5 19C41.5376 19 44 21.5 44 25C44 32 36.5 36 34 37.5C31.5 36 24 32 24 25C24 21.5 26.5 19 29.5 19C31.36 19 33 20 34 21C35 20 36.64 19 38.5 19Z"
+                        fill="#B4A9FF"
+                      />
+                    ) : (
+                      <path
+                        d="M38.5 19C41.5376 19 44 21.5 44 25C44 32 36.5 36 34 37.5C31.5 36 24 32 24 25C24 21.5 26.5 19 29.5 19C31.36 19 33 20 34 21C35 20 36.64 19 38.5 19Z"
+                        fill="none"
+                        stroke="white"
+                        strokeWidth="1.2"
+                      />
+                    )}
                   </svg>
                 </button>
               </div>

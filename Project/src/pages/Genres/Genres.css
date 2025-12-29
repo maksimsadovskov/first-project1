@@ -25,37 +25,74 @@
 
 .genres-title {
   font-family: 'Play', sans-serif;
-  font-size: 24px;
-  font-weight: 400;
+  font-size: 48px; /* десктоп по умолчанию */
+  font-weight: 700;
   font-style: normal;
-  line-height: 32px;
+  line-height: 56px;
   letter-spacing: 0;
   color: #ffffff;
   margin-bottom: 16px;
 }
 
+/* На мобиле уменьшаем размер */
+@media (max-width: 767px) {
+  .genres-title {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 700;
+  }
+}
+
 .genres-description { display: none; }
 
-.genres-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* используем fr для автоматического размещения */
-  gap: 40px; /* боковой отступ 40px */
-  row-gap: 64px; /* вертикальный отступ 64px */
-  justify-content: flex-start;
-  width: 100%; /* занимает всю ширину контейнера */
-  overflow: visible; /* Чтобы тени не обрезались */
+/* Grid применяется только на десктопе (широкие экраны) */
+/* На мобиле (max-width: 767px) используется одна колонка через стили ниже */
+@media (min-width: 768px) {
+  .genres-grid {
+    display: grid;
+    /* auto-fit автоматически подстраивает количество колонок под доступную ширину */
+    /* minmax(290px, 290px) - фиксированная ширина 290px (максимальная ширина карточки), карточки не растягиваются */
+    grid-template-columns: repeat(auto-fit, minmax(290px, 290px));
+    gap: 40px; /* боковой отступ 40px */
+    row-gap: 64px; /* вертикальный отступ 64px */
+    justify-content: start; /* выравнивание по левому краю */
+    justify-items: start; /* выравнивание элементов внутри ячеек */
+    width: 100%; /* занимает всю ширину контейнера */
+    overflow: visible; /* Чтобы тени не обрезались */
+  }
+
+  /* Убеждаемся, что карточки имеют фиксированную ширину 290px на десктопе */
+  .genres-grid .genre-card {
+    width: 290px;
+    max-width: 290px;
+  }
+
+  /* Ограничиваем максимум 4 колонками на очень широких экранах */
+  @media (min-width: 1440px) {
+    .genres-grid {
+      grid-template-columns: repeat(4, 290px); /* фиксированная ширина 290px для каждой колонки */
+      justify-content: start; /* выравниваем влево */
+    }
+  }
 }
 
 /* Контейнер на странице жанров */
 .genres .container {
-  max-width: 1440px;
-  padding: 0 80px; /* боковой отступ 80px на экранах 1440px */
+  max-width: 1340px; /* 1440px - 100px (50px с каждой стороны) */
+  padding: 0 30px; /* боковой отступ 30px на десктопе */
   margin: 0 auto;
   box-sizing: border-box;
   width: 100%;
 }
 
-@media (max-width: 768px) {
+/* Отступы для промежуточных размеров экрана (768px - 1440px) */
+@media (min-width: 768px) and (max-width: 1439px) {
+  .genres .container {
+    padding: 0 30px; /* Отступы для всех промежуточных размеров */
+  }
+}
+
+@media (max-width: 767px) {
   .genres {
     padding: 16px 0;
   }
@@ -65,14 +102,28 @@
   }
   
   .genres-title {
-    font-size: 28px;
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 700;
   }
   
   .genres-description {
     font-size: 16px;
   }
   
-  .genres-grid { grid-template-columns: 1fr; gap: 16px; }
+  .genres-grid { 
+    display: grid; /* Убеждаемся, что grid применяется на мобиле */
+    grid-template-columns: 1fr; 
+    gap: 16px;
+    row-gap: 24px; /* Нижний отступ между карточками */
+  }
+}
+
+/* Отступы для экранов с 766px до 360px */
+@media (max-width: 766px) and (min-width: 360px) {
+  .genres .container {
+    padding: 0 20px;
+  }
 }
 
 /* МЕДИА-ЗАПРОС ДЛЯ 375PX - СТРАНИЦА ЖАНРОВ */
@@ -102,10 +153,10 @@
   
   /* Сетка жанров - вертикальная раскладка */
   .genres.genres--mobile-375 .genres-grid {
-    display: flex;
-    flex-direction: column;
+    display: grid; /* Используем grid вместо flex для консистентности */
+    grid-template-columns: 1fr;
     gap: 24px;
-    align-items: stretch; /* Растягиваем на всю ширину */
+    row-gap: 24px; /* Нижний отступ между карточками */
     padding: 0;
     margin: 0;
   }

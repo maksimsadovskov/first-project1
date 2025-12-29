@@ -37,49 +37,66 @@
 }
 
 .header .logo-icon {
-  width: 32px;
-  height: 32px;
-  background: var(--logo-icon-gradient);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
+  object-fit: contain;
   transition: all 0.3s ease;
   flex-shrink: 0;
 }
 
-.header .logo--dark .logo-icon {
-  background-image: url('../../assets/logos/маруся.png');
-  background-size: 143px 32px;
-  background-position: left center;
-  background-repeat: no-repeat;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  overflow: hidden;
+/* Мобильная версия - маленький логотип до 909px */
+@media (max-width: 909px) {
+  .header .logo {
+    width: 80.6px;
+    height: 32px;
+    flex: 0 0 80.6px;
+  }
+  
+  .header .logo-icon {
+    width: 80.6px;
+    height: 32px;
+  }
+}
+
+/* Десктоп 910px и больше - большой логотип */
+@media (min-width: 910px) {
+  .header .logo {
+    width: 143.3px;
+    height: 32px;
+    flex: 0 0 143.3px;
+  }
+  
+  .header .logo-icon {
+    width: 143.3px;
+    height: 32px;
+  }
 }
 
 
-.header .logo span {
-  color: #ffffff;
-}
 
+
+
+
+/* Логотип на темном фоне (on dark) - прозрачный фон, белый текст */
 .header .logo--dark {
   background-color: transparent;
   box-shadow: none;
+  padding: 0;
 }
 
-.header .logo--dark span {
-  color: #ffffff;
+.header .logo--dark .logo-icon {
+  filter: brightness(1);
 }
 
+/* Логотип на светлом фоне (on light) - белый фон с тенью, темный текст */
 .header .logo--light {
-  background-color: var(--logo-background, #ffffff);
+  background-color: #ffffff;
   box-shadow: 0 6px 24px rgba(15, 23, 42, 0.2);
+  padding: 8px 16px;
+  border-radius: 13px;
 }
 
-.header .logo--light span {
-  color: #161c2d;
+.header .logo--light .logo-icon {
+  filter: brightness(0);
 }
 
 .header .nav {
@@ -236,8 +253,8 @@
   z-index: 1000;
 }
 
-/* Принудительно показываем бургер на мобильных */
-@media (max-width: 768px) {
+/* Принудительно показываем бургер только на мобильных экранах */
+@media (max-width: 909px) {
   .header .mobile-menu-toggle {
     display: block;
     visibility: visible;
@@ -264,55 +281,41 @@
 
 .header .container {
   position: relative;
-  max-width: 1440px;
-  padding: 0 80px; /* боковой отступ 80px на экранах 1440px */
+  max-width: 1340px; /* 1440px - 100px (50px с каждой стороны) */
+  padding: 0 30px; /* боковой отступ 30px */
   margin: 0 auto;
   box-sizing: border-box;
   width: 100%;
 }
 
-@media (max-width: 768px) {
+/* Мобильная версия - для экранов 909px и меньше */
+@media (max-width: 909px) {
   .header {
     height: 64px;
   }
 
   .header > .container {
-    padding: 0 20px 0 20px;
+    padding: 0 0 0 20px;
   }
 
   .header .header-content {
     height: 64px;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
     gap: 0;
   }
 
   .header .logo {
-    width: 80px;
-    flex: 0 0 80px;
-    margin-left: 0;
-    padding-left: 0;
+    margin: 0; /* Убираем margin: 0 auto, чтобы логотип был слева */
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     gap: 6px;
   }
-
-  .header .logo-icon {
-    width: 14px;
-    height: 18px;
-    flex-shrink: 0;
-  }
-
-  .header .logo span {
-    display: inline-block;
-    width: 56px;
-    font-size: 12px;
-    line-height: 16px;
-    text-align: left;
-  }
-
+  
+  /* Скрываем навигацию на мобильных (она показывается только при открытии бургера) */
   .header .nav {
     display: none;
     position: absolute;
@@ -325,10 +328,22 @@
     background-color: var(--background-primary);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     z-index: 999;
+    margin-left: 0; /* Убираем margin из промежуточных стилей */
+    margin-right: 0;
+  }
+  
+  /* Показываем бургер на мобильных */
+  .header .mobile-menu-toggle {
+    display: block;
+    visibility: visible;
+    opacity: 1;
   }
 
+
+
+  /* Навигация уже определена выше в этом же медиазапросе */
   .header .nav.nav--open {
-    display: flex;
+    display: flex; /* Показываем навигацию только когда открыт бургер */
   }
 
   .header .nav-link {
@@ -337,7 +352,7 @@
   }
 
   .header .header-actions {
-    margin-left: auto;
+    margin-left: 0;
     display: flex;
     align-items: center;
     gap: 20px;
@@ -349,10 +364,10 @@
   .header .search-btn {
     background: transparent;
     border: none;
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    max-width: 20px;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    max-width: 24px;
     padding: 0;
     display: flex;
     align-items: center;
@@ -362,10 +377,10 @@
 
   .header .mobile-menu-toggle {
     padding: 0;
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    max-width: 20px;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    max-width: 24px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -375,10 +390,10 @@
   .header .user-btn {
     padding: 0;
     border: none;
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    max-width: 20px;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    max-width: 24px;
     border-bottom: none;
     justify-content: center;
     background: transparent;
@@ -390,10 +405,10 @@
   .header .login-btn {
     padding: 0;
     border: none;
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    max-width: 20px;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    max-width: 24px;
     background: transparent;
     flex-shrink: 0;
     display: flex;
@@ -440,4 +455,36 @@ body[data-theme='light'] .header .user-btn svg path {
 
 .header .mobile-menu-toggle img {
   display: block;
+}
+
+@media (max-width: 909px) {
+  .header .mobile-menu-toggle img {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .header .search-btn img {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .header .user-btn img,
+  .header .login-btn img {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* Десктоп 910px и больше - большой логотип (в конце файла для приоритета) */
+@media (min-width: 910px) {
+  .header .logo {
+    width: 143.3px;
+    height: 32px;
+    flex: 0 0 143.3px;
+  }
+  
+  .header .logo-icon {
+    width: 143.3px;
+    height: 32px;
+  }
 }

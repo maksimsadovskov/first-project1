@@ -62,8 +62,7 @@
 
 .movie-card--small {
   width: 100%; /* занимает всю ширину ячейки grid */
-  max-width: 224px; /* максимальная ширина как было */
-  height: 336px;
+  height: auto; /* высота автоматически по aspect-ratio */
 }
 
 .movie-card--medium {
@@ -80,6 +79,25 @@
   aspect-ratio: 2/3;
   overflow: hidden;
   border-radius: 16px 16px 0 0;
+  min-height: 0; /* позволяет grid правильно масштабировать */
+}
+
+/* Для топ-10 на десктопе: фиксированная высота 336px, ширина 224px */
+@media (min-width: 889px) {
+  .top-movies__grid .movie-card--small {
+    height: 336px;
+    width: 224px;
+  }
+  
+  .top-movies__grid .movie-card__poster {
+    aspect-ratio: auto;
+    width: 224px;
+    height: 336px; /* на десктопе постер 224x336, инфо-блок скрыт */
+  }
+  
+  .top-movies__grid .movie-card__info {
+    display: none; /* инфо-блок скрыт на десктопе для топ-10 */
+  }
 }
 
 .movie-card__poster img {

@@ -11,8 +11,8 @@
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: 1440px;
-  padding: 0 80px; /* как на страницах */
+  max-width: 1340px; /* 1440px - 100px (50px с каждой стороны) */
+  padding: 0 30px; /* боковой отступ 30px */
   margin: 0 auto;
 }
 
@@ -61,7 +61,7 @@
 }
 
 /* Мобильная адаптация */
-@media (max-width: 768px) {
+@media (max-width: 888px) {
   .footer {
     height: auto;
   }
@@ -69,22 +69,22 @@
     padding: 24px 20px;
   }
   .footer-content {
-    justify-content: center;
+    justify-content: flex-start;
   }
   .footer .social-links {
     margin-left: 0;
     gap: 24px;
   }
   .social-link {
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
     border-radius: 8px;
     background-color: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.16);
   }
   .social-link svg {
-    width: 16px;
-    height: 16px;
+    width: 24px;
+    height: 24px;
     fill: currentColor;
   }
 }
@@ -100,7 +100,7 @@
     padding: 24px 20px;
   }
   .footer-content {
-    justify-content: center;
+    justify-content: flex-start;
   }
   .footer .social-links {
     margin-left: 0;
