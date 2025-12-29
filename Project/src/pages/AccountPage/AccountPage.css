@@ -4,8 +4,8 @@
 }
 
 .account-page .container {
-  max-width: 1440px;
-  padding: 0 80px; /* боковой отступ 80px на экранах 1440px */
+  max-width: 1340px; /* 1440px - 100px (50px с каждой стороны) */
+  padding: 0 30px; /* боковой отступ 30px */
   margin: 0 auto;
   box-sizing: border-box;
   width: 100%;
@@ -91,8 +91,22 @@
 }
 
 .favorites-section {
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: none; /* Убираем ограничение ширины */
+  margin: 0; /* Прижато к левому краю */
+  width: 100%;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  /* Всегда слева на десктопе */
+  margin-left: 0;
+  margin-right: auto;
 }
 
 .settings-section {
@@ -113,18 +127,42 @@
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 24px;
+  text-align: left; /* Прижато к левому краю */
 }
 
 .favorites-section {
   margin-bottom: 40px;
+  text-align: left; /* Прижато к левому краю */
 }
 
-.favorites-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 224px);
-  gap: 40px;
-  row-gap: 64px;
-  justify-content: flex-start;
+/* Grid применяется только на десктопе (широкие экраны) */
+/* На мобиле (max-width: 767px) используется flex с горизонтальным скроллом через стили ниже */
+@media (min-width: 768px) {
+  .favorites-grid {
+    display: grid;
+    /* auto-fit автоматически подстраивает количество колонок под доступную ширину */
+    /* minmax(224px, 224px) - фиксированная ширина 224px (размер постера), карточки не растягиваются */
+    grid-template-columns: repeat(auto-fit, minmax(224px, 224px));
+    gap: 40px;
+    row-gap: 64px;
+    justify-content: start; /* выравнивание по левому краю */
+    justify-items: start; /* выравнивание элементов внутри ячеек */
+    width: 100%;
+  }
+
+  /* Убеждаемся, что карточки имеют фиксированную ширину 224px на десктопе */
+  .favorites-grid .movie-card-wrapper {
+    width: 224px;
+    max-width: 224px;
+  }
+
+  /* Ограничиваем максимум 5 колонками на очень широких экранах */
+  @media (min-width: 1440px) {
+    .favorites-grid {
+      grid-template-columns: repeat(5, 224px); /* фиксированная ширина 224px для каждой колонки */
+      justify-content: start; /* выравниваем влево */
+    }
+  }
 }
 
 .favorites-grid .movie-card-wrapper {
@@ -163,12 +201,14 @@
   padding: 0;
 }
 
-.user-info {
-  display: flex;
-  flex-direction: column;
-  gap: 40px; /* 40px между элементами (Имя/Email) */
-  margin-bottom: 40px; /* 40px до кнопки */
-}
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 40px; /* 40px между элементами (Имя/Email) */
+    margin-bottom: 40px; /* 40px до кнопки */
+    align-items: flex-start; /* Прижато к левому краю */
+    width: 100%;
+  }
 
 /* Блок с иконкой и текстом */
 .info-block {
@@ -252,8 +292,12 @@
   transform: translateY(-2px);
 }
 
-/* На мобильных устройствах (до 768px) */
-@media (max-width: 768px) {
+/* На мобильных устройствах (до 888px) */
+@media (max-width: 888px) {
+  .account-page .container {
+    padding: 0 20px; /* 20px по бокам на мобильных */
+  }
+  
   .account-content {
     max-width: none;
     margin: 0;
@@ -267,6 +311,7 @@
   .settings-section {
     max-width: none;
     margin: 0;
+    align-items: flex-start; /* Прижато к левому краю */
   }
   
   .account-page {
@@ -276,7 +321,7 @@
   .account-page .account-header {
     margin-top: 16px; /* 16px ниже header */
     margin-bottom: 24px; /* 24px до табов */
-    text-align: left; /* Выравнивание слева на 375px */
+    text-align: left; /* Выравнивание слева */
     padding: 0; /* Убрали padding полностью */
   }
   
@@ -290,11 +335,11 @@
   
   .account-tabs {
     display: flex;
-    justify-content: flex-start;
-    gap: 16px; /* 16px между табами (было 24px) */
-    margin-bottom: 30px; /* 30px от табов до постеров (было 40px) */
+    justify-content: flex-start; /* Прижато к левому краю */
+    gap: 16px; /* 16px между табами */
+    margin-bottom: 30px; /* 30px от табов до контента */
     border-bottom: none;
-    padding: 0 8px; /* Уменьшили с 16px до 8px */
+    padding: 0; /* Убрали padding */
   }
   
   .tab-btn {
@@ -343,21 +388,20 @@
     height: 48px;
   }
   
-  /* Контейнер с padding 10px по бокам */
+  /* Контейнер кнопки - прижат к левому краю */
   .account-actions {
-    padding: 0 10px; /* 10px + 10px = 20px */
+    padding: 0; /* Убрали padding */
     width: 100%;
-    max-width: 375px;
-    margin: 0 auto;
-    margin-bottom: 152px; /* 152px до футера (192 - 40) */
+    margin: 0; /* Убрали margin */
+    margin-bottom: 152px; /* 152px до футера */
     box-sizing: border-box;
     display: flex;
-    justify-content: center; /* Кнопка по центру на 375px */
+    justify-content: flex-start; /* Прижато к левому краю */
   }
   
-  /* Кнопка выйти - 355px (375 - 10 - 10) */
+  /* Кнопка выйти - 335px с паддингами по бокам (20px от края экрана) */
   .logout-btn {
-    width: 355px; /* 335 + 10 + 10 = 355px */
+    width: 335px; /* 335px ширина кнопки */
     height: 56px;
     padding: 16px 48px;
     font-size: 18px;

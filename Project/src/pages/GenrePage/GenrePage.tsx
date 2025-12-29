@@ -85,8 +85,7 @@ const GenrePage: React.FC = () => {
     );
   }
 
-  const genre = genres.find(g => g.id === parseInt(genreId || '0')) || 
-                (genreId ? { id: parseInt(genreId), name: `Жанр ${genreId}`, slug: '', image: '' } : null);
+  const genre = genres.find(g => g.id === parseInt(genreId || '0')) || null;
 
   if (!genre) {
     return (
@@ -120,7 +119,7 @@ const GenrePage: React.FC = () => {
           <>
             <div className="movies-grid">
               {movies.slice(0, currentPage === 1 ? INITIAL_MOVIES_COUNT : movies.length).map(movie => (
-                <MovieCard key={movie.id} movie={movie} size="small" />
+                <MovieCard key={movie.id} movie={movie} size="small" showFavorite={false} />
               ))}
             </div>
 

@@ -14,7 +14,8 @@ import iconPersonaSolid from '../../assets/icons/user-white.svg';
 import iconPersonaFilled from '../../assets/icons/user-white.svg';
 import iconEnvelope from '../../assets/icons/icon-envelop.svg';
 import iconHeart from '../../assets/icons/icon-heart.svg';
-import logoMarusya from '../../assets/logos/маруся.png';
+import logoIcon from '../../assets/images/logo.svg';
+import logoDesktop from '../../assets/images/logo-desktop.svg';
 
 const Header: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -24,11 +25,15 @@ const Header: React.FC = () => {
   const { isAuthModalOpen } = useAppSelector((state) => state.modal);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 909);
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    const handleResize = () => {
+      const width = window.innerWidth;
+      const newIsMobile = width <= 909;
+      setIsMobile(newIsMobile);
+    };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -63,33 +68,28 @@ const Header: React.FC = () => {
     }
   };
 
-  const handleLogoClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>): void => {
-    event.preventDefault();
-    toggleTheme();
-  };
-
   return (
     <>
       <header className="header">
         <div className="container">
           <div className="header-content">
-        <Link to="/" className={`logo ${theme === 'light' ? 'logo--light' : 'logo--dark'}`} onClick={handleLogoClick}>
-          <div className="logo-icon"></div>
-          <span>маруся</span>
+        <Link to="/" className={`logo ${theme === 'light' ? 'logo--light' : 'logo--dark'}`}>
+          <img src={isMobile ? logoIcon : logoDesktop} alt="Маруся" className="logo-icon" />
         </Link>
-            {(!isMobile || isMobileMenuOpen) && (
-              <nav className={`nav ${isMobileMenuOpen ? 'nav--open' : ''}`}>
+            {!isMobile && (
+              <nav 
+                className="nav"
+                id="mobile-nav"
+              >
                 <Link 
                   to="/" 
                   className={`nav-link ${location.pathname === '/' ? 'nav-link--active' : ''}`}
-                  onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Главная
                 </Link>
                 <Link 
                   to="/genres" 
                   className={`nav-link ${location.pathname.startsWith('/genres') ? 'nav-link--active' : ''}`}
-                  onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Жанры
                 </Link>
@@ -100,10 +100,10 @@ const Header: React.FC = () => {
               {isMobile && (
                 <button 
                   className="mobile-menu-toggle"
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  aria-label={isMobileMenuOpen ? 'Закрыть меню' : 'Открыть меню'}
+                  onClick={() => navigate('/genres')}
+                  aria-label="Перейти к жанрам"
                 >
-                  <img src={iconBurger} alt="Меню" width={20} height={20} />
+                  <img src={iconBurger} alt="Меню" />
                 </button>
               )}
               {isMobile ? (
@@ -112,7 +112,7 @@ const Header: React.FC = () => {
                   onClick={() => setIsMobileSearchOpen(true)}
                   aria-label="Поиск"
                 >
-                  <img src={iconSearch} alt="Поиск" width={20} height={20} />
+                  <img src={iconSearch} alt="Поиск" />
                 </button>
               ) : (
                 <HeaderSearch />
@@ -124,7 +124,7 @@ const Header: React.FC = () => {
                   onClick={handleAccountClick}
                 >
                   {isMobile ? (
-                    <img src={iconPersonaOutline} alt="Профиль" width={20} height={20} />
+                    <img src={iconPersonaOutline} alt="Профиль" />
                   ) : (
                     user.name
                   )}
@@ -135,7 +135,7 @@ const Header: React.FC = () => {
                   onClick={handleLoginClick}
                 >
                   <span className="login-text">Войти</span>
-                  <img className="login-icon" src={iconPersonaOutline} alt="Войти" width={20} height={20} />
+                  <img className="login-icon" src={iconPersonaOutline} alt="Войти" />
                 </button>
               )}
             </div>

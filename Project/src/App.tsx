@@ -14,6 +14,7 @@ import Genres from './pages/Genres/Genres';
 import GenrePage from './pages/GenrePage/GenrePage';
 import MoviePage from './pages/MoviePage/MoviePage';
 import AccountPage from './pages/AccountPage/AccountPage';
+import ViewportWidth from './components/ViewportWidth/ViewportWidth';
 
 // Styles
 import './App.css';
@@ -50,6 +51,7 @@ const AppContent: React.FC = () => {
       }}
     >
       <div className="App">
+        <ViewportWidth />
         <Header />
         <main className="main-content">
           <Routes>

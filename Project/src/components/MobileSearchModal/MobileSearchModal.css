@@ -30,8 +30,9 @@
 .mobile-search-modal__search-icon {
   width: 20px;
   height: 20px;
-  opacity: 0.7;
+  opacity: 0.5; /* #FFFFFF80 = 50% прозрачности белого */
   flex-shrink: 0;
+  transition: opacity 0.2s ease; /* Плавный переход */
 }
 
 .mobile-search-modal__input {
@@ -39,15 +40,27 @@
   background: transparent;
   border: none;
   outline: none;
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.5); /* #FFFFFF80 = 50% прозрачности белого по умолчанию */
   font-size: 18px;
   line-height: 28px;
   font-family: 'Play', sans-serif;
   min-width: 0; /* Позволяет сжиматься */
+  transition: color 0.2s ease; /* Плавный переход */
+}
+
+/* Когда input не пустой (есть текст), цвет становится белым */
+.mobile-search-modal__input:not(:placeholder-shown),
+.mobile-search-modal__input:focus {
+  color: #ffffff; /* Белый цвет, как у крестика */
+}
+
+/* Когда input не пустой, иконка поиска тоже становится белой */
+.mobile-search-modal__header--has-text .mobile-search-modal__search-icon {
+  opacity: 1; /* Полная непрозрачность = белый цвет */
 }
 
 .mobile-search-modal__input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.5); /* #FFFFFF80 = 50% прозрачности белого */
 }
 
 .mobile-search-modal__close {
@@ -78,11 +91,11 @@
   right: 20px; /* Боковой отступ 20px справа */
   width: calc(100% - 40px); /* 335px */
   max-height: 378px;
-  background-color: #393B3C;
+  background-color: #393B3C; /* серый фон, как было изначально */
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-  z-index: 9;
+  z-index: 9; /* как было изначально */
 }
 
 .mobile-search-modal__content {
@@ -181,7 +194,7 @@
   z-index: 1;
   display: flex;
   flex-direction: column;
-  background-color: #0A0B0B;
+  background-color: #0A0B0B; /* черный фон */
   overflow: hidden;
   padding: 0;
   box-sizing: border-box;
@@ -189,22 +202,19 @@
 
 .mobile-search-featured-card__poster {
   width: 100%;
-  height: 234px;
+  height: 100%; /* Занимает всю высоту карточки (520px) */
   object-fit: cover;
   display: block;
   flex-shrink: 0;
   margin: 0;
   padding: 0;
   border-radius: 0;
+  opacity: 0.5; /* 50% прозрачности (#00000080 = rgba(0, 0, 0, 0.5) в виде opacity) */
 }
 
+/* Скрываем все текстовые элементы - только постер должен быть виден */
 .mobile-search-featured-card__info {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  flex: 1; /* займёт оставшееся место до 520px */
-  overflow: hidden;
+  display: none; /* Скрываем все тексты, оставляем только постер */
 }
 
 .mobile-search-featured-card__meta {

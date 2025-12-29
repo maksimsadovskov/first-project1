@@ -1,0 +1,16 @@
+.viewport-width-indicator {
+  position: fixed;
+  top: 100px; /* опускаем ниже хедера (80px высота + 20px отступ) */
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 10000;
+  pointer-events: none;
+  user-select: none;
+}
+

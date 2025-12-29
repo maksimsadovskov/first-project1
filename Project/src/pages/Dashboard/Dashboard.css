@@ -19,8 +19,8 @@
 }
 
 .dashboard .container {
-  max-width: 1440px;
-  padding: 0 80px; /* боковой отступ 80px на экранах 1440px */
+  max-width: 1340px; /* 1440px - 100px (50px с каждой стороны) */
+  padding: 0 30px; /* боковой отступ 30px */
   margin: 0 auto;
   box-sizing: border-box;
   width: 100%;
@@ -255,42 +255,85 @@
 
 .top-movies {
   margin-bottom: 120px; /* нижний отступ до футера */
+  overflow: visible; /* чтобы номера не обрезались */
 }
 
-.top-movies__grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr); /* используем fr для автоматического размещения */
-  gap: 40px; /* боковой отступ 40px */
-  row-gap: 64px; /* вертикальный отступ 64px */
-  justify-content: flex-start; /* выравниваем влево */
-  width: 100%; /* занимает всю ширину контейнера */
+@media (max-width: 767px) {
+  .top-movies {
+    overflow: visible; /* на мобиле тоже не обрезаем */
+  }
+}
+
+/* Grid применяется только на десктопе (широкие экраны) */
+/* На мобиле (max-width: 767px) используется flex с прокруткой через стили ниже */
+@media (min-width: 768px) {
+  .top-movies__grid {
+    display: grid;
+    /* auto-fit автоматически подстраивает количество колонок под доступную ширину */
+    /* minmax(224px, 224px) - фиксированная ширина 224px (размер постера), карточки не растягиваются */
+    grid-template-columns: repeat(auto-fit, minmax(224px, 224px));
+    gap: 40px; /* боковой отступ 40px */
+    row-gap: 64px; /* вертикальный отступ 64px */
+    justify-content: flex-start; /* выравниваем влево */
+    width: 100%; /* занимает всю ширину контейнера */
+  }
+
+  /* Убеждаемся, что карточки имеют фиксированную ширину 224px на десктопе */
+  .top-movies__grid .top-movie-item {
+    width: 224px;
+    max-width: 224px;
+  }
+
+  /* Ограничиваем максимум 5 колонками на очень широких экранах */
+  @media (min-width: 1440px) {
+    .top-movies__grid {
+      grid-template-columns: repeat(5, 224px); /* фиксированная ширина 224px для каждой колонки */
+      justify-content: flex-start; /* выравниваем влево */
+    }
+  }
 }
 
 .top-movie-item {
   position: relative;
+  width: 100%;
+  max-width: 224px; /* фиксированная ширина карточки = размер постера */
+}
+
+/* Убеждаемся, что карточки не растягиваются в grid */
+.top-movies__grid .top-movie-item {
+  justify-self: start; /* выравниваем влево внутри ячейки grid */
 }
 
 .top-movie-item__rank {
   position: absolute;
-  top: -8px;
-  left: -8px;
-  background-color: #4285f4;
-  color: #ffffff;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+  top: -12px;
+  left: -12px;
+  width: 62px;
+  height: 48px;
+  background-color: #ffffff;
+  color: var(--background-brand-active, #6A5DC2);
+  border-radius: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: 'Play', sans-serif;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: 0;
   z-index: 10;
-  box-shadow: 0 4px 8px rgba(66, 133, 244, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 }
 
-@media (max-width: 768px) {
-  .dashboard .container {
+@media (max-width: 767px) {
+  .dashboard:not(.dashboard--mobile-375) .container {
     padding: 0 20px; /* общий боковой отступ контейнера */
+    overflow: visible; /* чтобы номера не обрезались */
+  }
+  
+  .dashboard--mobile-375 .container {
+    padding: 0; /* для dashboard--mobile-375 padding убираем, так как он в .top-movies */
+    overflow: visible;
   }
   .dashboard {
     padding: 20px 0;
@@ -389,13 +432,59 @@
     padding: 8px 12px;
     background-color: #747474;
     color: #FFFFFF80;
-    border: none; /* выравниваем визуально с action-btn */
+    border: none;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  
+  .mobile-second-row .btn--secondary:hover,
+  .mobile-second-row .btn--secondary:focus {
+    background-color: #45526E;
+    color: #FFFFFF80;
+    transform: translateY(-2px);
+  }
+  
+  .mobile-second-row .btn--secondary:active {
+    background-color: #45526E;
+    transform: translateY(0);
+  }
+  
+  .mobile-second-row .btn--secondary:visited {
+    background-color: #747474;
+    color: #FFFFFF80;
   }
   
   .mobile-second-row .action-btn {
     display: flex;
-    flex: 1;
-    min-height: 50px;
+    flex: 0 0 68px; /* фиксированная ширина, не растягивается */
+    width: 68px; /* фиксированная ширина */
+    height: 56px; /* фиксированная высота */
+    min-width: 68px; /* минимальная ширина */
+    max-width: 68px; /* максимальная ширина */
+    min-height: 56px;
+    max-height: 56px; /* максимальная высота */
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+  
+  .mobile-second-row .action-btn svg {
+    width: 68px;
+    height: 56px;
+    flex-shrink: 0;
+    display: block;
+  }
+  
+  .mobile-second-row .action-btn--refresh {
+    flex: 0 0 68px;
+    width: 68px;
+    height: 56px;
+    min-width: 68px;
+    max-width: 68px;
+    min-height: 56px;
+    max-height: 56px;
   }
   
   .btn--primary {
@@ -427,32 +516,58 @@
     min-height: 50px;
   }
   
-  .section-title {
+  .top-movies .section-title {
+    display: block !important; /* убеждаемся, что виден */
     font-size: 24px;
-    margin-bottom: 24px;
+    margin-bottom: 40px; /* 40px вниз до постера на мобиле */
+    margin-top: 0;
+    padding: 0;
+    text-align: left; /* прижат влево */
+    font-family: 'Play', sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    line-height: 32px;
+    letter-spacing: 0;
+    color: var(--text-primary, #ffffff);
+    visibility: visible;
+    opacity: 1;
   }
   
   .top-movies {
     margin-bottom: 32px;
   }
 
-  .top-movies__grid {
+  /* Стили применяются только если НЕТ класса dashboard--mobile-375 */
+  .dashboard:not(.dashboard--mobile-375) .top-movies__grid {
     display: flex;
     overflow-x: auto;
+    overflow-y: visible;
     gap: 16px;
-    padding: 0 0 8px 0; /* убираем внутренние боковые, остаётся только 20px у контейнера */
+    padding: 38px 20px 8px 20px; /* верхний отступ 38px, слева и справа 20px - от края до постера 20px по макету */
+    margin-left: -20px; /* выходим за padding контейнера слева, grid начинается от края */
+    margin-right: -20px; /* выходим за padding контейнера справа */
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     -ms-overflow-style: none;
     justify-content: flex-start;
+    width: calc(100% + 40px); /* увеличиваем ширину на 40px (20px слева + 20px справа), чтобы постеры могли уходить вправо */
   }
   
   .top-movies__grid::-webkit-scrollbar {
     display: none;
   }
   
-  .top-movies__grid .movie-card {
+  .dashboard:not(.dashboard--mobile-375) .top-movie-item {
+    overflow: visible; /* чтобы номера не обрезались */
+    padding-left: 12px; /* добавляем padding слева для номера, чтобы он не обрезался */
+  }
+  
+  .dashboard:not(.dashboard--mobile-375) .top-movie-item__rank {
+    left: -12px; /* номер на -12px от элемента, но элемент имеет padding 12px, итого номер на 0px от края grid */
+  }
+  
+  .dashboard:not(.dashboard--mobile-375) .top-movies__grid .movie-card {
     flex: 0 0 335px;
     width: 335px;
     scroll-snap-align: start;
@@ -473,25 +588,12 @@
   }
 }
 
-@media (max-width: 768px) {
-  .header-content {
-    justify-content: space-between;
-  }
+/* Убрали переопределения хедера - они должны быть в Header.css для всех страниц */
 
-  .logo {
-    margin: 0 auto;
-    padding: 8px 16px;
-  }
-
-  .header-actions {
-    margin-left: 0;
-  }
-}
-
-/* МЕДИА-ЗАПРОС ДЛЯ 375PX - ГЛАВНАЯ СТРАНИЦА */
-@media (max-width: 375px) {
-  /* Контейнер БЕЗ боковых отступов для постера и инфо-блока */
-  .dashboard .container {
+/* МЕДИА-ЗАПРОС ДЛЯ МОБИЛЬНЫХ - ГЛАВНАЯ СТРАНИЦА (до 888px, как в хедере) */
+@media (max-width: 888px) {
+  /* Контейнер БЕЗ боковых отступов для постера и инфо-блока, но для top-movies нужен отступ */
+  .dashboard--mobile-375 .container {
     padding: 0;
   }
   
@@ -626,9 +728,33 @@
 
   /* Кнопка "О фильме" */
   .dashboard--mobile-375 .mobile-second-row .btn--secondary {
-    background-color: #393B3C;
+    background-color: #747474;
+    color: #FFFFFF80;
     border: none;
-    font-size: 14px;
+    font-size: 18px;
+    line-height: 24px;
+    padding: 8px 12px;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  
+  .dashboard--mobile-375 .mobile-second-row .btn--secondary:hover,
+  .dashboard--mobile-375 .mobile-second-row .btn--secondary:focus {
+    background-color: #45526E;
+    color: #FFFFFF80;
+    transform: translateY(-2px);
+  }
+  
+  .dashboard--mobile-375 .mobile-second-row .btn--secondary:active {
+    background-color: #45526E;
+    transform: translateY(0);
+  }
+  
+  .dashboard--mobile-375 .mobile-second-row .btn--secondary:visited {
+    background-color: #747474;
+    color: #FFFFFF80;
   }
   
   /* Заголовок секции */
@@ -636,6 +762,7 @@
     font-size: 24px;
     line-height: 32px;
     margin-bottom: 24px;
+    margin-left: -10px; /* сдвигаем влево на 10px (на столько же, на сколько карточки сдвинулись вправо) */
   }
   
   /* Общие кнопки */
@@ -653,19 +780,45 @@
   /* Секция "Топ 10 фильмов" на 375px */
   .dashboard--mobile-375 .top-movies {
     margin-bottom: 32px;
-    padding: 0 20px; /* Боковые отступы только для этой секции */
+    padding: 0 0 0 30px;
+    overflow: visible; /* чтобы номера не обрезались */
   }
   
   .dashboard--mobile-375 .top-movies__grid {
     display: flex;
-    overflow-x: auto;
-    gap: 16px;
-    padding: 0;
-    scroll-snap-type: x mandatory;
+    overflow-x: visible;
+    overflow-y: visible;
+    gap: 48px; /* боковые отступы между постерами 48px (увеличено с 40px) */
+    padding: 14px 0 8px 0; /* верхний отступ 14px, padding слева убран, так как он в .top-movies */
+    margin-left: 0; /* убираем отрицательный margin, чтобы постеры были правее */
+    margin-right: 0; /* справа без ограничений, постеры обрезаются краем */
+    scroll-snap-type: none; /* убираем snap, так как нет прокрутки */
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     -ms-overflow-style: none;
     justify-content: flex-start;
+    width: 100%; /* убираем calc, так как margin-left теперь 0 */
+  }
+  
+  .dashboard--mobile-375 .top-movie-item {
+    overflow: visible;
+    position: relative;
+    margin-left: -12px; /* сдвигаем постер левее на столько же, на сколько сдвинули облако правее */
+    padding-left: 0; /* убираем padding-left из @media (max-width: 767px) */
+  }
+  
+  .dashboard--mobile-375 .top-movie-item__rank {
+    z-index: 100;
+    position: absolute;
+    left: -12px; /* сдвигаем облако влево относительно постера */
+  }
+  
+  .dashboard--mobile-375 .top-movies__grid .movie-card {
+    overflow: visible; /* чтобы тень не обрезалась */
+  }
+  
+  .dashboard--mobile-375 .top-movies__grid .movie-card .movie-card__poster {
+    overflow: visible; /* чтобы тень не обрезалась */
   }
   
   .dashboard--mobile-375 .top-movies__grid::-webkit-scrollbar {
@@ -676,27 +829,33 @@
   .dashboard--mobile-375 .top-movies__grid .movie-card,
   .dashboard--mobile-375 .top-movies__grid .movie-card.movie-card--small {
     flex: 0 0 224px;
-    width: 224px; /* переопределяем общее правило 335px для главной страницы */
+    width: 224px; /* на мобиле 224x336 */
     height: 336px;
     scroll-snap-align: start;
     margin: 0;
     border-radius: 0; /* Карточка без радиуса */
     border: none;
+    flex-shrink: 0; /* не сжимаются, чтобы gap работал */
   }
   
   /* ПОСТЕР с border-radius 16px со всех сторон */
+  .dashboard--mobile-375 .top-movies__grid .movie-card {
+    overflow: visible; /* чтобы тень не обрезалась */
+  }
+  
   .dashboard--mobile-375 .top-movies__grid .movie-card .movie-card__poster {
     width: 224px;
     height: 336px;
     border-radius: 16px; /* Радиус только у постера */
     aspect-ratio: auto;
+    overflow: visible; /* чтобы тень не обрезалась */
   }
   
   .dashboard--mobile-375 .top-movies__grid .movie-card .movie-card__poster img {
     border-radius: 16px;
     object-fit: cover;
   }
-
+  
   /* Инфо-блок скрыт на 375px */
   .dashboard--mobile-375 .top-movies__grid .movie-card .movie-card__info {
     display: none;
@@ -707,9 +866,8 @@
   width: 68px;
   height: 56px;
   border-radius: 28px;
-  background-color: #393B3C;
+  background: transparent;
   border: none;
-  color: #ffffff;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -718,20 +876,27 @@
   flex-shrink: 0;
 }
 
-.action-btn:hover {
-  background-color: #2f3132;
+/* Кнопка обновления: фон и бордюр как в макете, не меняются при клике */
+.action-btn--refresh {
+  background-color: #393B3C;
+  border: 1px solid var(--content-placeholder, #00000066);
 }
 
-/* Активное состояние сердечка на ГЛАВНОЙ — сиреневый цвет */
+/* Активное состояние сердечка на ГЛАВНОЙ — тот же фон, белое залитое сердце */
 .dashboard .featured-movie__actions-container .action-btn--favorite.active {
-  background-color: #393B3C;
-  color: #B4A9FF;
+  background-color: #333333;
+  border: 1px solid var(--content-placeholder, #00000066);
+  color: #ffffff; /* сердце остаётся белым */
 }
 
 .dashboard .featured-movie__actions-container .action-btn--favorite.active:hover {
-  background-color: #393B3C;
-  color: #a599ee;
+  background-color: #333333;
+  border: 1px solid var(--content-placeholder, #00000066);
+  color: #ffffff;
 }
+
+/* Заливка сердца в активном состоянии на главной */
+/* Контур и заливка сердца на главной задаются прямо в SVG */
 
 /* Стили для кнопки сердечка — как на странице фильма */
 .btn--icon {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { loginUser, registerUser, clearRegistrationSuccess } from '../../store/slices/authSlice';
+import { loginUser, registerUser, clearRegistrationSuccess, clearError } from '../../store/slices/authSlice';
 import { LoginCredentials, RegisterCredentials } from '../../types';
 import logoMarusya from '../../assets/logos/mask-group.svg';
 import './AuthModal.css';
@@ -54,11 +54,26 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     }
   }, [isOpen, isRegistrationSuccess]);
 
-  // Очищаем ошибки при изменении email
+  // Очищаем ошибки при изменении email и при появлении ошибок валидации от сервера
   useEffect(() => {
-    if (formData.email && errors.email) {
+    if (errors.email) {
+      // Игнорируем ошибки валидации от сервера API (кириллические символы и т.д.)
+      const serverValidationError = errors.email.includes('символ') || 
+                                    errors.email.includes('не должна содержать') ||
+                                    errors.email.includes('Часть адреса');
+      
+      if (serverValidationError) {
+        // Немедленно очищаем ошибку валидации от сервера
+        setErrors(prev => {
+          const newErrors = { ...prev };
+          delete newErrors.email;
+          return newErrors;
+        });
+        return;
+      }
+      
       // Проверяем, что email валидный, и если да - очищаем ошибку
-      if (/\S+@\S+\.\S+/.test(formData.email)) {
+      if (formData.email && /\S+@\S+\.\S+/.test(formData.email)) {
         setErrors(prev => {
           const newErrors = { ...prev };
           delete newErrors.email;
@@ -66,7 +81,46 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         });
       }
     }
-  }, [formData.email]);
+  }, [formData.email, errors.email]);
+
+  // Очищаем ошибки валидации от сервера при изменении authError
+  // И переключаем на регистрацию при любой ошибке входа
+  useEffect(() => {
+    if (authError && isLogin) {
+      const serverValidationError = authError.includes('символ') || 
+                                    authError.includes('не должна содержать') ||
+                                    authError.includes('Часть адреса') ||
+                                    authError.includes('до символа') ||
+                                    authError.includes('недопустим') ||
+                                    authError.includes('недопустимая');
+      
+      if (serverValidationError) {
+        // Очищаем ошибку из authError и из всех полей формы
+        setErrors(prev => {
+          const newErrors = { ...prev };
+          delete newErrors.email;
+          delete newErrors.name;
+          delete newErrors.surname;
+          delete newErrors.password;
+          delete newErrors.confirmPassword;
+          return newErrors;
+        });
+      }
+      
+      // При любой ошибке входа переключаем на регистрацию
+      setIsLogin(false);
+      setTouched({});
+      setHasAttemptedSubmit(false);
+      setFormData(prev => ({
+        ...prev,
+        confirmPassword: '',
+        name: '',
+        surname: ''
+      }));
+      dispatch(clearError());
+      dispatch(clearRegistrationSuccess());
+    }
+  }, [authError, isLogin, dispatch]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
@@ -76,12 +130,22 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     }));
     
     // Clear error when user starts typing (only if field was touched)
-    if (errors[name as keyof FormErrors] && touched[name]) {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[name as keyof FormErrors];
-        return newErrors;
-      });
+    // Также очищаем ошибки валидации от сервера API
+    if (errors[name as keyof FormErrors]) {
+      const errorValue = errors[name as keyof FormErrors] || '';
+      const serverValidationError = errorValue.includes('символ') || 
+                                    errorValue.includes('не должна содержать') ||
+                                    errorValue.includes('Часть адреса') ||
+                                    errorValue.includes('недопустим') ||
+                                    errorValue.includes('недопустимая');
+      
+      if (touched[name] || serverValidationError) {
+        setErrors(prev => {
+          const newErrors = { ...prev };
+          delete newErrors[name as keyof FormErrors];
+          return newErrors;
+        });
+      }
     }
   };
 
@@ -97,6 +161,21 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
+    
+    // Очищаем ошибки валидации от сервера перед валидацией
+    if (errors.email) {
+      const serverValidationError = errors.email.includes('символ') || 
+                                    errors.email.includes('не должна содержать') ||
+                                    errors.email.includes('Часть адреса');
+      if (serverValidationError) {
+        // Очищаем ошибку валидации от сервера
+        setErrors(prev => {
+          const newErrors = { ...prev };
+          delete newErrors.email;
+          return newErrors;
+        });
+      }
+    }
     
     if (!formData.email.trim()) {
       newErrors.email = 'Email обязателен';
@@ -150,9 +229,38 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       surname: true
     });
     
+    // Очищаем ошибки валидации от сервера перед валидацией
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      // Очищаем ошибки валидации от сервера для всех полей
+      Object.keys(newErrors).forEach(key => {
+        const errorMessage = newErrors[key as keyof FormErrors] || '';
+        const serverValidationError = errorMessage.includes('символ') || 
+                                      errorMessage.includes('не должна содержать') ||
+                                      errorMessage.includes('Часть адреса') ||
+                                      errorMessage.includes('недопустим') ||
+                                      errorMessage.includes('недопустимая');
+        if (serverValidationError) {
+          delete newErrors[key as keyof FormErrors];
+        }
+      });
+      return newErrors;
+    });
+    
     const isValid = validateForm();
     if (!isValid) {
+      // Если форма не валидна, не продолжаем
       return;
+    }
+    
+    // Убеждаемся, что для регистрации все поля заполнены
+    if (!isLogin) {
+      if (!formData.email.trim() || !formData.password.trim() || 
+          !formData.name.trim() || !formData.surname.trim() || 
+          !formData.confirmPassword.trim()) {
+        // Если какое-то поле не заполнено, не продолжаем регистрацию
+        return;
+      }
     }
     
     try {
@@ -161,10 +269,32 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           email: formData.email,
           password: formData.password
         };
-        await dispatch(loginUser(credentials)).unwrap();
-        onClose();
-        setFormData({ email: '', password: '', confirmPassword: '', name: '', surname: '' });
-        setErrors({});
+        const loginResult = await dispatch(loginUser(credentials));
+        if (loginUser.fulfilled.match(loginResult)) {
+          // Успешный вход
+          onClose();
+          setFormData({ email: '', password: '', confirmPassword: '', name: '', surname: '' });
+          setErrors({});
+        } else {
+          // При любой ошибке входа (пользователь не найден, ошибка валидации и т.д.)
+          // переключаем на форму регистрации
+          // Сохраняем введенный email и пароль
+          setIsLogin(false);
+          setErrors({});
+          setTouched({});
+          setHasAttemptedSubmit(false);
+          // Очищаем ошибку из authError
+          dispatch(clearError());
+          // Email и пароль уже в formData, оставляем их
+          // Очищаем только confirmPassword, name и surname
+          setFormData(prev => ({
+            ...prev,
+            confirmPassword: '',
+            name: '',
+            surname: ''
+          }));
+          dispatch(clearRegistrationSuccess());
+        }
       } else {
         const credentials: RegisterCredentials = {
           email: formData.email,
@@ -172,6 +302,19 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           name: formData.name,
           surname: formData.surname
         };
+        // Очищаем ошибки валидации от сервера перед регистрацией
+        setErrors(prev => {
+          const newErrors = { ...prev };
+          if (newErrors.email) {
+            const errorMessage = newErrors.email;
+            if (errorMessage.includes('символ') || 
+                errorMessage.includes('не должна содержать') ||
+                errorMessage.includes('Часть адреса')) {
+              delete newErrors.email;
+            }
+          }
+          return newErrors;
+        });
         try {
           await dispatch(registerUser(credentials)).unwrap();
           // Регистрация успешна, не закрываем модальное окно - показываем экран успешной регистрации
@@ -181,6 +324,19 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         } catch (registerError: any) {
           // Ошибки от API обрабатываются в authSlice, здесь не показываем их пользователю
           // Локальная регистрация должна была сработать автоматически
+          // Очищаем любые ошибки валидации от сервера
+          setErrors(prev => {
+            const newErrors = { ...prev };
+            if (newErrors.email) {
+              const errorMessage = newErrors.email;
+              if (errorMessage.includes('символ') || 
+                  errorMessage.includes('не должна содержать') ||
+                  errorMessage.includes('Часть адреса')) {
+                delete newErrors.email;
+              }
+            }
+            return newErrors;
+          });
         }
         return;
       }
@@ -269,7 +425,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         </div>
         
         <form className="auth-modal__form" onSubmit={handleSubmit}>
-          {authError && !authError.includes('символ') && !authError.includes('не должна содержать') && (
+          {authError && !authError.includes('символ') && !authError.includes('не должна содержать') && !authError.includes('Часть адреса') && !authError.includes('до символа') && (
             <div className="auth-modal__error-message">
               {authError}
             </div>
@@ -296,11 +452,23 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     <span className="form-input-label">электронная почта</span>
                   </div>
                 </div>
-                {errors.email && touched.email && hasAttemptedSubmit && (
-                  <div className="error-message error-message--field">
-                    {errors.email}
-                  </div>
-                )}
+                {errors.email && touched.email && hasAttemptedSubmit && (() => {
+                  const errorMessage = errors.email || '';
+                  const serverValidationError = errorMessage.includes('символ') || 
+                                                errorMessage.includes('не должна содержать') ||
+                                                errorMessage.includes('Часть адреса') ||
+                                                errorMessage.includes('недопустим') ||
+                                                errorMessage.includes('недопустимая');
+                  // Не показываем ошибки валидации от сервера
+                  if (!serverValidationError) {
+                    return (
+                      <div className="error-message error-message--field">
+                        {errors.email}
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
               </div>
               
               <div className="form-group form-group--with-icon">
@@ -360,11 +528,23 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     <span className="form-input-label">электронная почта</span>
                   </div>
                 </div>
-                {errors.email && touched.email && hasAttemptedSubmit && (
-                  <div className="error-message error-message--field">
-                    {errors.email}
-                  </div>
-                )}
+                {errors.email && touched.email && hasAttemptedSubmit && (() => {
+                  const errorMessage = errors.email || '';
+                  const serverValidationError = errorMessage.includes('символ') || 
+                                                errorMessage.includes('не должна содержать') ||
+                                                errorMessage.includes('Часть адреса') ||
+                                                errorMessage.includes('недопустим') ||
+                                                errorMessage.includes('недопустимая');
+                  // Не показываем ошибки валидации от сервера
+                  if (!serverValidationError) {
+                    return (
+                      <div className="error-message error-message--field">
+                        {errors.email}
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
               </div>
               
               <div className="form-group form-group--with-icon">
@@ -385,11 +565,22 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     <span className="form-input-label">имя</span>
                   </div>
                 </div>
-                {errors.name && touched.name && hasAttemptedSubmit && (
-                  <div className="error-message error-message--field">
-                    {errors.name}
-                  </div>
-                )}
+                {errors.name && touched.name && hasAttemptedSubmit && (() => {
+                  const errorMessage = errors.name || '';
+                  const serverValidationError = errorMessage.includes('символ') || 
+                                                errorMessage.includes('не должна содержать') ||
+                                                errorMessage.includes('недопустим') ||
+                                                errorMessage.includes('недопустимая');
+                  // Не показываем ошибки валидации от сервера
+                  if (!serverValidationError) {
+                    return (
+                      <div className="error-message error-message--field">
+                        {errors.name}
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
               </div>
               
               <div className="form-group form-group--with-icon">
@@ -410,11 +601,22 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     <span className="form-input-label">фамилия</span>
                   </div>
                 </div>
-                {errors.surname && touched.surname && hasAttemptedSubmit && (
-                  <div className="error-message error-message--field">
-                    {errors.surname}
-                  </div>
-                )}
+                {errors.surname && touched.surname && hasAttemptedSubmit && (() => {
+                  const errorMessage = errors.surname || '';
+                  const serverValidationError = errorMessage.includes('символ') || 
+                                                errorMessage.includes('не должна содержать') ||
+                                                errorMessage.includes('недопустим') ||
+                                                errorMessage.includes('недопустимая');
+                  // Не показываем ошибки валидации от сервера
+                  if (!serverValidationError) {
+                    return (
+                      <div className="error-message error-message--field">
+                        {errors.surname}
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
               </div>
               
               <div className="form-group form-group--with-icon">

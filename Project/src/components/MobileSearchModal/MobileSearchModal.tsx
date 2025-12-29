@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setQuery, searchMovies, clearResults } from '../../store/slices/searchSlice';
@@ -15,14 +15,44 @@ const MobileSearchModal: React.FC<MobileSearchModalProps> = ({ isOpen, onClose }
   const dispatch = useAppDispatch();
   const { query, results, isSearching } = useAppSelector((state) => state.search);
   const { featuredMovie } = useAppSelector((state) => state.movies);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Debounced search function - предотвращает повторные запросы
+  const debouncedSearch = useCallback((searchQuery: string) => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    
+    // Если это первая буква, ищем сразу, иначе с небольшой задержкой
+    const delay = searchQuery.length === 1 ? 50 : 200;
+    
+    debounceTimerRef.current = setTimeout(() => {
+      if (searchQuery.trim()) {
+        dispatch(searchMovies(searchQuery));
+      }
+    }, delay);
+  }, [dispatch]);
 
   useEffect(() => {
     if (query.trim()) {
-      dispatch(searchMovies(query));
+      // Запускаем поиск с debounce
+      debouncedSearch(query);
     } else {
       dispatch(clearResults());
+      // Очищаем таймер при очистке запроса
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
+      }
     }
-  }, [query, dispatch]);
+    
+    // Cleanup function
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [query, dispatch, debouncedSearch]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -48,7 +78,7 @@ const MobileSearchModal: React.FC<MobileSearchModalProps> = ({ isOpen, onClose }
   return (
     <div className="mobile-search-modal">
       {/* Хедер поиска поверх всего */}
-      <div className="mobile-search-modal__header">
+      <div className={`mobile-search-modal__header ${query.trim() ? 'mobile-search-modal__header--has-text' : ''}`}>
         <img className="mobile-search-modal__search-icon" src={iconSearch} alt="Поиск" width={20} height={20} />
         <input
           type="text"

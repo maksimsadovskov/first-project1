@@ -6,11 +6,18 @@
 }
 
 .genre-page .container {
-  max-width: 1440px;
-  padding: 0 80px; /* боковой отступ 80px на экранах 1440px */
+  max-width: 1340px; /* 1440px - 100px (50px с каждой стороны) */
+  padding: 0 30px; /* боковой отступ 30px на десктопе */
   margin: 0 auto;
   box-sizing: border-box;
   width: 100%;
+}
+
+/* Отступы для промежуточных размеров экрана (768px - 1440px) */
+@media (min-width: 768px) and (max-width: 1439px) {
+  .genre-page .container {
+    padding: 0 30px; /* Отступы для всех промежуточных размеров */
+  }
 }
 
 .genre-page-loading,
@@ -69,22 +76,50 @@
 }
 
 .genre-title {
-  font-size: 32px;
+  font-family: 'Play', sans-serif;
+  font-size: 48px; /* десктоп по умолчанию */
   font-weight: 700;
+  font-style: normal;
+  line-height: 56px;
+  letter-spacing: 0;
   color: #ffffff;
   margin: 0;
 }
 
-.movies-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 5 колонок, растягиваются равномерно */
-  grid-auto-rows: auto;
-  gap: 40px; /* 40px между постерами по горизонтали */
-  row-gap: 64px; /* 64px между рядами по вертикали */
-  justify-content: start; /* Выравнивание по левому краю */
-  overflow: visible; /* Чтобы тени не обрезались */
-  width: 100%;
-  box-sizing: border-box;
+/* На мобиле уменьшаем размер */
+@media (max-width: 767px) {
+  .genre-title {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 700;
+  }
+}
+
+/* Grid применяется только на десктопе (широкие экраны) */
+/* На мобиле (max-width: 767px) используется адаптивная сетка через стили ниже */
+@media (min-width: 768px) {
+  .movies-grid {
+    display: grid;
+    /* auto-fit автоматически подстраивает количество колонок под доступную ширину */
+    /* minmax(224px, 224px) - фиксированная ширина 224px (размер постера), карточки не растягиваются */
+    grid-template-columns: repeat(auto-fit, minmax(224px, 224px));
+    grid-auto-rows: auto;
+    gap: 40px; /* 40px между постерами по горизонтали */
+    row-gap: 64px; /* 64px между рядами по вертикали */
+    justify-content: start; /* Выравнивание по левому краю */
+    justify-items: start; /* выравнивание элементов внутри ячеек */
+    overflow: visible; /* Чтобы тени не обрезались */
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Ограничиваем максимум 5 колонками на очень широких экранах */
+  @media (min-width: 1440px) {
+    .movies-grid {
+      grid-template-columns: repeat(5, 224px); /* фиксированная ширина 224px для каждой колонки */
+      justify-content: start; /* выравниваем влево */
+    }
+  }
 }
 
 .no-movies {
@@ -140,18 +175,12 @@
   transform: none;
 }
 
-/* На десктопе всегда 5 колонок, растягиваются на всю ширину */
-@media (min-width: 769px) {
-  .movies-grid {
-    grid-template-columns: repeat(5, 1fr);
-    justify-content: start;
-  }
-  
-  /* Карточки растягиваются на всю ширину ячейки */
+/* Убеждаемся, что карточки имеют фиксированную ширину 224px на десктопе */
+@media (min-width: 768px) {
   .movies-grid .movie-card-wrapper,
   .movies-grid .movie-card-wrapper .movie-card {
-    width: 100%;
-    max-width: none;
+    width: 224px;
+    max-width: 224px;
   }
 }
 
@@ -193,7 +222,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .genre-page {
     padding: 20px 0;
   }
@@ -216,7 +245,9 @@
   }
   
   .genre-title {
-    font-size: 28px;
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 700;
   }
   
   .genre-description {
@@ -224,9 +255,10 @@
   }
   
   .movies-grid {
+    display: grid; /* Убеждаемся, что grid применяется на мобиле */
     grid-template-columns: 1fr;
     gap: 20px;
-    row-gap: 24px;
+    row-gap: 24px; /* Нижний отступ между карточками */
     justify-items: center;
   }
   
@@ -247,6 +279,13 @@
   }
 }
 
+/* Отступы для экранов с 766px до 360px */
+@media (max-width: 766px) and (min-width: 360px) {
+  .genre-page .container {
+    padding: 0 20px;
+  }
+}
+
 @media (max-width: 480px) {
   .genre-back-btn {
     font-size: 24px;
@@ -259,6 +298,8 @@
   
   .genre-title {
     font-size: 24px;
+    line-height: 32px;
+    font-weight: 700;
   }
   
   .genre-description {
@@ -270,7 +311,7 @@
   }
 }
 
-@media (min-width: 481px) and (max-width: 768px) {
+@media (min-width: 481px) and (max-width: 767px) {
   .movies-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     justify-items: stretch;

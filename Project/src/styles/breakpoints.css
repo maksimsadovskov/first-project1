@@ -1,0 +1,19 @@
+/* Breakpoints для синхронизации всех компонентов */
+
+/* Мобильная версия - для экранов 766px и меньше */
+/* Используется в: Header, Dashboard, GenrePage, Genres, MoviePage, AccountPage */
+
+/* Промежуточная версия - для экранов 767px */
+/* Используется в: Header */
+
+/* Десктопная версия - для экранов 768px и выше */
+/* Используется в: все компоненты */
+
+/* Значения breakpoints:
+   - mobile: max-width: 766px
+   - intermediate: max-width: 767px and min-width: 767px
+   - desktop: min-width: 768px
+*/
+
+
+
