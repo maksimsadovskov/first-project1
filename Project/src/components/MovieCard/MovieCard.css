@@ -1,0 +1,230 @@
+.movie-card-wrapper {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+.movie-card-wrapper .movie-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease;
+  border-radius: 16px;
+  border: 1px solid #FFFFFF40;
+  box-shadow: 0px 0px 80px 0px #FFFFFF54;
+  overflow: hidden;
+  background-color: #2a2a2a;
+  width: 100%;
+}
+
+.movie-card-wrapper .movie-card-remove-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: none;
+  color: #000000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Крестик появляется при hover на карточку */
+.movie-card-wrapper:hover .movie-card-remove-btn {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Крестик увеличивается при hover на сам крестик */
+.movie-card-wrapper .movie-card-remove-btn:hover {
+  transform: translate(50%, -50%) scale(1.1);
+  background-color: #f5f5f5;
+}
+
+.movie-card-wrapper .movie-card-remove-btn:active {
+  transform: translate(50%, -50%) scale(0.95);
+}
+
+.movie-card:hover {
+  transform: translateY(-4px);
+}
+
+.movie-card--small {
+  width: 100%; /* занимает всю ширину ячейки grid */
+  height: auto; /* высота автоматически по aspect-ratio */
+}
+
+.movie-card--medium {
+  width: 250px;
+}
+
+.movie-card--large {
+  width: 300px;
+}
+
+.movie-card__poster {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2/3;
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+  min-height: 0; /* позволяет grid правильно масштабировать */
+}
+
+/* Для топ-10 на десктопе: фиксированная высота 336px, ширина 224px */
+@media (min-width: 889px) {
+  .top-movies__grid .movie-card--small {
+    height: 336px;
+    width: 224px;
+  }
+  
+  .top-movies__grid .movie-card__poster {
+    aspect-ratio: auto;
+    width: 224px;
+    height: 336px; /* на десктопе постер 224x336, инфо-блок скрыт */
+  }
+  
+  .top-movies__grid .movie-card__info {
+    display: none; /* инфо-блок скрыт на десктопе для топ-10 */
+  }
+}
+
+.movie-card__poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.movie-card:hover .movie-card__poster img {
+  transform: scale(1.05);
+}
+
+.favorite-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: none;
+  color: #ffffff;
+  font-size: 20px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.favorite-btn:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+  transform: scale(1.1);
+}
+
+.favorite-btn--active {
+  background-color: #B4A9FF;
+  color: #ffffff;
+}
+
+.favorite-btn--active:hover {
+  background-color: #a599ee;
+}
+
+.movie-card__info {
+  padding: 16px;
+  border-radius: 0 0 16px 16px;
+  background-color: #2a2a2a;
+}
+
+.movie-card__title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.movie-card__details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #888;
+}
+
+.movie-card__rating {
+  color: #ffd700;
+  font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .movie-card--small {
+    width: 150px;
+  }
+  
+  .movie-card--medium {
+    width: 180px;
+  }
+  
+  .movie-card--large {
+    width: 200px;
+  }
+  
+  .movie-card__info {
+    padding: 12px;
+  }
+  
+  .movie-card__title {
+    font-size: 14px;
+  }
+  
+  .movie-card__details {
+    font-size: 12px;
+  }
+}
+
+/* Mobile 375px: карточка 335x(220+84), радиус 16, бордер 1, отступ снизу 24 */
+@media (max-width: 375px) {
+  .movie-card {
+    width: 335px;
+    border-radius: 16px;
+    border: 1px solid #FFFFFF40;
+    box-shadow: 0px 0px 80px 0px #FFFFFF54;
+    margin-bottom: 24px;
+  }
+
+  .movie-card__poster {
+    aspect-ratio: auto;
+    height: 220px;
+  }
+
+  .movie-card__info {
+    height: 84px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .movie-card__title {
+    text-align: center;
+    margin-bottom: 6px;
+  }
+}

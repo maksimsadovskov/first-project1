@@ -1,0 +1,490 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--background-primary);
+  border-bottom: none;
+  z-index: 1000;
+  height: 80px;
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.header .header-content {
+  display: flex;
+  align-items: center;
+  height: 80px;
+  width: 100%;
+  gap: 24px;
+  min-width: 0;
+}
+
+.header .logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--logo-text-color);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  justify-content: flex-start;
+  border-radius: 13px;
+  background-color: var(--logo-background, transparent);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  flex-shrink: 0;
+}
+
+.header .logo-icon {
+  display: block;
+  object-fit: contain;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+/* Мобильная версия - маленький логотип до 909px */
+@media (max-width: 909px) {
+  .header .logo {
+    width: 80.6px;
+    height: 32px;
+    flex: 0 0 80.6px;
+  }
+  
+  .header .logo-icon {
+    width: 80.6px;
+    height: 32px;
+  }
+}
+
+/* Десктоп 910px и больше - большой логотип */
+@media (min-width: 910px) {
+  .header .logo {
+    width: 143.3px;
+    height: 32px;
+    flex: 0 0 143.3px;
+  }
+  
+  .header .logo-icon {
+    width: 143.3px;
+    height: 32px;
+  }
+}
+
+
+
+
+
+
+/* Логотип на темном фоне (on dark) - прозрачный фон, белый текст */
+.header .logo--dark {
+  background-color: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.header .logo--dark .logo-icon {
+  filter: brightness(1);
+}
+
+/* Логотип на светлом фоне (on light) - белый фон с тенью, темный текст */
+.header .logo--light {
+  background-color: #ffffff;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.2);
+  padding: 8px 16px;
+  border-radius: 13px;
+}
+
+.header .logo--light .logo-icon {
+  filter: brightness(0);
+}
+
+.header .nav {
+  display: flex;
+  gap: 32px;
+  margin-left: 60px;
+  margin-right: 24px;
+  flex-shrink: 0;
+}
+
+.header .nav-link {
+  font-family: 'Play', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: 0;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  display: inline-block;
+  padding-bottom: 4px;
+  border-bottom: 1px solid transparent;
+}
+
+.header .nav-link:hover {
+  color: #4285f4;
+}
+
+.header .nav-link--active {
+  color: #B4A9FF;
+  border-bottom: 1px solid #9747FF;
+}
+
+.header .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-shrink: 1;
+  flex-grow: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  margin-left: auto;
+  justify-content: flex-end;
+}
+
+.header .search-btn {
+  background-color: #2a2a2a;
+  border: none;
+  color: #ffffff;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 12px 16px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  max-width: 700px;
+  width: 100%;
+  flex: 1;
+}
+
+.header .search-btn:hover {
+  background-color: #333;
+}
+
+.header .login-btn {
+  font-family: 'Play', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: 0;
+  background-color: transparent; /* цвет как у страницы */
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.header .login-btn .login-text { display: inline; }
+.header .login-btn .login-icon { display: none; }
+
+
+.header .login-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* лёгкий hover-эффект */
+}
+
+.header .user-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header .user-btn {
+  font-family: 'Play', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: 0;
+  background-color: transparent;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 0; /* Без радиуса для имени на 1440px */
+  transition: background-color 0.2s ease;
+  border-bottom: 1.5px solid #DC5DFC; /* Border для 1440px */
+  padding-bottom: 6.5px; /* Компенсация border */
+  width: 132px; /* Ширина 132px для прямой линии */
+  justify-content: center; /* Текст по центру */
+}
+
+.header .user-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.header .user-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.header .logout-btn {
+  background-color: transparent;
+  color: #888;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.header .logout-btn:hover {
+  color: #ffffff;
+}
+
+/* Бургер-меню */
+.header .mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 1000;
+}
+
+/* Принудительно показываем бургер только на мобильных экранах */
+@media (max-width: 909px) {
+  .header .mobile-menu-toggle {
+    display: block;
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+.header .burger-icon {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 24px;
+  height: 24px;
+}
+
+.header .burger-icon span {
+  width: 10px;
+  height: 10px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+}
+
+.header .container {
+  position: relative;
+  max-width: 1340px; /* 1440px - 100px (50px с каждой стороны) */
+  padding: 0 30px; /* боковой отступ 30px */
+  margin: 0 auto;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Мобильная версия - для экранов 909px и меньше */
+@media (max-width: 909px) {
+  .header {
+    height: 64px;
+  }
+
+  .header > .container {
+    padding: 0 0 0 20px;
+  }
+
+  .header .header-content {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0;
+  }
+
+  .header .logo {
+    margin: 0; /* Убираем margin: 0 auto, чтобы логотип был слева */
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+  }
+  
+  /* Скрываем навигацию на мобильных (она показывается только при открытии бургера) */
+  .header .nav {
+    display: none;
+    position: absolute;
+    top: 64px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px 20px;
+    background-color: var(--background-primary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 999;
+    margin-left: 0; /* Убираем margin из промежуточных стилей */
+    margin-right: 0;
+  }
+  
+  /* Показываем бургер на мобильных */
+  .header .mobile-menu-toggle {
+    display: block;
+    visibility: visible;
+    opacity: 1;
+  }
+
+
+
+  /* Навигация уже определена выше в этом же медиазапросе */
+  .header .nav.nav--open {
+    display: flex; /* Показываем навигацию только когда открыт бургер */
+  }
+
+  .header .nav-link {
+    font-size: 18px;
+    border-bottom: none;
+  }
+
+  .header .header-actions {
+    margin-left: 0;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: auto;
+  }
+
+  .header .search-btn {
+    background: transparent;
+    border: none;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    max-width: 24px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .header .mobile-menu-toggle {
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    max-width: 24px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .header .user-btn {
+    padding: 0;
+    border: none;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    max-width: 24px;
+    border-bottom: none;
+    justify-content: center;
+    background: transparent;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .header .login-btn {
+    padding: 0;
+    border: none;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    max-width: 24px;
+    background: transparent;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .header .login-btn .login-text {
+    display: none;
+  }
+
+  .header .login-btn .login-icon {
+    display: block;
+  }
+}
+
+body[data-theme='light'] .header {
+  background-color: var(--surface-elevated);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body[data-theme='light'] .header .logo,
+body[data-theme='light'] .header .logo span {
+  color: var(--logo-text-color);
+}
+
+body[data-theme='light'] .header .logo-icon {
+  background: var(--logo-icon-gradient);
+}
+
+body[data-theme='light'] .header .search-btn svg path,
+body[data-theme='light'] .header .user-btn svg path {
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+.header .mobile-menu-toggle img,
+.header .search-btn img,
+.header .user-btn img,
+.header .login-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.header .mobile-menu-toggle img {
+  display: block;
+}
+
+@media (max-width: 909px) {
+  .header .mobile-menu-toggle img {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .header .search-btn img {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .header .user-btn img,
+  .header .login-btn img {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* Десктоп 910px и больше - большой логотип (в конце файла для приоритета) */
+@media (min-width: 910px) {
+  .header .logo {
+    width: 143.3px;
+    height: 32px;
+    flex: 0 0 143.3px;
+  }
+  
+  .header .logo-icon {
+    width: 143.3px;
+    height: 32px;
+  }
+}

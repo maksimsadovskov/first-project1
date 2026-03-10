@@ -1,0 +1,405 @@
+/* Overlay для затемнения фона */
+.trailer-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.95); /* Более темный фон */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000; /* Очень высокий z-index */
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@media (min-width: 1025px) {
+  .trailer-modal-overlay {
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+  }
+
+  .trailer-modal__close-btn {
+    top: -24px;
+    right: -24px;
+  }
+}
+
+/* Модальное окно с точными размерами для 1440px */
+.trailer-modal {
+  position: relative;
+  width: 1104px;
+  height: 540px;
+  background-color: #000;
+  overflow: hidden; /* Кнопка теперь внутри */
+  box-shadow: none; /* Убираем тень */
+}
+
+/* Кнопка закрытия - 48x48, БЕЛЫЙ ФОН, ВНУТРИ окна в правом верхнем углу */
+.trailer-modal__close-btn {
+  position: absolute;
+  top: 24px; /* Внутри окна, 24px от верха */
+  right: 24px; /* Внутри окна, 24px справа */
+  width: 48px;
+  height: 48px;
+  background-color: #ffffff; /* БЕЛЫЙ ФОН */
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  transition: transform 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.trailer-modal__close-btn:hover {
+  transform: scale(1.1);
+}
+
+.trailer-modal__close-btn img {
+  width: 24px;
+  height: 24px;
+  filter: invert(1);
+}
+
+@media (max-width: 768px) {
+  .trailer-modal__close-btn img {
+    width: 16px;
+    height: 16px;
+    filter: none;
+  }
+}
+
+/* Обертка для видео */
+.trailer-modal__video-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  box-shadow: none;
+  overflow: hidden;
+  line-height: 0;
+  font-size: 0;
+}
+
+/* Псевдоэлемент для очистки отступов */
+.trailer-modal__video-wrapper::after {
+  content: '';
+  display: block;
+  clear: both;
+  height: 0;
+  line-height: 0;
+}
+
+/* Overlay для перехвата кликов */
+.trailer-modal__click-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 15;
+  cursor: pointer;
+}
+
+/* Видео занимает все пространство окна */
+.trailer-modal__video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 1;
+  margin: 0;
+  padding: 0;
+}
+
+/* Контейнер для иконки паузы/плей в центре */
+.trailer-modal__controls {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 25; /* Поверх всего */
+}
+
+/* Иконка паузы/плей 80x80 */
+.trailer-modal__control-icon {
+  width: 80px;
+  height: 80px;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+}
+
+/* Блок полутона - для горизонтальной */
+.trailer-modal__title-bg--horizontal {
+  position: absolute;
+  bottom: 0; /* Теперь ровно в низу - черный экран убирает щели */
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 72px;
+  background-color: rgba(10, 11, 11, 0.8);
+  z-index: 18;
+  pointer-events: none;
+  display: block;
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+}
+
+/* Текст названия поверх блока */
+.trailer-modal__title--horizontal {
+  position: absolute;
+  bottom: 24px; /* 24px от низа видеоокна */
+  left: 40px; /* 40px от левого края видеоокна */
+  color: #ffffff;
+  font-family: Play, sans-serif;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+  z-index: 20;
+  pointer-events: none;
+}
+
+/* Вертикальная версия ПОД окном - скрыта для десктопа, показывается в portrait */
+.trailer-modal__title--vertical {
+  display: none;
+  position: relative;
+  width: 100%;
+  padding: 0 24px;
+  margin-top: 24px;
+  font-family: Play, sans-serif;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-align: center;
+  background-color: transparent;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+/* Loader */
+.trailer-modal__loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #000000;
+  z-index: 20;
+}
+
+.trailer-modal__loader p {
+  color: #ffffff;
+  font-size: 18px;
+  margin-top: 24px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* Spinner анимация */
+.trailer-modal__spinner {
+  width: 60px;
+  height: 60px;
+  border: 5px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Адаптация для меньших экранов */
+@media (max-width: 1200px) {
+  .trailer-modal {
+    width: 90vw;
+    height: calc(90vw * 540 / 1104);
+  }
+  
+  .trailer-modal__close-btn {
+    top: -60px;
+    right: 0;
+    width: 40px;
+    height: 40px;
+  }
+  
+  .trailer-modal__close-btn img {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .trailer-modal__title {
+    bottom: 32px;
+    left: 40px;
+    font-size: 24px;
+    max-width: calc(100% - 80px);
+  }
+  
+  .trailer-modal__control-icon {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+/* ГОРИЗОНТАЛЬНАЯ ориентация (ландшафт) - экран шире чем выше */
+@media (max-width: 1024px) and (orientation: landscape) {
+  .trailer-modal {
+    width: 812px;
+    height: 375px;
+    max-width: 90vw;
+    overflow: hidden;
+    box-shadow: none;
+  }
+  
+  .trailer-modal__video-wrapper {
+    width: 663px;
+    height: 100%; /* Во всю высоту модального окна (375px) */
+    margin: 0 auto; /* Центрируем с одинаковыми паддингами по краям */
+    box-shadow: none;
+    position: relative;
+    overflow: hidden; /* Скрываем рекламу YouTube */
+  }
+  
+  /* Кнопка закрытия для landscape - ВНУТРИ окна, правый верхний угол модального окна */
+  .trailer-modal__close-btn {
+    top: 16px; /* 16px от верха модального окна */
+    right: 16px; /* 16px от правого края модального окна (НЕ video-wrapper!) */
+    width: 48px;
+    height: 48px;
+  }
+  
+  .trailer-modal__close-btn img {
+    width: 24px;
+    height: 24px;
+    filter: invert(1);
+  }
+  
+  /* Блок полутона - показывается */
+  .trailer-modal__title-bg--horizontal {
+    display: block;
+  }
+  
+  /* Горизонтальная версия текста - показывается */
+  .trailer-modal__title--horizontal {
+    display: block;
+  }
+  
+  /* Вертикальная версия - скрыта */
+  .trailer-modal__title--vertical {
+    display: none;
+  }
+  
+  .trailer-modal__control-icon {
+    width: 56px;
+    height: 56px;
+  }
+  
+  .trailer-modal__loader p {
+    font-size: 16px;
+  }
+}
+
+/* ВЕРТИКАЛЬНАЯ ориентация (портрет) - экран выше чем шире */
+@media (max-width: 768px) and (orientation: portrait), (max-width: 480px) {
+  .trailer-modal-overlay {
+    background-color: #000000; /* Полностью черный фон для вертикальной */
+  }
+  
+  .trailer-modal {
+    width: 375px;
+    max-width: 100vw;
+    height: auto;
+    overflow: visible;
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .trailer-modal__video-wrapper {
+    width: 100%; /* Во всю ширину (375px) */
+    height: 212px;
+    margin: 0; /* Убираем margin */
+    padding: 0;
+    background-color: #000;
+    position: relative;
+  }
+  
+  /* Кнопка закрытия для вертикальной */
+  .trailer-modal__close-btn {
+    position: absolute;
+    top: 16px; /* От верха модального окна */
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  .trailer-modal__close-btn img {
+    width: 13px;
+    height: 13px;
+    filter: invert(1);
+  }
+  
+  /* Блок полутона - НЕТ на вертикальной */
+  .trailer-modal__title-bg--horizontal {
+    display: none;
+  }
+  
+  /* Горизонтальная версия текста - скрыта */
+  .trailer-modal__title--horizontal {
+    display: none;
+  }
+  
+  /* Вертикальная версия ПОД окном видео - 24px ниже, БЕЗ полутона */
+  .trailer-modal__title--vertical {
+    position: static;
+    display: flex;
+    width: 100%;
+    max-width: 375px;
+    padding: 0 24px;
+    margin-top: 24px; /* 24px ниже видеоокна */
+    margin-bottom: 0;
+    font-family: Play, sans-serif;
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 700;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+    background-color: transparent; /* БЕЗ фона */
+    box-sizing: border-box;
+  }
+  
+  .trailer-modal__control-icon {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .trailer-modal__loader p {
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,275 @@
+/* Мобильный поиск: полноэкранный режим, скрывает основной хедер и слайдер */
+.mobile-search-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #0A0B0B; /* почти чёрный фон */
+  z-index: 2000;
+  overflow-y: auto;
+}
+
+.mobile-search-modal__header {
+  width: calc(100% - 40px); /* 375 - 20 - 20 = 335px */
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Уменьшил gap */
+  padding: 0 16px; /* 16px слева и справа внутри header */
+  background: #393B3C;
+  border-radius: 8px;
+  position: absolute;
+  top: 16px; /* сверху 16px */
+  left: 20px; /* Боковой отступ 20px от края экрана */
+  right: 20px; /* Боковой отступ 20px от края экрана */
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+.mobile-search-modal__search-icon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.5; /* #FFFFFF80 = 50% прозрачности белого */
+  flex-shrink: 0;
+  transition: opacity 0.2s ease; /* Плавный переход */
+}
+
+.mobile-search-modal__input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: rgba(255, 255, 255, 0.5); /* #FFFFFF80 = 50% прозрачности белого по умолчанию */
+  font-size: 18px;
+  line-height: 28px;
+  font-family: 'Play', sans-serif;
+  min-width: 0; /* Позволяет сжиматься */
+  transition: color 0.2s ease; /* Плавный переход */
+}
+
+/* Когда input не пустой (есть текст), цвет становится белым */
+.mobile-search-modal__input:not(:placeholder-shown),
+.mobile-search-modal__input:focus {
+  color: #ffffff; /* Белый цвет, как у крестика */
+}
+
+/* Когда input не пустой, иконка поиска тоже становится белой */
+.mobile-search-modal__header--has-text .mobile-search-modal__search-icon {
+  opacity: 1; /* Полная непрозрачность = белый цвет */
+}
+
+.mobile-search-modal__input::placeholder {
+  color: rgba(255, 255, 255, 0.5); /* #FFFFFF80 = 50% прозрачности белого */
+}
+
+.mobile-search-modal__close {
+  width: 12px;
+  height: 12px;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0; /* Крестик не сжимается */
+  padding: 0;
+  margin-left: auto; /* Прижимает к правому краю */
+}
+
+.mobile-search-modal__close img {
+  width: 12px;
+  height: 12px;
+}
+
+/* Dropdown с результатами — появляется только при вводе текста, поверх фонового фильма */
+.mobile-search-modal__dropdown-container {
+  position: absolute;
+  top: calc(56px + 16px + 8px); /* хедер 56px + отступ сверху 16px + gap 8px */
+  left: 20px; /* Боковой отступ 20px слева */
+  right: 20px; /* Боковой отступ 20px справа */
+  width: calc(100% - 40px); /* 335px */
+  max-height: 378px;
+  background-color: #393B3C; /* серый фон, как было изначально */
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  z-index: 9; /* как было изначально */
+}
+
+.mobile-search-modal__content {
+  width: 100%;
+  height: 100%;
+  max-height: 378px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.mobile-search-modal__results {
+  display: flex;
+  gap: 16px;
+  padding: 16px 20px; /* Боковые отступы 20px для горизонтального скролла */
+  height: 100%;
+}
+
+/* Карточка фильма в слайдере */
+.mobile-search-result {
+  width: 220px;
+  flex-shrink: 0;
+  background-color: #393B3C;
+  border-radius: 8px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+}
+
+.mobile-search-result__poster {
+  width: 158px;
+  height: 206px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.mobile-search-result__content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.mobile-search-result__rating {
+  background-color: #308E21;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+  width: 47px;
+  height: 20px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.mobile-search-result__year-genre {
+  display: flex;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 20px;
+  color: #ffffff;
+}
+
+.mobile-search-result__duration {
+  font-size: 14px;
+  line-height: 20px;
+  color: #ffffff;
+  margin-top: 0;
+}
+
+.mobile-search-result__title {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 24px;
+  color: #ffffff;
+  margin: 0;
+  font-family: 'Play', sans-serif;
+}
+
+/* Фоновая карточка главного фильма — строго 375×520 */
+.mobile-search-featured-card {
+  position: absolute;
+  top: 0; /* с самого верха, хедер поверх */
+  left: 0;
+  width: 100%; /* 375px */
+  height: 520px; /* фиксированная высота */
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #0A0B0B; /* черный фон */
+  overflow: hidden;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.mobile-search-featured-card__poster {
+  width: 100%;
+  height: 100%; /* Занимает всю высоту карточки (520px) */
+  object-fit: cover;
+  display: block;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  opacity: 0.5; /* 50% прозрачности (#00000080 = rgba(0, 0, 0, 0.5) в виде opacity) */
+}
+
+/* Скрываем все текстовые элементы - только постер должен быть виден */
+.mobile-search-featured-card__info {
+  display: none; /* Скрываем все тексты, оставляем только постер */
+}
+
+.mobile-search-featured-card__meta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.mobile-search-featured-card__rating {
+  background-color: #308E21;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 20px;
+  width: 47px;
+  height: 20px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.mobile-search-featured-card__year,
+.mobile-search-featured-card__genre,
+.mobile-search-featured-card__duration {
+  font-size: 14px;
+  line-height: 20px;
+  color: #ffffff;
+}
+
+.mobile-search-featured-card__title {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 24px;
+  color: #ffffff;
+  margin: 0;
+  font-family: 'Play', sans-serif;
+}
+
+.mobile-search-featured-card__description {
+  font-size: 14px;
+  line-height: 20px;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+.mobile-search-modal__loading,
+.mobile-search-modal__no-results {
+  padding: 32px 16px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  width: 100%;
+}
+

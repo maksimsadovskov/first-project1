@@ -1,0 +1,120 @@
+.footer {
+  background-color: var(--background-primary);
+  display: flex;
+  align-items: center;
+  height: 120px; /* десктоп */
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Контейнер как флекс, совпадает с шириной и отступами страниц */
+.footer .container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 1340px; /* 1440px - 100px (50px с каждой стороны) */
+  padding: 0 30px; /* боковой отступ 30px */
+  margin: 0 auto;
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* на десктопе справа */
+  width: 100%;
+  height: 100%;
+}
+
+.social-links {
+  display: flex;
+  gap: 24px; /* расстояние между иконками */
+  align-items: center;
+}
+
+/* Десктоп: соцсети справа, внутри ограничивающих отступов контейнера */
+.footer .social-links { margin-left: auto; }
+
+/* Соцсети внутри футера, без фиксированного позиционирования */
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; /* десктоп: 36x36 */
+  height: 36px;
+  background: transparent; /* фон как у страницы */
+  border: 1px solid currentColor; /* бордер 1px */
+  border-radius: 8px;
+  color: var(--text-primary); /* цвет svg через currentColor */
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+  box-shadow: none;
+}
+
+.social-link svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 888px) {
+  .footer {
+    height: auto;
+  }
+  .footer .container {
+    padding: 24px 20px;
+  }
+  .footer-content {
+    justify-content: flex-start;
+  }
+  .footer .social-links {
+    margin-left: 0;
+    gap: 24px;
+  }
+  .social-link {
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+  }
+  .social-link svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer .container {
+    padding: 24px 20px;
+  }
+}
+
+@media (max-width: 375px) {
+  .footer .container {
+    padding: 24px 20px;
+  }
+  .footer-content {
+    justify-content: flex-start;
+  }
+  .footer .social-links {
+    margin-left: 0;
+  }
+}
+
+/* DEBUG off */
+
+body[data-theme='light'] .footer {
+  background-color: var(--background-primary);
+  border-top: none;
+}
+
+body[data-theme='light'] .social-link:hover {
+  background-color: rgba(22, 28, 45, 0.08);
+}
+

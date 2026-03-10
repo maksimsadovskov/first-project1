@@ -1,0 +1,536 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.95); /* Увеличил непрозрачность, чтобы не было видно страницу под окном */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999; /* Очень высокий z-index, чтобы модальное окно было поверх всех элементов, включая карточки фильмов */
+  padding: 20px;
+  isolation: isolate; /* Создаем новый контекст наложения */
+}
+
+.auth-modal {
+  background-color: #ffffff;
+  border-radius: 24px;
+  width: 564px; /* Для 1440px */
+  height: 450px; /* Вход для 1440px */
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  z-index: 100000; /* Очень высокий z-index модального окна */
+  isolation: isolate; /* Создаем новый контекст наложения */
+}
+
+.auth-modal--registration {
+  height: 710px; /* Регистрация для 1440px */
+}
+
+.auth-modal--success {
+  height: 382px; /* Успех для 1440px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-modal__close-btn {
+  position: absolute;
+  top: 0;
+  right: -70px;
+  width: 48px;
+  height: 48px;
+  background-color: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100001; /* Очень высокий z-index кнопки закрытия */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  opacity: 1;
+  visibility: visible;
+  transition: none;
+  will-change: opacity;
+}
+
+/* Скрываем все другие кнопки закрытия в AuthModal */
+.auth-modal .modal-close {
+  display: none;
+}
+
+
+.auth-modal__close-btn:hover {
+  background-color: #f5f5f5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.auth-modal__close-btn svg {
+  width: 24px;
+  height: 24px;
+  color: #000000;
+}
+
+.auth-modal__close-btn svg path {
+  fill: #000000;
+  stroke: #000000;
+  stroke-width: 0.5;
+}
+
+.auth-modal__header {
+  padding: 32px 32px 32px; /* От маруся до окна ввода: 32px */
+  text-align: center;
+  border-bottom: none;
+}
+
+.auth-modal__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  margin-bottom: 0;
+}
+
+.auth-modal__logo-img {
+  width: auto;
+  height: auto;
+  display: block;
+}
+
+.auth-modal__logo-text {
+  font-family: 'Play', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  color: #000000;
+  margin-left: 3px;
+}
+
+.auth-modal__title {
+  display: none; /* Скрываем заголовок "Вход" */
+}
+
+.auth-modal__title--registration {
+  display: block;
+  font-family: 'Play', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 24px;
+  color: #000000;
+  margin: 0;
+  text-align: center;
+  padding-top: 16px;
+}
+
+.auth-modal__subtitle {
+  font-size: 16px;
+  color: #666666;
+  margin: 12px 0 0 0;
+  text-align: center;
+}
+
+.auth-modal__form {
+  padding: 0 32px 24px; /* Убрал верхний padding, так как отступ уже в header */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Между окнами ввода: 12px */
+  overflow-y: auto;
+}
+
+.auth-modal__error-message {
+  margin: 0 0 12px 0;
+  color: #E5484D;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  font-family: 'Play', sans-serif;
+}
+
+.form-group {
+  margin-bottom: 0;
+}
+
+.form-group--with-icon {
+  position: relative;
+}
+
+.form-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-input-label-wrapper {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.form-input-label {
+  font-family: 'Play', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  color: #00000066;
+  white-space: nowrap;
+}
+
+.form-input-icon {
+  width: 24px;
+  height: 24px;
+  color: #00000066;
+  flex-shrink: 0;
+}
+
+.form-input {
+  width: 100%;
+  height: 56px; /* Высота окна ввода: 56px */
+  padding: 16px;
+  padding-left: 140px; /* левый паддинг больше для иконки+текста */
+  background-color: #ffffff;
+  border: 1px solid #00000066;
+  border-radius: 8px;
+  color: #00000066;
+  font-family: 'Play', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #000000;
+  color: #000000;
+  padding-left: 16px; /* Убираем левый паддинг при фокусе */
+}
+
+.form-input--error:focus {
+  border-color: #e74c3c;
+}
+
+.form-input:focus ~ .form-input-label-wrapper,
+.form-input:not(:placeholder-shown) ~ .form-input-label-wrapper {
+  opacity: 0; /* Скрываем лейбл при фокусе или когда есть текст */
+  pointer-events: none;
+}
+
+.form-input--error {
+  border-color: #ff7575;
+}
+
+.form-input--error ~ .form-input-label-wrapper .form-input-icon {
+  color: #ff7575;
+}
+
+.form-input--error:focus {
+  border-color: #ff7575;
+}
+
+.form-input::placeholder {
+  color: transparent; /* Скрываем плейсхолдер */
+}
+
+.error-message {
+  display: block;
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: 4px;
+  font-family: 'Play', sans-serif;
+}
+
+.error-message--field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #FF9800;
+  color: #000000;
+  font-size: 14px;
+  line-height: 20px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-top: 8px;
+  font-family: 'Play', sans-serif;
+}
+
+.error-message--field::before {
+  content: '⚠';
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.error-message--general {
+  background-color: rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.auth-modal__submit {
+  width: 100%;
+  background-color: #4285f4;
+  color: #ffffff;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+  margin-top: 24px; /* От окон ввода до кнопки: 24px (и для 1440px тоже) */
+  border: none;
+  cursor: pointer;
+  font-family: 'Play', sans-serif;
+}
+
+  .auth-modal__registration-text {
+    font-family: 'Play', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: 0%;
+    color: #000000;
+    margin: 24px 0 0 0;
+    text-align: center;
+  }
+
+.auth-modal__back-to-login {
+  font-family: 'Play', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0%;
+  color: #000000;
+  margin: 24px 0 0 0;
+  text-align: center;
+}
+
+.auth-modal__submit--register {
+  font-family: 'Play', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0%;
+}
+
+.auth-modal__submit:hover:not(:disabled) {
+  background-color: #3367d6;
+}
+
+.auth-modal__submit:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+.auth-modal__actions {
+  padding: 24px 32px 32px;
+  text-align: center;
+}
+
+.auth-modal__success-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 64px 40px 64px;
+}
+
+.auth-modal__logo--success {
+  margin-bottom: 40px;
+}
+
+.auth-modal__title--success {
+  display: block;
+  font-family: 'Play', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 24px;
+  color: #000000;
+  margin: 0 0 24px 0;
+  text-align: center;
+}
+
+.auth-modal__subtitle--success {
+  font-family: 'Play', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0%;
+  color: #000000;
+  margin: 0 0 24px 0;
+  text-align: center;
+}
+
+.auth-modal__submit--success {
+  background-color: #4285f4;
+  color: #ffffff;
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+  border: none;
+  cursor: pointer;
+  min-width: 120px;
+  font-family: 'Play', sans-serif;
+  margin: 0;
+}
+
+.auth-modal__submit--success:hover {
+  background-color: #3367d6;
+}
+
+.auth-modal__footer {
+  padding: 16px 32px 32px;
+  text-align: center;
+  border-top: 1px solid #e0e0e0;
+}
+
+.auth-modal__toggle {
+  background: none;
+  border: none;
+  color: #4285f4;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+  font-family: 'Play', sans-serif;
+}
+
+.auth-modal__toggle:hover {
+  color: #3367d6;
+}
+
+/* Медиа-запрос для мобильных экранов (включая 375px) */
+@media (max-width: 480px) {
+  /* Размер модального окна входа для 375px */
+  .auth-modal {
+    width: 335px;
+    height: 410px; /* Вход для 375px */
+    overflow: hidden; /* Скрываем всё, что не помещается */
+    position: relative;
+  }
+  
+  /* Размер окна регистрации для 375px */
+  .auth-modal--registration {
+    width: 335px;
+    height: 670px; /* Регистрация для 375px */
+    overflow: hidden; /* Скрываем всё, что не помещается */
+    position: relative;
+  }
+  
+  /* Размер окна успешной регистрации для 375px */
+  .auth-modal--success {
+    width: 335px;
+    height: 342px; /* Успех для 375px */
+    overflow: hidden; /* Скрываем всё, что не помещается */
+    position: relative;
+  }
+  
+  /* Кнопка закрытия - кнопка 48x48 в правом верхнем углу ВНУТРИ окна */
+  .auth-modal__close-btn,
+  .auth-modal .auth-modal__close-btn,
+  .auth-modal--registration .auth-modal__close-btn,
+  .auth-modal--success .auth-modal__close-btn {
+    position: absolute;
+    top: 0; /* В самом верху */
+    right: 0; /* В самом правом углу */
+    width: 48px; /* Кнопка 48x48 */
+    height: 48px;
+    border: none;
+    background-color: transparent;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100001; /* Очень высокий z-index для мобильной версии */
+    box-shadow: none;
+  }
+  
+  /* Крестик внутри кнопки 24x24 */
+  .auth-modal__close-btn svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  /* SVG и Маруся на 64px от верха окна */
+  .auth-modal__header {
+    padding: 64px 20px 32px; /* 64px сверху, 20px по бокам, 32px снизу (от маруся до окна ввода) */
+  }
+  
+  /* Боковые отступы 20px для формы (поля ввода и кнопка войти) */
+  .auth-modal__form {
+    padding: 0 20px 24px; /* Убрал верхний padding, gap между окнами: 12px */
+    gap: 12px; /* Между окнами ввода: 12px */
+    overflow: visible;
+  }
+  
+  /* От окон ввода до кнопки: 24px */
+  .auth-modal__form .auth-modal__submit {
+    margin-top: 24px;
+  }
+  
+  /* Боковые отступы 20px для окна успешной регистрации */
+  .auth-modal__success-content {
+    padding: 64px 20px 64px;
+  }
+  
+  .auth-modal__title {
+    font-size: 20px;
+  }
+  
+  .auth-modal__subtitle {
+    font-size: 14px;
+  }
+  
+  .auth-modal__actions {
+    padding: 20px;
+  }
+  
+  .auth-modal__submit--success {
+    padding: 12px 24px;
+    font-size: 14px;
+  }
+  
+  /* От войти до регистрация: 24px */
+  .auth-modal__registration-text {
+    font-size: 16px; /* Уменьшил для 375px, чтобы поместилось */
+    line-height: 20px;
+    margin: 24px 0 0 0;
+  }
+  
+  .auth-modal__back-to-login {
+    font-size: 16px; /* Уменьшил для 375px, чтобы поместилось */
+    line-height: 20px;
+    margin: 24px 0 0 0;
+  }
+  
+  /* Убедимся, что поля ввода занимают всю ширину с учетом бокового отступа */
+  .form-group {
+    width: 100%;
+  }
+  
+  .form-input {
+    width: 100%;
+    height: 56px; /* Высота окна ввода: 56px */
+  }
+  
+  .auth-modal__submit {
+    width: 100%;
+  }
+}

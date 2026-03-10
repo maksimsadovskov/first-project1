@@ -1,0 +1,315 @@
+.genre-page {
+  padding: 64px 0;
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.genre-page .container {
+  max-width: 1340px; /* 1440px - 100px (50px с каждой стороны) */
+  padding: 0 30px; /* боковой отступ 30px на десктопе */
+  margin: 0 auto;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Отступы для промежуточных размеров экрана (768px - 1440px) */
+@media (min-width: 768px) and (max-width: 1439px) {
+  .genre-page .container {
+    padding: 0 30px; /* Отступы для всех промежуточных размеров */
+  }
+}
+
+.genre-page-loading,
+.genre-page-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+}
+
+.loading-spinner {
+  font-size: 18px;
+  color: #888;
+}
+
+.genre-page-error h1 {
+  color: #e74c3c;
+  margin-bottom: 16px;
+}
+
+.genre-page-error p {
+  color: #888;
+  font-size: 16px;
+}
+
+.genre-header {
+  text-align: left;
+  margin-bottom: 48px;
+}
+
+.genre-back-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  margin: 0;
+  transition: opacity 0.2s ease;
+}
+
+.genre-back-btn:hover {
+  opacity: 0.8;
+}
+
+.back-arrow {
+  display: inline-flex;
+  width: 13px;
+  height: 22px;
+}
+
+.genre-title {
+  font-family: 'Play', sans-serif;
+  font-size: 48px; /* десктоп по умолчанию */
+  font-weight: 700;
+  font-style: normal;
+  line-height: 56px;
+  letter-spacing: 0;
+  color: #ffffff;
+  margin: 0;
+}
+
+/* На мобиле уменьшаем размер */
+@media (max-width: 767px) {
+  .genre-title {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 700;
+  }
+}
+
+/* Grid применяется только на десктопе (широкие экраны) */
+/* На мобиле (max-width: 767px) используется адаптивная сетка через стили ниже */
+@media (min-width: 768px) {
+  .movies-grid {
+    display: grid;
+    /* auto-fit автоматически подстраивает количество колонок под доступную ширину */
+    /* minmax(224px, 224px) - фиксированная ширина 224px (размер постера), карточки не растягиваются */
+    grid-template-columns: repeat(auto-fit, minmax(224px, 224px));
+    grid-auto-rows: auto;
+    gap: 40px; /* 40px между постерами по горизонтали */
+    row-gap: 64px; /* 64px между рядами по вертикали */
+    justify-content: start; /* Выравнивание по левому краю */
+    justify-items: start; /* выравнивание элементов внутри ячеек */
+    overflow: visible; /* Чтобы тени не обрезались */
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Ограничиваем максимум 5 колонками на очень широких экранах */
+  @media (min-width: 1440px) {
+    .movies-grid {
+      grid-template-columns: repeat(5, 224px); /* фиксированная ширина 224px для каждой колонки */
+      justify-content: start; /* выравниваем влево */
+    }
+  }
+}
+
+.no-movies {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.no-movies h2 {
+  font-size: 24px;
+  color: #888;
+  margin-bottom: 16px;
+}
+
+.no-movies p {
+  font-size: 16px;
+  color: #666;
+}
+
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 64px;
+  width: 100%;
+}
+
+.load-more-btn {
+  width: 218px;
+  height: 56px;
+  background-color: #4285f4;
+  color: #ffffff;
+  padding: 0;
+  border: none;
+  border-radius: 28px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Play', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.load-more-btn:hover:not(:disabled) {
+  background-color: #3367d6;
+  transform: translateY(-2px);
+}
+
+.load-more-btn:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Убеждаемся, что карточки имеют фиксированную ширину 224px на десктопе */
+@media (min-width: 768px) {
+  .movies-grid .movie-card-wrapper,
+  .movies-grid .movie-card-wrapper .movie-card {
+    width: 224px;
+    max-width: 224px;
+  }
+}
+
+/* На странице жанра скрываем информационный блок (название, рейтинг) - только постеры */
+.genre-page .movies-grid .movie-card__info {
+  display: none;
+}
+
+.genre-page .movies-grid .movie-card {
+  height: auto;
+}
+
+.genre-page .movies-grid .movie-card__poster {
+  height: auto;
+  aspect-ratio: 2 / 3;
+}
+
+.genre-page .movies-grid .movie-card__poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Убираем желтые обводки у ссылок на странице жанра */
+.genre-page a,
+.genre-page a:link,
+.genre-page a:visited,
+.genre-page a:hover,
+.genre-page a:active,
+.genre-page a:focus,
+.genre-page a:focus-visible {
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+  outline-offset: 0;
+  border: none;
+  box-shadow: none;
+  background-color: transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 767px) {
+  .genre-page {
+    padding: 20px 0;
+  }
+  
+  .genre-header {
+    margin-bottom: 32px;
+  }
+  
+  .genre-back-btn {
+    font-size: 28px;
+    gap: 8px;
+  }
+  
+  .back-arrow {
+    font-size: 28px;
+  }
+  
+  .genre-title {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 700;
+  }
+  
+  .genre-description {
+    font-size: 16px;
+  }
+  
+  .movies-grid {
+    display: grid; /* Убеждаемся, что grid применяется на мобиле */
+    grid-template-columns: 1fr;
+    gap: 20px;
+    row-gap: 24px; /* Нижний отступ между карточками */
+    justify-items: center;
+  }
+  
+  .load-more-btn {
+    padding: 12px 24px;
+    font-size: 14px;
+  }
+
+  .genre-page .movie-card--small {
+    width: 100% !important;
+    max-width: 335px;
+    height: auto;
+  }
+
+  .genre-page .movie-card__poster {
+    aspect-ratio: 2 / 3;
+    height: auto;
+  }
+}
+
+/* Отступы для экранов с 766px до 360px */
+@media (max-width: 766px) and (min-width: 360px) {
+  .genre-page .container {
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .genre-back-btn {
+    font-size: 24px;
+    gap: 6px;
+  }
+  
+  .back-arrow {
+    font-size: 24px;
+  }
+  
+  .genre-title {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 700;
+  }
+  
+  .genre-description {
+    font-size: 14px;
+  }
+  
+  .movies-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+@media (min-width: 481px) and (max-width: 767px) {
+  .movies-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-items: stretch;
+  }
+}
